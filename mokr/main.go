@@ -35,7 +35,11 @@ func main() {
 		panic(err)
 	}
 
-	txIdentity := NewTxIdentityFromSeed(seedPhrase)
+	txIdentity, err := NewTxIdentityFromSeed(seedPhrase)
+	if err != nil {
+		panic(err)
+	}
+
 	keyringIdentity := KeyringIdentity{
 		KeyringID:  keyringID,
 		TxIdentity: txIdentity,
