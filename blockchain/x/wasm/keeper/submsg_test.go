@@ -14,12 +14,12 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/x/wasm/keeper/testdata"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/wasm/keeper/wasmtesting"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/wasm/types"
+	"github.com/qredo/fusionchain/x/wasm/keeper/testdata"
+	"github.com/qredo/fusionchain/x/wasm/keeper/wasmtesting"
+	"github.com/qredo/fusionchain/x/wasm/types"
 )
 
 // test handing of submessages, very closely related to the reflect_test

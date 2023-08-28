@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package types
 
 import (
@@ -32,7 +32,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/types"
+	"github.com/qredo/fusionchain/types"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/math"
@@ -429,7 +429,7 @@ func (msg *MsgEthereumTx) BuildTx(b client.TxBuilder, evmDenom string) (signing.
 
 // GetSigners returns the expected signers for a MsgUpdateParams message.
 func (m MsgUpdateParams) GetSigners() []sdk.AccAddress {
-	//#nosec G703 -- gosec raises a warning about a non-handled error which we deliberately ignore here
+	// #nosec G703 -- gosec raises a warning about a non-handled error which we deliberately ignore here
 	addr, _ := sdk.AccAddressFromBech32(m.Authority)
 	return []sdk.AccAddress{addr}
 }

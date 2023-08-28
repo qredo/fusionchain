@@ -9,9 +9,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	// "gitlab.qredo.com/qrdochain/fusionchain/testutil/sample"
-	qassetssimulation "gitlab.qredo.com/qrdochain/fusionchain/x/qassets/simulation"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/qassets/types"
+
+	// "github.com/qredo/fusionchain/testutil/sample"
+	qassetssimulation "github.com/qredo/fusionchain/x/qassets/simulation"
+	"github.com/qredo/fusionchain/x/qassets/types"
 )
 
 // avoid unused import issue
@@ -52,7 +53,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 }
 
 // ProposalContents doesn't return any content functions for governance proposals
-func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
+func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalMsg {
 	return nil
 }
 
@@ -62,7 +63,7 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 // }
 
 // RegisterStoreDecoder registers a decoder
-func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
+func (AppModule) RegisterStoreDecoder(sdk.StoreDecoderRegistry) {}
 
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {

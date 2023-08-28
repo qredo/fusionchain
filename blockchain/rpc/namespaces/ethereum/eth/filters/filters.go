@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package filters
 
 import (
@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"math/big"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/rpc/backend"
-	"gitlab.qredo.com/qrdochain/fusionchain/rpc/types"
+	rpcbackend "github.com/qredo/fusionchain/rpc/backend"
+	"github.com/qredo/fusionchain/rpc/types"
 
 	"github.com/cometbft/cometbft/libs/log"
 	tmrpctypes "github.com/cometbft/cometbft/rpc/core/types"
@@ -201,7 +201,7 @@ func (f *Filter) blockLogs(blockRes *tmrpctypes.ResultBlockResults, bloom ethtyp
 		return []*ethtypes.Log{}, nil
 	}
 
-	logsList, err := backend.GetLogsFromBlockResults(blockRes)
+	logsList, err := rpcbackend.GetLogsFromBlockResults(blockRes)
 	if err != nil {
 		return []*ethtypes.Log{}, errors.Wrapf(err, "failed to fetch logs block number %d", blockRes.Height)
 	}
@@ -219,9 +219,9 @@ func (f *Filter) blockLogs(blockRes *tmrpctypes.ResultBlockResults, bloom ethtyp
 	return logs, nil
 }
 
-func createBloomFilters(filters [][][]byte, logger log.Logger) [][]BloomIV {
+func createBloomFilters(bfilters [][][]byte, logger log.Logger) [][]BloomIV {
 	bloomFilters := make([][]BloomIV, 0)
-	for _, filter := range filters {
+	for _, filter := range bfilters {
 		// Gather the bit indexes of the filter rule, special casing the nil filter
 		if len(filter) == 0 {
 			continue

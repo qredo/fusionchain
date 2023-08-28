@@ -3,9 +3,9 @@ package keeper_test
 import (
 	"testing"
 
+	testkeeper "github.com/qredo/fusionchain/testutil/keeper"
+	"github.com/qredo/fusionchain/x/qassets/types"
 	"github.com/stretchr/testify/require"
-	testkeeper "gitlab.qredo.com/qrdochain/fusionchain/testutil/keeper"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/qassets/types"
 )
 
 func TestGetParams(t *testing.T) {

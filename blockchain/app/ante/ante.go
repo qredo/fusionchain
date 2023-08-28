@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package ante
 
 import (
@@ -29,7 +29,7 @@ import (
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/crypto/ethsecp256k1"
+	"github.com/qredo/fusionchain/crypto/ethsecp256k1"
 )
 
 const (
@@ -90,22 +90,24 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 }
 
 func Recover(logger tmlog.Logger, err *error) {
-	if r := recover(); r != nil {
-		*err = errorsmod.Wrapf(errortypes.ErrPanic, "%v", r)
+	defer func() {
+		if r := recover(); r != nil {
+			*err = errorsmod.Wrapf(errortypes.ErrPanic, "%v", r)
 
-		if e, ok := r.(error); ok {
-			logger.Error(
-				"ante handler panicked",
-				"error", e,
-				"stack trace", string(debug.Stack()),
-			)
-		} else {
-			logger.Error(
-				"ante handler panicked",
-				"recover", fmt.Sprintf("%v", r),
-			)
+			if e, ok := r.(error); ok {
+				logger.Error(
+					"ante handler panicked",
+					"error", e,
+					"stack trace", string(debug.Stack()),
+				)
+			} else {
+				logger.Error(
+					"ante handler panicked",
+					"recover", fmt.Sprintf("%v", r),
+				)
+			}
 		}
-	}
+	}()
 }
 
 var _ authante.SignatureVerificationGasConsumer = DefaultSigVerificationGasConsumer

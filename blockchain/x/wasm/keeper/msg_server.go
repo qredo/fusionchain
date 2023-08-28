@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/x/wasm/types"
+	"github.com/qredo/fusionchain/x/wasm/types"
 )
 
 var _ types.MsgServer = msgServer{}
@@ -435,7 +435,7 @@ func contains[T comparable](src []T, o T) bool {
 
 func (m msgServer) selectAuthorizationPolicy(ctx sdk.Context, actor string) types.AuthorizationPolicy {
 	if actor == m.keeper.GetAuthority() {
-		return newGovAuthorizationPolicy(m.keeper.propagateGovAuthorization)
+		return newGovAuthorizationPolicyInner(m.keeper.propagateGovAuthorization)
 	}
 	if policy, ok := types.SubMsgAuthzPolicy(ctx); ok {
 		return policy

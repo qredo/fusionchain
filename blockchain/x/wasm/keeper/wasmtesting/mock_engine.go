@@ -9,7 +9,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/x/wasm/types"
+	"github.com/qredo/fusionchain/x/wasm/types"
 )
 
 var _ types.WasmerEngine = &MockWasmer{}
@@ -82,7 +82,7 @@ func (m *MockWasmer) IBCPacketTimeout(codeID wasmvm.Checksum, env wasmvmtypes.En
 }
 
 // Deprecated: use StoreCode instead.
-func (m *MockWasmer) Create(codeID wasmvm.WasmCode) (wasmvm.Checksum, error) {
+func (*MockWasmer) Create(wasmvm.WasmCode) (wasmvm.Checksum, error) {
 	panic("Deprecated: use StoreCode instead")
 }
 

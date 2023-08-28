@@ -1,4 +1,4 @@
-module gitlab.qredo.com/qrdochain/fusionchain
+module github.com/qredo/fusionchain
 
 go 1.21
 
@@ -231,6 +231,8 @@ require (
 	nhooyr.io/websocket v1.8.6 // indirect
 	pgregory.net/rapid v0.5.5 // indirect
 )
+
+replace gitlab.qredo.com/edmund/blackbird/verifier/golang v0.1.2 => github.com/qredo/blackbird/verifier/golang v0.0.0-20230330094021-716ea13e0979
 
 replace (
 	// use cosmos keyring

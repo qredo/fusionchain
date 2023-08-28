@@ -5,8 +5,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/qredo/fusionchain/x/treasury/types"
 	"github.com/spf13/cobra"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/treasury/types"
 )
 
 func CmdQueryParams() *cobra.Command {

@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package types
 
 import (
@@ -23,7 +23,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/core/vm"
-	"gitlab.qredo.com/qrdochain/fusionchain/types"
+	"github.com/qredo/fusionchain/types"
 )
 
 var (
@@ -103,7 +103,7 @@ func (p Params) EIPs() []int {
 	return eips
 }
 
-func validateEVMDenom(i interface{}) error {
+func validateEVMDenom(i any) error {
 	denom, ok := i.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter EVM denom type: %T", i)
@@ -112,7 +112,7 @@ func validateEVMDenom(i interface{}) error {
 	return sdk.ValidateDenom(denom)
 }
 
-func validateBool(i interface{}) error {
+func validateBool(i any) error {
 	_, ok := i.(bool)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
@@ -120,7 +120,7 @@ func validateBool(i interface{}) error {
 	return nil
 }
 
-func validateEIPs(i interface{}) error {
+func validateEIPs(i any) error {
 	eips, ok := i.([]int64)
 	if !ok {
 		return fmt.Errorf("invalid EIP slice type: %T", i)
@@ -135,7 +135,7 @@ func validateEIPs(i interface{}) error {
 	return nil
 }
 
-func validateChainConfig(i interface{}) error {
+func validateChainConfig(i any) error {
 	cfg, ok := i.(ChainConfig)
 	if !ok {
 		return fmt.Errorf("invalid chain config type: %T", i)

@@ -9,3 +9,4 @@ go mod tidy
 golangci-lint run \
     --config ../.golangci.yml \
     --timeout 10m
+

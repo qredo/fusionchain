@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package debug
 
 import (
@@ -52,9 +52,9 @@ func ExpandHome(p string) (string, error) {
 }
 
 // writeProfile writes the data to a file
-func writeProfile(name, file string, log log.Logger) error {
+func writeProfile(name, file string, l log.Logger) error {
 	p := pprof.Lookup(name)
-	log.Info("Writing profile records", "count", p.Count(), "type", name, "dump", file)
+	l.Info("Writing profile records", "count", p.Count(), "type", name, "dump", file)
 	fp, err := ExpandHome(file)
 	if err != nil {
 		return err

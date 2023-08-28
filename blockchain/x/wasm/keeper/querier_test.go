@@ -19,13 +19,13 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 
+	sdkErrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/x/wasm/keeper/wasmtesting"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/wasm/types"
+	"github.com/qredo/fusionchain/x/wasm/keeper/wasmtesting"
+	"github.com/qredo/fusionchain/x/wasm/types"
 )
 
 func TestQueryAllContractState(t *testing.T) {

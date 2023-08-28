@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package backend
 
 import (
@@ -30,8 +30,8 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/trie"
 	"github.com/pkg/errors"
-	rpctypes "gitlab.qredo.com/qrdochain/fusionchain/rpc/types"
-	evmtypes "gitlab.qredo.com/qrdochain/fusionchain/x/evm/types"
+	rpctypes "github.com/qredo/fusionchain/rpc/types"
+	evmtypes "github.com/qredo/fusionchain/x/evm/types"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
@@ -64,7 +64,7 @@ func (b *Backend) BlockNumber() (hexutil.Uint64, error) {
 // GetBlockByNumber returns the JSON-RPC compatible Ethereum block identified by
 // block number. Depending on fullTx it either returns the full transaction
 // objects or if false only the hashes of the transactions.
-func (b *Backend) GetBlockByNumber(blockNum rpctypes.BlockNumber, fullTx bool) (map[string]interface{}, error) {
+func (b *Backend) GetBlockByNumber(blockNum rpctypes.BlockNumber, fullTx bool) (map[string]any, error) {
 	resBlock, err := b.TendermintBlockByNumber(blockNum)
 	if err != nil {
 		return nil, nil
@@ -92,7 +92,7 @@ func (b *Backend) GetBlockByNumber(blockNum rpctypes.BlockNumber, fullTx bool) (
 
 // GetBlockByHash returns the JSON-RPC compatible Ethereum block identified by
 // hash.
-func (b *Backend) GetBlockByHash(hash common.Hash, fullTx bool) (map[string]interface{}, error) {
+func (b *Backend) GetBlockByHash(hash common.Hash, fullTx bool) (map[string]any, error) {
 	resBlock, err := b.TendermintBlockByHash(hash)
 	if err != nil {
 		return nil, err
@@ -358,7 +358,7 @@ func (b *Backend) HeaderByHash(blockHash common.Hash) (*ethtypes.Header, error) 
 }
 
 // BlockBloom query block bloom filter from block results
-func (b *Backend) BlockBloom(blockRes *tmrpctypes.ResultBlockResults) (ethtypes.Bloom, error) {
+func (*Backend) BlockBloom(blockRes *tmrpctypes.ResultBlockResults) (ethtypes.Bloom, error) {
 	for _, event := range blockRes.EndBlockEvents {
 		if event.Type != evmtypes.EventTypeBlockBloom {
 			continue
@@ -379,8 +379,8 @@ func (b *Backend) RPCBlockFromTendermintBlock(
 	resBlock *tmrpctypes.ResultBlock,
 	blockRes *tmrpctypes.ResultBlockResults,
 	fullTx bool,
-) (map[string]interface{}, error) {
-	ethRPCTxs := []interface{}{}
+) (map[string]any, error) {
+	ethRPCTxs := []any{}
 	block := resBlock.Block
 
 	baseFee, err := b.BaseFee(blockRes)

@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package eip712
 
 import (
@@ -28,7 +28,7 @@ import (
 type eip712MessagePayload struct {
 	payload        gjson.Result
 	numPayloadMsgs int
-	message        map[string]interface{}
+	message        map[string]any
 }
 
 const (
@@ -48,7 +48,7 @@ func createEIP712MessagePayload(data []byte) (eip712MessagePayload, error) {
 		return eip712MessagePayload{}, errorsmod.Wrap(err, "failed to flatten payload JSON messages")
 	}
 
-	message, ok := payload.Value().(map[string]interface{})
+	message, ok := payload.Value().(map[string]any)
 	if !ok {
 		return eip712MessagePayload{}, errorsmod.Wrap(errortypes.ErrInvalidType, "failed to parse JSON as map")
 	}

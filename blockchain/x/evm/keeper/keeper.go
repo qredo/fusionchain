@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package keeper
 
 import (
@@ -31,10 +31,10 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/params"
 
-	ethermint "gitlab.qredo.com/qrdochain/fusionchain/types"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/evm/statedb"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/evm/types"
-	evm "gitlab.qredo.com/qrdochain/fusionchain/x/evm/vm"
+	ethermint "github.com/qredo/fusionchain/types"
+	"github.com/qredo/fusionchain/x/evm/statedb"
+	"github.com/qredo/fusionchain/x/evm/types"
+	evm "github.com/qredo/fusionchain/x/evm/vm"
 )
 
 // Keeper grants access to the EVM module state and implements the go-ethereum StateDB interface.
@@ -122,7 +122,7 @@ func NewKeeper(
 }
 
 // Logger returns a module-specific logger.
-func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+func (Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
 }
 
@@ -151,7 +151,7 @@ func (k Keeper) ChainID() *big.Int {
 // ----------------------------------------------------------------------------
 
 // EmitBlockBloomEvent emit block bloom events
-func (k Keeper) EmitBlockBloomEvent(ctx sdk.Context, bloom ethtypes.Bloom) {
+func (Keeper) EmitBlockBloomEvent(ctx sdk.Context, bloom ethtypes.Bloom) {
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeBlockBloom,
@@ -336,10 +336,10 @@ func (k *Keeper) GetBalance(ctx sdk.Context, addr common.Address) *big.Int {
 // - `0`: london hardfork enabled but feemarket is not enabled.
 // - `n`: both london hardfork and feemarket are enabled.
 func (k Keeper) GetBaseFee(ctx sdk.Context, ethCfg *params.ChainConfig) *big.Int {
-	return k.getBaseFee(ctx, types.IsLondon(ethCfg, ctx.BlockHeight()))
+	return k.getBaseFeeAmt(ctx, types.IsLondon(ethCfg, ctx.BlockHeight()))
 }
 
-func (k Keeper) getBaseFee(ctx sdk.Context, london bool) *big.Int {
+func (k Keeper) getBaseFeeAmt(ctx sdk.Context, london bool) *big.Int {
 	if !london {
 		return nil
 	}

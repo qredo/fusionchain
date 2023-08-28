@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package eip712
 
 import (
@@ -26,12 +26,12 @@ import (
 	txTypes "github.com/cosmos/cosmos-sdk/types/tx"
 
 	apitypes "github.com/ethereum/go-ethereum/signer/core/apitypes"
-	"gitlab.qredo.com/qrdochain/fusionchain/types"
+	"github.com/qredo/fusionchain/types"
 )
 
 type aminoMessage struct {
-	Type  string      `json:"type"`
-	Value interface{} `json:"value"`
+	Type  string `json:"type"`
+	Value any    `json:"value"`
 }
 
 // LegacyGetEIP712BytesForMsg returns the EIP-712 object bytes for the given SignDoc bytes by decoding the bytes into

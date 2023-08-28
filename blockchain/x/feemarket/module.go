@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package feemarket
 
 import (
@@ -33,9 +33,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/x/feemarket/client/cli"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/feemarket/keeper"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/feemarket/types"
+	"github.com/qredo/fusionchain/x/feemarket/client/cli"
+	"github.com/qredo/fusionchain/x/feemarket/keeper"
+	"github.com/qredo/fusionchain/x/feemarket/types"
 )
 
 var (
@@ -82,7 +82,7 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingCo
 func (AppModuleBasic) RegisterRESTRoutes(_ client.Context, _ *mux.Router) {
 }
 
-func (b AppModuleBasic) RegisterGRPCGatewayRoutes(c client.Context, serveMux *runtime.ServeMux) {
+func (AppModuleBasic) RegisterGRPCGatewayRoutes(c client.Context, serveMux *runtime.ServeMux) {
 	if err := types.RegisterQueryHandlerClient(context.Background(), serveMux, types.NewQueryClient(c)); err != nil {
 		panic(err)
 	}
@@ -129,7 +129,7 @@ func (AppModule) Name() string {
 
 // RegisterInvariants interface for registering invariants. Performs a no-op
 // as the fee market module doesn't expose invariants.
-func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
+func (AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
 // RegisterServices registers the GRPC query service and migrator service to respond to the
 // module-specific GRPC queries and handle the upgrade store migration for the module.
@@ -173,13 +173,13 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 }
 
 // RegisterStoreDecoder registers a decoder for fee market module's types
-func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
+func (AppModule) RegisterStoreDecoder(sdk.StoreDecoderRegistry) {}
 
 // GenerateGenesisState creates a randomized GenState of the fee market module.
-func (AppModule) GenerateGenesisState(_ *module.SimulationState) {
+func (AppModule) GenerateGenesisState(*module.SimulationState) {
 }
 
 // WeightedOperations returns the all the fee market module operations with their respective weights.
-func (am AppModule) WeightedOperations(_ module.SimulationState) []simtypes.WeightedOperation {
+func (AppModule) WeightedOperations(module.SimulationState) []simtypes.WeightedOperation {
 	return nil
 }

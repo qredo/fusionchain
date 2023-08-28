@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package backend
 
 import (
@@ -28,9 +28,9 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
-	rpctypes "gitlab.qredo.com/qrdochain/fusionchain/rpc/types"
-	ethermint "gitlab.qredo.com/qrdochain/fusionchain/types"
-	evmtypes "gitlab.qredo.com/qrdochain/fusionchain/x/evm/types"
+	rpctypes "github.com/qredo/fusionchain/rpc/types"
+	ethermint "github.com/qredo/fusionchain/types"
+	evmtypes "github.com/qredo/fusionchain/x/evm/types"
 )
 
 // GetTransactionByHash returns the Ethereum format transaction identified by Ethereum transaction hash
@@ -137,7 +137,7 @@ func (b *Backend) getTransactionByHashPending(txHash common.Hash) (*rpctypes.RPC
 func (b *Backend) GetGasUsed(res *ethermint.TxResult, price *big.Int, gas uint64) uint64 {
 	// patch gasUsed if tx is reverted and happened before height on which fixed was introduced
 	// to return real gas charged
-	// more info at https://gitlab.qredo.com/qrdochain/fusionchain/pull/1557
+	// more info at https://github.com/qredo/fusionchain/pull/1557
 	if res.Failed && res.Height < b.cfg.JSONRPC.FixRevertGasRefundHeight {
 		return new(big.Int).Mul(price, new(big.Int).SetUint64(gas)).Uint64()
 	}
@@ -145,7 +145,7 @@ func (b *Backend) GetGasUsed(res *ethermint.TxResult, price *big.Int, gas uint64
 }
 
 // GetTransactionReceipt returns the transaction receipt identified by hash.
-func (b *Backend) GetTransactionReceipt(hash common.Hash) (map[string]interface{}, error) {
+func (b *Backend) GetTransactionReceipt(hash common.Hash) (map[string]any, error) {
 	hexTx := hash.Hex()
 	b.logger.Debug("eth_getTransactionReceipt", "hash", hexTx)
 
@@ -220,7 +220,7 @@ func (b *Backend) GetTransactionReceipt(hash common.Hash) (map[string]interface{
 		return nil, errors.New("can't find index of ethereum tx")
 	}
 
-	receipt := map[string]interface{}{
+	receipt := map[string]any{
 		// Consensus fields: These fields are defined by the Yellow Paper
 		"status":            status,
 		"cumulativeGasUsed": hexutil.Uint64(cumulativeGasUsed),

@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package backend
 
 import (
@@ -30,10 +30,10 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/pkg/errors"
-	rpctypes "gitlab.qredo.com/qrdochain/fusionchain/rpc/types"
-	ethermint "gitlab.qredo.com/qrdochain/fusionchain/types"
-	evmtypes "gitlab.qredo.com/qrdochain/fusionchain/x/evm/types"
-	feemarkettypes "gitlab.qredo.com/qrdochain/fusionchain/x/feemarket/types"
+	rpctypes "github.com/qredo/fusionchain/rpc/types"
+	ethermint "github.com/qredo/fusionchain/types"
+	evmtypes "github.com/qredo/fusionchain/x/evm/types"
+	feemarkettypes "github.com/qredo/fusionchain/x/feemarket/types"
 )
 
 // ChainID is the EIP-155 replay-protection chain id for the current ethereum chain config.
@@ -58,12 +58,12 @@ func (b *Backend) ChainID() (*hexutil.Big, error) {
 
 // ChainConfig returns the latest ethereum chain configuration
 func (b *Backend) ChainConfig() *params.ChainConfig {
-	params, err := b.queryClient.Params(b.ctx, &evmtypes.QueryParamsRequest{})
+	p, err := b.queryClient.Params(b.ctx, &evmtypes.QueryParamsRequest{})
 	if err != nil {
 		return nil
 	}
 
-	return params.Params.ChainConfig.EthereumConfig(b.chainID)
+	return p.Params.ChainConfig.EthereumConfig(b.chainID)
 }
 
 // GlobalMinGasPrice returns MinGasPrice param from FeeMarket
@@ -305,7 +305,7 @@ func (b *Backend) SuggestGasTipCap(baseFee *big.Int) (*big.Int, error) {
 		return big.NewInt(0), nil
 	}
 
-	params, err := b.queryClient.FeeMarket.Params(b.ctx, &feemarkettypes.QueryParamsRequest{})
+	p, err := b.queryClient.FeeMarket.Params(b.ctx, &feemarkettypes.QueryParamsRequest{})
 	if err != nil {
 		return nil, err
 	}
@@ -319,7 +319,7 @@ func (b *Backend) SuggestGasTipCap(baseFee *big.Int) (*big.Int, error) {
 	// MaxDelta = BaseFee * (GasLimit - GasLimit / ElasticityMultiplier) / (GasLimit / ElasticityMultiplier) / Denominator
 	//          = BaseFee * (ElasticityMultiplier - 1) / Denominator
 	// ```
-	maxDelta := baseFee.Int64() * (int64(params.Params.ElasticityMultiplier) - 1) / int64(params.Params.BaseFeeChangeDenominator)
+	maxDelta := baseFee.Int64() * (int64(p.Params.ElasticityMultiplier) - 1) / int64(p.Params.BaseFeeChangeDenominator)
 	if maxDelta < 0 {
 		// impossible if the parameter validation passed.
 		maxDelta = 0

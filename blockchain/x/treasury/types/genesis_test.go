@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
+	"github.com/qredo/fusionchain/x/treasury/types"
 	"github.com/stretchr/testify/require"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/treasury/types"
 )
 
 func TestGenesisState_Validate(t *testing.T) {

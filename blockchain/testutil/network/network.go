@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package network
 
 import (
@@ -64,14 +64,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/crypto/hd"
-	"gitlab.qredo.com/qrdochain/fusionchain/encoding"
-	"gitlab.qredo.com/qrdochain/fusionchain/server/config"
-	ethermint "gitlab.qredo.com/qrdochain/fusionchain/types"
-	evmtypes "gitlab.qredo.com/qrdochain/fusionchain/x/evm/types"
+	"github.com/qredo/fusionchain/crypto/hd"
+	"github.com/qredo/fusionchain/encoding"
+	"github.com/qredo/fusionchain/server/config"
+	ethermint "github.com/qredo/fusionchain/types"
+	evmtypes "github.com/qredo/fusionchain/x/evm/types"
 
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
-	"gitlab.qredo.com/qrdochain/fusionchain/app"
+	"github.com/qredo/fusionchain/app"
 )
 
 // network lock to only allow one test network at a time
@@ -211,8 +211,8 @@ type (
 // Logger is a network logger interface that exposes testnet-level Log() methods for an in-process testing network
 // This is not to be confused with logging that may happen at an individual node or validator level
 type Logger interface {
-	Log(args ...interface{})
-	Logf(format string, args ...interface{})
+	Log(args ...any)
+	Logf(format string, args ...any)
 }
 
 var (
@@ -224,11 +224,11 @@ type CLILogger struct {
 	cmd *cobra.Command
 }
 
-func (s CLILogger) Log(args ...interface{}) {
+func (s CLILogger) Log(args ...any) {
 	s.cmd.Println(args...)
 }
 
-func (s CLILogger) Logf(format string, args ...interface{}) {
+func (s CLILogger) Logf(format string, args ...any) {
 	s.cmd.Printf(format, args...)
 }
 
@@ -656,6 +656,7 @@ func (n *Network) Cleanup() {
 
 		if v.jsonrpc != nil {
 			shutdownCtx, cancelFn := context.WithTimeout(context.Background(), 10*time.Second)
+			// revive:disable-next-line:defer
 			defer cancelFn()
 
 			if err := v.jsonrpc.Shutdown(shutdownCtx); err != nil {

@@ -5,11 +5,13 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/treasury/types"
+	"github.com/qredo/fusionchain/x/treasury/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
+// nolint:stylecheck,st1003
+// revive:disable-next-line var-naming
 func (k Keeper) KeyRequestById(goCtx context.Context, req *types.QueryKeyRequestByIdRequest) (*types.QueryKeyRequestByIdResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")

@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package ethsecp256k1
 
 import (
@@ -27,7 +27,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/ethereum/go-ethereum/crypto"
-	"gitlab.qredo.com/qrdochain/fusionchain/ethereum/eip712"
+	"github.com/qredo/fusionchain/ethereum/eip712"
 )
 
 const (
@@ -95,7 +95,7 @@ func (privKey PrivKey) Equals(other cryptotypes.LedgerPrivKey) bool {
 }
 
 // Type returns eth_secp256k1
-func (privKey PrivKey) Type() string {
+func (PrivKey) Type() string {
 	return KeyType
 }
 
@@ -181,7 +181,7 @@ func (pubKey PubKey) String() string {
 }
 
 // Type returns eth_secp256k1
-func (pubKey PubKey) Type() string {
+func (PubKey) Type() string {
 	return KeyType
 }
 

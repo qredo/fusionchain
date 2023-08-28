@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package app
 
 import (
@@ -77,6 +77,7 @@ import (
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
+
 	// distrclient "github.com/cosmos/cosmos-sdk/x/distribution/client"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -143,22 +144,22 @@ import (
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 
 	// unnamed import of statik for swagger UI support
-	_ "gitlab.qredo.com/qrdochain/fusionchain/client/docs/statik"
+	_ "github.com/qredo/fusionchain/client/docs/statik"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/app/ante"
-	"gitlab.qredo.com/qrdochain/fusionchain/ethereum/eip712"
-	srvflags "gitlab.qredo.com/qrdochain/fusionchain/server/flags"
-	ethermint "gitlab.qredo.com/qrdochain/fusionchain/types"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/evm"
-	evmkeeper "gitlab.qredo.com/qrdochain/fusionchain/x/evm/keeper"
-	evmtypes "gitlab.qredo.com/qrdochain/fusionchain/x/evm/types"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/evm/vm/geth"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/feemarket"
-	feemarketkeeper "gitlab.qredo.com/qrdochain/fusionchain/x/feemarket/keeper"
-	feemarkettypes "gitlab.qredo.com/qrdochain/fusionchain/x/feemarket/types"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/wasm"
-	wasmkeeper "gitlab.qredo.com/qrdochain/fusionchain/x/wasm/keeper"
-	wasmtypes "gitlab.qredo.com/qrdochain/fusionchain/x/wasm/types"
+	"github.com/qredo/fusionchain/app/ante"
+	"github.com/qredo/fusionchain/ethereum/eip712"
+	srvflags "github.com/qredo/fusionchain/server/flags"
+	ethermint "github.com/qredo/fusionchain/types"
+	"github.com/qredo/fusionchain/x/evm"
+	evmkeeper "github.com/qredo/fusionchain/x/evm/keeper"
+	evmtypes "github.com/qredo/fusionchain/x/evm/types"
+	"github.com/qredo/fusionchain/x/evm/vm/geth"
+	"github.com/qredo/fusionchain/x/feemarket"
+	feemarketkeeper "github.com/qredo/fusionchain/x/feemarket/keeper"
+	feemarkettypes "github.com/qredo/fusionchain/x/feemarket/types"
+	"github.com/qredo/fusionchain/x/wasm"
+	wasmkeeper "github.com/qredo/fusionchain/x/wasm/keeper"
+	wasmtypes "github.com/qredo/fusionchain/x/wasm/types"
 
 	consensusparamkeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
@@ -168,18 +169,18 @@ import (
 	_ "github.com/ethereum/go-ethereum/eth/tracers/js"
 	_ "github.com/ethereum/go-ethereum/eth/tracers/native"
 
-	blackbirdmodule "gitlab.qredo.com/qrdochain/fusionchain/x/blackbird"
-	blackbirdmodulekeeper "gitlab.qredo.com/qrdochain/fusionchain/x/blackbird/keeper"
-	blackbirdmoduletypes "gitlab.qredo.com/qrdochain/fusionchain/x/blackbird/types"
-	identitymodule "gitlab.qredo.com/qrdochain/fusionchain/x/identity"
-	identitymodulekeeper "gitlab.qredo.com/qrdochain/fusionchain/x/identity/keeper"
-	identitymoduletypes "gitlab.qredo.com/qrdochain/fusionchain/x/identity/types"
-	qassetsmodule "gitlab.qredo.com/qrdochain/fusionchain/x/qassets"
-	qassetsmodulekeeper "gitlab.qredo.com/qrdochain/fusionchain/x/qassets/keeper"
-	qassetsmoduletypes "gitlab.qredo.com/qrdochain/fusionchain/x/qassets/types"
-	treasurymodule "gitlab.qredo.com/qrdochain/fusionchain/x/treasury"
-	treasurymodulekeeper "gitlab.qredo.com/qrdochain/fusionchain/x/treasury/keeper"
-	treasurymoduletypes "gitlab.qredo.com/qrdochain/fusionchain/x/treasury/types"
+	blackbirdmodule "github.com/qredo/fusionchain/x/blackbird"
+	blackbirdmodulekeeper "github.com/qredo/fusionchain/x/blackbird/keeper"
+	blackbirdmoduletypes "github.com/qredo/fusionchain/x/blackbird/types"
+	identitymodule "github.com/qredo/fusionchain/x/identity"
+	identitymodulekeeper "github.com/qredo/fusionchain/x/identity/keeper"
+	identitymoduletypes "github.com/qredo/fusionchain/x/identity/types"
+	qassetsmodule "github.com/qredo/fusionchain/x/qassets"
+	qassetsmodulekeeper "github.com/qredo/fusionchain/x/qassets/keeper"
+	qassetsmoduletypes "github.com/qredo/fusionchain/x/qassets/types"
+	treasurymodule "github.com/qredo/fusionchain/x/treasury"
+	treasurymodulekeeper "github.com/qredo/fusionchain/x/treasury/keeper"
+	treasurymoduletypes "github.com/qredo/fusionchain/x/treasury/types"
 )
 
 func init() {
@@ -205,15 +206,15 @@ var (
 	EnableSpecificProposals = ""
 )
 
-func GetEnabledProposals() []wasm.ProposalType {
+func GetEnabledProposals() []wasmtypes.ProposalType {
 	if EnableSpecificProposals == "" {
 		if ProposalsEnabled == "true" {
-			return wasm.EnableAllProposals
+			return wasmtypes.EnableAllProposals
 		}
-		return wasm.DisableAllProposals
+		return wasmtypes.DisableAllProposals
 	}
 	chunks := strings.Split(EnableSpecificProposals, ",")
-	proposals, err := wasm.ConvertToProposals(chunks)
+	proposals, err := wasmtypes.ConvertToProposals(chunks)
 	if err != nil {
 		panic(err)
 	}
@@ -439,7 +440,7 @@ func NewEthermintApp(
 		// Fusion keys
 		evmtypes.StoreKey,
 		feemarkettypes.StoreKey,
-		wasm.StoreKey,
+		wasmtypes.StoreKey,
 		blackbirdmoduletypes.StoreKey,
 		identitymoduletypes.StoreKey,
 		treasurymoduletypes.StoreKey,
@@ -453,6 +454,7 @@ func NewEthermintApp(
 	// load state streaming if enabled
 	if _, _, err := streaming.LoadStreamingServices(bApp, appOpts, appCodec, logger, keys); err != nil {
 		fmt.Printf("failed to load state streaming: %s", err)
+		//revive:disable-next-line:deep-exit
 		os.Exit(1)
 	}
 
@@ -496,7 +498,7 @@ func NewEthermintApp(
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
-	scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
+	scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasmtypes.ModuleName)
 	// Applications that wish to enforce statically created ScopedKeepers should call `Seal` after creating
 	// their scoped modules in `NewApp` with `ScopeToModule`
 	app.CapabilityKeeper.Seal()
@@ -638,12 +640,10 @@ func NewEthermintApp(
 	supportedFeatures := "iterator,staking,stargate,cosmwasm_1_1,cosmwasm_1_2,cosmwasm_1_3"
 	app.WasmKeeper = wasmkeeper.NewKeeper(
 		appCodec,
-		keys[wasm.StoreKey],
-		// app.GetSubspace(wasm.ModuleName),
+		keys[wasmtypes.StoreKey],
 		app.AccountKeeper,
 		app.BankKeeper,
 		app.StakingKeeper,
-		// app.DistrKeeper,
 		distrkeeper.NewQuerier(app.DistrKeeper),
 		app.IBCFeeKeeper,
 		app.IBCKeeper.ChannelKeeper,
@@ -811,7 +811,7 @@ func NewEthermintApp(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
-	/****  Module Options ****/
+	// Module Options
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
 	// we prefer to be more strict in what arguments the modules expect.
@@ -1119,7 +1119,7 @@ func (app *EthermintApp) LoadHeight(height int64) error {
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
-func (app *EthermintApp) ModuleAccountAddrs() map[string]bool {
+func (*EthermintApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
@@ -1130,7 +1130,7 @@ func (app *EthermintApp) ModuleAccountAddrs() map[string]bool {
 
 // BlockedAddrs returns all the app's module account addresses that are not
 // allowed to receive external tokens.
-func (app *EthermintApp) BlockedAddrs() map[string]bool {
+func (*EthermintApp) BlockedAddrs() map[string]bool {
 	blockedAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
@@ -1191,7 +1191,7 @@ func (app *EthermintApp) GetSubspace(moduleName string) paramstypes.Subspace {
 
 // RegisterAPIRoutes registers all application module routes with the provided
 // API server.
-func (app *EthermintApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+func (*EthermintApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
 	// Register new tx routes from grpc-gateway.
 	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)

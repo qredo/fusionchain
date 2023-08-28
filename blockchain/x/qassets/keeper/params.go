@@ -2,11 +2,11 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/qassets/types"
+	"github.com/qredo/fusionchain/x/qassets/types"
 )
 
 // GetParams get all parameters as types.Params
-func (k Keeper) GetParams(ctx sdk.Context) types.Params {
+func (Keeper) GetParams(sdk.Context) types.Params {
 	return types.NewParams()
 }
 

@@ -6,8 +6,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/qredo/fusionchain/x/treasury/types"
 	"github.com/spf13/cobra"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/treasury/types"
 )
 
 var _ = strconv.Itoa(0)
@@ -18,7 +18,6 @@ func CmdSignatureRequests() *cobra.Command {
 		Short: "Query SignatureRequests, optionally filtering by their current status",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err

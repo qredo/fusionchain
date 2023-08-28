@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package backend
 
 import (
@@ -46,6 +46,6 @@ func (b *Backend) GetLogsByHeight(height *int64) ([][]*ethtypes.Log, error) {
 
 // BloomStatus returns the BloomBitsBlocks and the number of processed sections maintained
 // by the chain indexer.
-func (b *Backend) BloomStatus() (uint64, uint64) {
+func (*Backend) BloomStatus() (uint64, uint64) {
 	return 4096, 0
 }

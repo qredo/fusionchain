@@ -3,9 +3,9 @@ package types
 import (
 	"testing"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdkerrors "cosmossdk.io/errors"
+	"github.com/qredo/fusionchain/testutil/sample"
 	"github.com/stretchr/testify/require"
-	"gitlab.qredo.com/qrdochain/fusionchain/testutil/sample"
 )
 
 func TestMsgNewSignatureRequest_ValidateBasic(t *testing.T) {

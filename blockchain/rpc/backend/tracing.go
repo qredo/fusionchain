@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package backend
 
 import (
@@ -24,13 +24,13 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/pkg/errors"
-	rpctypes "gitlab.qredo.com/qrdochain/fusionchain/rpc/types"
-	evmtypes "gitlab.qredo.com/qrdochain/fusionchain/x/evm/types"
+	rpctypes "github.com/qredo/fusionchain/rpc/types"
+	evmtypes "github.com/qredo/fusionchain/x/evm/types"
 )
 
 // TraceTransaction returns the structured logs created during the execution of EVM
 // and returns them as a JSON object.
-func (b *Backend) TraceTransaction(hash common.Hash, config *evmtypes.TraceConfig) (interface{}, error) {
+func (b *Backend) TraceTransaction(hash common.Hash, config *evmtypes.TraceConfig) (any, error) {
 	// Get transaction by hash
 	transaction, err := b.GetTxByEthHash(hash)
 	if err != nil {
@@ -120,7 +120,7 @@ func (b *Backend) TraceTransaction(hash common.Hash, config *evmtypes.TraceConfi
 
 	// Response format is unknown due to custom tracer config param
 	// More information can be found here https://geth.ethereum.org/docs/dapp/tracing-filtered
-	var decodedResult interface{}
+	var decodedResult any
 	err = json.Unmarshal(traceResult.Data, &decodedResult)
 	if err != nil {
 		return nil, err

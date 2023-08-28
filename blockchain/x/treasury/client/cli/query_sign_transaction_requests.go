@@ -6,8 +6,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/qredo/fusionchain/x/treasury/types"
 	"github.com/spf13/cobra"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/treasury/types"
 )
 
 var _ = strconv.Itoa(0)
@@ -18,7 +18,6 @@ func CmdSignTransactionRequests() *cobra.Command {
 		Short: "Query sign transactions requests",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err

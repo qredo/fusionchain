@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package config
 
 import (
@@ -155,7 +155,7 @@ type TLSConfig struct {
 
 // AppConfig helps to override default appConfig template and configs.
 // return "", nil if no custom configuration is required for the application.
-func AppConfig(denom string) (string, interface{}) {
+func AppConfig(denom string) (string, any) {
 	// Optionally allow the chain developer to overwrite the SDK's default
 	// server config.
 	srvCfg := config.DefaultConfig()

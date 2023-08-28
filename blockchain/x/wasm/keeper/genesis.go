@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"gitlab.qredo.com/qrdochain/fusionchain/x/wasm/types"
+	"github.com/qredo/fusionchain/x/wasm/types"
 )
 
 // ValidatorSetSource is a subset of the staking keeper
@@ -43,15 +43,16 @@ func InitGenesis(ctx sdk.Context, keeper *Keeper, data types.GenesisState) ([]ab
 
 	var maxContractID int
 	for i, contract := range data.Contracts {
-		contractAddr, err := sdk.AccAddressFromBech32(contract.ContractAddress)
+		c := contract // Create a copy of the loop variable to prevent memory aliasing
+		contractAddr, err := sdk.AccAddressFromBech32(c.ContractAddress)
 		if err != nil {
 			return nil, errorsmod.Wrapf(err, "address in contract number %d", i)
 		}
-		err = keeper.importContract(ctx, contractAddr, &contract.ContractInfo, contract.ContractState, contract.ContractCodeHistory)
+		err = keeper.importContract(ctx, contractAddr, &c.ContractInfo, c.ContractState, c.ContractCodeHistory)
 		if err != nil {
 			return nil, errorsmod.Wrapf(err, "contract number %d", i)
 		}
-		maxContractID = i + 1 // not ideal but max(contractID) is not persisted otherwise
+		maxContractID = i + 1
 	}
 
 	for i, seq := range data.Sequences {

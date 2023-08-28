@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package types
 
 import (
@@ -28,8 +28,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 
-	evmtypes "gitlab.qredo.com/qrdochain/fusionchain/x/evm/types"
-	feemarkettypes "gitlab.qredo.com/qrdochain/fusionchain/x/feemarket/types"
+	evmtypes "github.com/qredo/fusionchain/x/evm/types"
+	feemarkettypes "github.com/qredo/fusionchain/x/feemarket/types"
 
 	tmrpcclient "github.com/cometbft/cometbft/rpc/client"
 	"github.com/ethereum/go-ethereum/common"
@@ -117,9 +117,9 @@ func BlockMaxGasFromConsensusParams(goCtx context.Context, clientCtx client.Cont
 // transactions.
 func FormatBlock(
 	header tmtypes.Header, size int, gasLimit int64,
-	gasUsed *big.Int, transactions []interface{}, bloom ethtypes.Bloom,
+	gasUsed *big.Int, transactions []any, bloom ethtypes.Bloom,
 	validatorAddr common.Address, baseFee *big.Int,
-) map[string]interface{} {
+) map[string]any {
 	var transactionsRoot common.Hash
 	if len(transactions) == 0 {
 		transactionsRoot = ethtypes.EmptyRootHash
@@ -127,7 +127,7 @@ func FormatBlock(
 		transactionsRoot = common.BytesToHash(header.DataHash)
 	}
 
-	result := map[string]interface{}{
+	result := map[string]any{
 		"number":           hexutil.Uint64(header.Height),
 		"hash":             hexutil.Bytes(header.Hash()),
 		"parentHash":       common.BytesToHash(header.LastBlockID.Hash.Bytes()),

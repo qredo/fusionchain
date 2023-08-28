@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package main
 
 import (
@@ -50,16 +50,16 @@ import (
 
 	rosettaCmd "cosmossdk.io/tools/rosetta/cmd"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-	"gitlab.qredo.com/qrdochain/fusionchain/app"
-	ethermintclient "gitlab.qredo.com/qrdochain/fusionchain/client"
-	"gitlab.qredo.com/qrdochain/fusionchain/client/debug"
-	"gitlab.qredo.com/qrdochain/fusionchain/crypto/hd"
-	"gitlab.qredo.com/qrdochain/fusionchain/encoding"
-	"gitlab.qredo.com/qrdochain/fusionchain/ethereum/eip712"
-	"gitlab.qredo.com/qrdochain/fusionchain/server"
-	servercfg "gitlab.qredo.com/qrdochain/fusionchain/server/config"
-	srvflags "gitlab.qredo.com/qrdochain/fusionchain/server/flags"
-	ethermint "gitlab.qredo.com/qrdochain/fusionchain/types"
+	"github.com/qredo/fusionchain/app"
+	ethermintclient "github.com/qredo/fusionchain/client"
+	"github.com/qredo/fusionchain/client/debug"
+	"github.com/qredo/fusionchain/crypto/hd"
+	"github.com/qredo/fusionchain/encoding"
+	"github.com/qredo/fusionchain/ethereum/eip712"
+	"github.com/qredo/fusionchain/server"
+	servercfg "github.com/qredo/fusionchain/server/config"
+	srvflags "github.com/qredo/fusionchain/server/flags"
+	ethermint "github.com/qredo/fusionchain/types"
 )
 
 const EnvPrefix = "ETHERMINT"
@@ -68,7 +68,7 @@ const EnvPrefix = "ETHERMINT"
 // main function.
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 	encodingConfig := encoding.MakeConfig(app.ModuleBasics)
-	initClientCtx := client.Context{}.
+	ctx := client.Context{}.
 		WithCodec(encodingConfig.Codec).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
 		WithTxConfig(encodingConfig.TxConfig).
@@ -84,27 +84,26 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 
 	rootCmd := &cobra.Command{
 		Use:   "fusiond",
-		Short: "Ethermint Daemon",
+		Short: "Fusion Daemon",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
 			cmd.SetErr(cmd.ErrOrStderr())
 
-			initClientCtx, err := client.ReadPersistentCommandFlags(initClientCtx, cmd.Flags())
+			ctx, err := client.ReadPersistentCommandFlags(ctx, cmd.Flags())
 			if err != nil {
 				return err
 			}
 
-			initClientCtx, err = config.ReadFromClientConfig(initClientCtx)
+			ctx, err = config.ReadFromClientConfig(ctx)
 			if err != nil {
 				return err
 			}
 
-			if err := client.SetCmdClientContextHandler(initClientCtx, cmd); err != nil {
+			if err := client.SetCmdClientContextHandler(ctx, cmd); err != nil {
 				return err
 			}
 
-			// FIXME: replace AttoPhoton with bond denom
 			customAppTemplate, customAppConfig := servercfg.AppConfig(ethermint.AttoPhoton)
 
 			return sdkserver.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig, tmcfg.DefaultConfig())

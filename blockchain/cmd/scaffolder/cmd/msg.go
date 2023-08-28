@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"path"
 
+	"github.com/qredo/fusionchain/cmd/scaffolder/casing"
+	"github.com/qredo/fusionchain/cmd/scaffolder/editor"
 	"github.com/spf13/cobra"
-	"gitlab.qredo.com/qrdochain/fusionchain/cmd/scaffolder/casing"
-	"gitlab.qredo.com/qrdochain/fusionchain/cmd/scaffolder/editor"
 )
 
 type MsgCmdParams struct {
@@ -175,7 +175,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/{{ .ModuleName }}/types"
+	"github.com/qredo/fusionchain/x/{{ .ModuleName }}/types"
 )
 
 var _ = strconv.Itoa(0)
@@ -221,7 +221,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/{{ .ModuleName }}/types"
+	"github.com/qredo/fusionchain/x/{{ .ModuleName }}/types"
 )
 
 func (k msgServer) {{ .MsgName }}(goCtx context.Context, msg *types.Msg{{ .MsgName }}) (*types.Msg{{ .MsgName }}Response, error) {
@@ -249,8 +249,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/{{ .ModuleName }}/keeper"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/{{ .ModuleName }}/types"
+	"github.com/qredo/fusionchain/x/{{ .ModuleName }}/keeper"
+	"github.com/qredo/fusionchain/x/{{ .ModuleName }}/types"
 )
 
 func SimulateMsg{{ .MsgName }}(
@@ -283,7 +283,7 @@ func typesMessage(params MsgCmdParams) error {
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdkerrors "cosmossdk.io/errors"
 )
 
 const TypeMsg{{ .MsgName }} = "{{ .MsgName | ToSnakeCase }}"
@@ -338,9 +338,9 @@ func typesMessageTest(params MsgCmdParams) error {
 import (
 	"testing"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdkerrors "cosmossdk.io/errors"
 	"github.com/stretchr/testify/require"
-	"gitlab.qredo.com/qrdochain/fusionchain/testutil/sample"
+	"github.com/qredo/fusionchain/testutil/sample"
 )
 
 func TestMsg{{ .MsgName }}_ValidateBasic(t *testing.T) {

@@ -6,14 +6,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/qassets/keeper"
-	"gitlab.qredo.com/qrdochain/fusionchain/x/qassets/types"
+	"github.com/qredo/fusionchain/x/qassets/keeper"
+	"github.com/qredo/fusionchain/x/qassets/types"
 )
 
 func SimulateMsgBurn(
-	ak types.AccountKeeper,
-	bk types.BankKeeper,
-	k keeper.Keeper,
+	types.AccountKeeper,
+	types.BankKeeper,
+	keeper.Keeper,
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {

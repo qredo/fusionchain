@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package backend
 
 import (
@@ -34,11 +34,11 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
-	"gitlab.qredo.com/qrdochain/fusionchain/crypto/ethsecp256k1"
-	rpctypes "gitlab.qredo.com/qrdochain/fusionchain/rpc/types"
-	"gitlab.qredo.com/qrdochain/fusionchain/server/config"
-	ethermint "gitlab.qredo.com/qrdochain/fusionchain/types"
-	evmtypes "gitlab.qredo.com/qrdochain/fusionchain/x/evm/types"
+	"github.com/qredo/fusionchain/crypto/ethsecp256k1"
+	rpctypes "github.com/qredo/fusionchain/rpc/types"
+	"github.com/qredo/fusionchain/server/config"
+	ethermint "github.com/qredo/fusionchain/types"
+	evmtypes "github.com/qredo/fusionchain/x/evm/types"
 )
 
 // Accounts returns the list of accounts available to this node.
@@ -69,7 +69,7 @@ func (b *Backend) Accounts() ([]common.Address, error) {
 // - highestBlock:  block number of the highest block header this node has received from peers
 // - pulledStates:  number of state entries processed until now
 // - knownStates:   number of known state entries that still need to be pulled
-func (b *Backend) Syncing() (interface{}, error) {
+func (b *Backend) Syncing() (any, error) {
 	status, err := b.clientCtx.Client.Status(b.ctx)
 	if err != nil {
 		return false, err
@@ -79,7 +79,7 @@ func (b *Backend) Syncing() (interface{}, error) {
 		return false, nil
 	}
 
-	return map[string]interface{}{
+	return map[string]any{
 		"startingBlock": hexutil.Uint64(status.SyncInfo.EarliestBlockHeight),
 		"currentBlock":  hexutil.Uint64(status.SyncInfo.LatestBlockHeight),
 		// "highestBlock":  nil, // NA

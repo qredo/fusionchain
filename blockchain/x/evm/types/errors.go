@@ -12,7 +12,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package types
 
 import (
@@ -142,11 +142,11 @@ type RevertError struct {
 
 // ErrorCode returns the JSON error code for a revert.
 // See: https://github.com/ethereum/wiki/wiki/JSON-RPC-Error-Codes-Improvement-Proposal
-func (e *RevertError) ErrorCode() int {
+func (*RevertError) ErrorCode() int {
 	return 3
 }
 
 // ErrorData returns the hex encoded revert reason.
-func (e *RevertError) ErrorData() interface{} {
+func (e *RevertError) ErrorData() any {
 	return e.reason
 }

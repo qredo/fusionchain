@@ -12,11 +12,11 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the Ethermint library. If not, see https://gitlab.qredo.com/qrdochain/fusionchain/blob/main/LICENSE
+// along with the Ethermint library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
 package web3
 
 import (
-	"gitlab.qredo.com/qrdochain/fusionchain/version"
+	"github.com/qredo/fusionchain/version"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -31,11 +31,11 @@ func NewPublicAPI() *PublicAPI {
 }
 
 // ClientVersion returns the client version in the Web3 user agent format.
-func (a *PublicAPI) ClientVersion() string {
+func (*PublicAPI) ClientVersion() string {
 	return version.Version()
 }
 
 // Sha3 returns the keccak-256 hash of the passed-in input.
-func (a *PublicAPI) Sha3(input string) hexutil.Bytes {
+func (*PublicAPI) Sha3(input string) hexutil.Bytes {
 	return crypto.Keccak256(hexutil.Bytes(input))
 }
