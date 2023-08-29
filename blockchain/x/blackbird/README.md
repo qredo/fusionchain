@@ -28,7 +28,7 @@ owners of the respective workspace.
 ### Blackbird Policy
 
 Blackbird describes an ambitious wallet policy language, with a compiler and 
-an on-chain verifier. Policies can refer to individual signatures (@Trader1), 
+an on-chain verifier. Policies can refer to individual signatures (`@Trader1`), 
 threshold signatures/policies (any n […]), native currencies, accounting 
 currencies, oracles, ZK proofs and more.
 
