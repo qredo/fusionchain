@@ -27,8 +27,7 @@ QAssets through the `bank` module.
 
 ### QAssets
 
-QAssets are bridged assets of other blockchains on the fusion chain. They are native cosmos
-coins and can be managed by the bank module. 
+QAssets are bridged assets coming from other blockchains and tracked in the `bank` module.
 To bridge and mint QAssets, users have to send the funds on the source blockchain to Qredo's
 omnibus address, which gets picked up by the Verifiable Oracles which create a ZKP and 
 report the change to the Fusion Chain's verifier smart contract. After the ZKP has been 
