@@ -51,7 +51,7 @@ git checkout <<branch with stable testnet version>>
 ### Build and install the Fusion Chain binary
 
 ```shell
-./init.sh
+make install
 ```
 
 <!-- Beware that dependencies to Qredo's GitLab exist. Ensure a connection exists  -->
