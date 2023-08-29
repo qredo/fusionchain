@@ -46,7 +46,7 @@ and signing policy that defines required approvals to authorize respective opera
 Invoking a policy that requires approval for others creates an action to which eligible 
 owners respond. 
 
-A workspace is its own account type identified by the prefix `qredoworkspace`. It utilizes
+A workspace is an account with an address prefixed by `qredoworkspace`. It utilizes
 an interface to the `bank` module to interact with assets on the Fusion Chain. 
 
 ### Keyrings
