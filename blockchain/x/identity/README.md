@@ -7,7 +7,7 @@ This document specifies the identity module of the Fusion Chain.
 The identity module is responsible for specifying and managing workspaces and keyrings.
 A workspace represents a group of owners that manage and act in the name of the workspace
 to request keys and signatures, manage L1 wallets and QAssets. 
-A keyring represents an outside actor that provides key managemenent services like an MPC cluster.
+A keyring represents an outside actor that provides key management services like an MPC cluster.
 
 ## Contents
 
