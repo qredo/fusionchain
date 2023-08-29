@@ -6,7 +6,7 @@ This document specifies the blackbird module of the Fusion Chain.
 
 The blackbird module is responsible for storing blackbird policies and do verification
 checks of transactions that include a blackbird policy. 
-A blackbird policy represents and set of conditions that need to be met in order to
+A blackbird policy represents a set of conditions that need to be met in order to
 successfully verify a transaction's policy. 
 Submitting a transaction with a blackbird policy does result in actions for eligible 
 owners of the respective workspace. 
