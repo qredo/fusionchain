@@ -203,7 +203,7 @@ To upgrade the node to a be validator node, you must submit a `create-validator`
 fusiond tx staking create-validator \
 --chain-id="{{ chainId }}" \
 --pubkey=$(fusiond tendermint show-validator) \
---amount=[staking_amount_utsp] \
+--amount=[staking_amount_nqrdo] \
 --commission-rate="[commission_rate]" \
 --commission-max-rate="[maximum_commission_rate]" \
 --commission-max-change-rate="[maximum_rate_of_change_of_commission]" \
