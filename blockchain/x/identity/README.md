@@ -39,7 +39,6 @@ A workspace lets Fusion Chain accounts manage their L1 assets and QAssets collec
 and acts as the main identity abstraction model for the Fusion Chain. Any Fusion Chain 
 account can create a workspace and manage it to add or remove other accounts, called owners, 
 or adjust the workspace's policies. The owners can act in the name of the workspace, particularly for QAssets management, or for themselves through the request of keys and signatures of L1 wallets. 
-keys and signatures for their L1 wallets and provides a way to mint, send, and burn QAssets.
 Workspaces can also control other workspaces, indicated by the childworkspace attribute, 
 enabling a hierarchical and distinct way of managing assets. A workspace also has an admin- 
 and signing policy that defines required approvals to authorize respective operations. 
