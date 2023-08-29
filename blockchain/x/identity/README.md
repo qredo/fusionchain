@@ -36,7 +36,7 @@ A keyring represents an outside actor that provides key management services like
 ### Workspaces
 
 A workspace lets fusion chain accounts manage their L1 assets and QAssets collectively 
-and acts as the main identiy abstraction model for the Fusion Chain. Any Fusion Chain 
+and acts as the main identity abstraction model for the Fusion Chain. Any Fusion Chain 
 account can create a workspace and manage it to add or remove other accounts, called owners, 
 or adjust the workspace's policies. The owners act in the name of the workspace to request 
 keys and signatures for their L1 wallets and provides a way to mint, send, and burn QAssets.
