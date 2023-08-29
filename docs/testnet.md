@@ -222,7 +222,7 @@ fusiond tx staking create-validator \
     fusiond tx staking create-validator \
     --chain-id="{{ chainId }}" \
     --pubkey=$(fusiond tendermint show-validator) \
-    --amount=9000000utsp \
+    --amount=9000000nQRDO \
     --commission-rate="0.1" \
     --commission-max-rate="0.2" \
     --commission-max-change-rate="0.1" \
