@@ -5,9 +5,8 @@
 This document specifies the QAssets module of the Fusion Chain.
 
 The QAssets module is responsible for minting and burning of QAssets. QAssets are
-bridged assets from L1 blockchains that need to go through the QAssets module to
-get minted or burned. From there on, accounts can manage the QAssets through the 
-bank module.
+bridged assets from L1 blockchains. From there on, accounts can manage their
+QAssets through the `bank` module.
 
 ## Contents
 
