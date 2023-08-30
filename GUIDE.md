@@ -1,8 +1,8 @@
 # Fusion Chain Guide
 
-This document takes you through the features of Fusion Chain
-and gives you the experience of interacting with a mocked MPC.
-It provides a step by step guide through the CLI. 
+This document leads through the features of Fusion Chain 
+with the CLI interface and demonstrates the experience 
+of interacting with a mocked MPC.
 
 ## Contents
 
@@ -14,7 +14,7 @@ It provides a step by step guide through the CLI.
         * [Keyring](#keyring)
         * [Accounts](#accounts)
 * [Start](#start)
-    * [Basic Walkthrough](#basicwalkthrough)
+    * [Basic Walkthrough](#basic-walkthrough)
     * [Broadcast](#broadcast)
         * [Pregenerated](#pregenerated)
         * [More Transactions](#more-tx)
@@ -83,7 +83,7 @@ To interact with the chain you can use the `fusiond` CLI tool.
 
 It's suggested to create an alias like this:
 
-```
+```bash
 alias fchain="fusiond --node tcp://localhost:27657 --home ~/.fusiond/ --from shulgin --gas-prices 1000000000nQRDO"
 ```
 
@@ -106,14 +106,14 @@ fchain tx identity new-workspace --yes
 fchain q identity workspaces
 
 # creata a new key of type `ecdsa`` for the workspace
-fchain tx treasury new-key-request qredoworkspace10j06zdk5gyl6vrss5d5 0 ecdsa --yes 
+fchain tx treasury new-key-request qredoworkspace14a2hpadpsy9h5m6us54 0 ecdsa --yes 
 
 # wait for the MPC (keyring_id = 0) to pick up the request and generate a new key
 # you can monitor all the requests with:
 fchain q treasury key-requests 0 all
 
 # and after the request in fulfilled you will find the public key:
-fchain q treasury keys qredoworkspace10j06zdk5gyl6vrss5d5
+fchain q treasury keys qredoworkspace14a2hpadpsy9h5m6us54
 
 # let's use your new key to sign a payload
 # payload must be a 32byte hash of arbitrary data to be singed
@@ -139,7 +139,7 @@ For the testnet Qredo runs its own watcher to broadcast the transaction. You can
 
 This unsigned transaction only works for the first transaction to be sent from an address. The transaction looks as follows: 
 
-```bash
+```
 nonce: 0
 to: 0x993f45666B2A78434711D1a20D2A9733c07A5318
 amount: 4000000000000000 WEI
@@ -178,19 +178,19 @@ You can add and remove owners or adjust policies inside a workspace.
 
 ```bash
 # add a new owner to the workspace
-fchain tx identity add-workspace-owner qredoworkspace10j06zdk5gyl6vrss5d5 qredo1s3qj9p0ymugy6chyrwy3ft2s5u24fc320vdvv5 --yes
+fchain tx identity add-workspace-owner qredoworkspace14a2hpadpsy9h5m6us54 qredo1s3qj9p0ymugy6chyrwy3ft2s5u24fc320vdvv5 --yes
 
 # check the new owner has been added to the workspace
 fchain q identity workspaces-by-owner qredo1s3qj9p0ymugy6chyrwy3ft2s5u24fc320vdvv5
 
 # remove owner from the workspace
-fchain tx identity remove-workspace-owner qredoworkspace10j06zdk5gyl6vrss5d5  qredo1s3qj9p0ymugy6chyrwy3ft2s5u24fc320vdvv5 --yes
+fchain tx identity remove-workspace-owner qredoworkspace14a2hpadpsy9h5m6us54 qredo1s3qj9p0ymugy6chyrwy3ft2s5u24fc320vdvv5 --yes
 
 # check the new owner has been removed to the workspace
 fchain q identity workspaces-by-owner qredo1s3qj9p0ymugy6chyrwy3ft2s5u24fc320vdvv5
 
 # create a new workspace and append it to an existing one
-fchain tx identity new-child-workspace qredoworkspace14a2hpadpsy9h5m6us54
+fchain tx identity new-child-workspace qredoworkspace14a2hpadpsy9h5m6us54 --yes
 
 # check the indicated workspace has a new workspace as child_workspace
 fchain q identity workspaces
@@ -205,19 +205,18 @@ As of now, QAssets are just in a demo state. Anyone can freely mint any QAsset t
 fchain tx qassets mint 1 qredoworkspace14a2hpadpsy9h5m6us54 false "" "" 1000000 --yes
 
 # Check the workspace's balance
-fchain q bank balance qredoworkspace14a2hpadpsy9h5m6us54
+fchain q bank balances qredoworkspace14a2hpadpsy9h5m6us54
 
 # Send QAssets
-fusion tx qassets send qredoworkspace14a2hpadpsy9h5m6us54 qredoworkspace10j06zdk5gyl6vrss5d5 qETH-SEPOLIA 200000 --yes
+fchain tx qassets send qredoworkspace14a2hpadpsy9h5m6us54 qredoworkspace10j06zdk5gyl6vrss5d5 qETH-SEPOLIA 200000 --yes
 
 # Check both the workspace's balance
-fchain q bank balance qredoworkspace14a2hpadpsy9h5m6us54
-fchain q bank balance qredoworkspace10j06zdk5gyl6vrss5d5
+fchain q bank balances qredoworkspace14a2hpadpsy9h5m6us54
+fchain q bank balances qredoworkspace10j06zdk5gyl6vrss5d5
 
 # Burn QAssets - This is also mocked right now
 fchain tx qassets burn qredoworkspace14a2hpadpsy9h5m6us54 1 false "" "" 50000 --yes 
 
 # Check both the workspace's balance
-fchain q bank balance qredoworkspace14a2hpadpsy9h5m6us54
-
+fchain q bank balances qredoworkspace14a2hpadpsy9h5m6us54
 ```
