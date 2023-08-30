@@ -123,7 +123,7 @@ fchain tx treasury new-signature-request 1 '778f572f33acfab831365d52e563a0ddd282
 fchain q treasury signature-requests 0 all
 
 # you can create a Ethereum-specific wallet using your public key
-fchain tx treasury new-wallet-request ethereum 1 --yes
+fchain tx treasury new-wallet-request sepolia 1 --yes
 
 # retrieving the wallets will include the Ethereum address for that key:
 fchain q treasury wallets
