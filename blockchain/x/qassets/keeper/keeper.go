@@ -66,7 +66,7 @@ func (k Keeper) validateWallet(ctx sdk.Context, sender string, walletID uint64) 
 
 func (k Keeper) validateWorkspace(ctx sdk.Context, sender string, workspaceAddr string) error {
 	workspace := k.identityKeeper.GetWorkspace(ctx, workspaceAddr)
-	if workspace != nil {
+	if workspace == nil {
 		return fmt.Errorf("workspace %s not found", workspaceAddr)
 	}
 	if !workspace.IsOwner(sender) {
