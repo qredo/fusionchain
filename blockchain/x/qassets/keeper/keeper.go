@@ -58,12 +58,8 @@ func (Keeper) Logger(ctx sdk.Context) log.Logger {
 func (k Keeper) validateWallet(ctx sdk.Context, sender string, walletID uint64) error {
 	wallet, _ := k.treasuryKeeper.WalletsRepo().Get(ctx, walletID)
 	key, _ := k.treasuryKeeper.KeysRepo().Get(ctx, wallet.KeyId)
-	workspace := k.identityKeeper.GetWorkspace(ctx, key.WorkspaceAddr)
-	if workspace == nil {
-		return fmt.Errorf("workspace is nil")
-	}
-	if !workspace.IsOwner(sender) {
-		return fmt.Errorf("sender is not a workspace owner")
+	if err := k.validateWorkspace(ctx, sender, key.WorkspaceAddr); err != nil {
+		return err
 	}
 	return nil
 }
