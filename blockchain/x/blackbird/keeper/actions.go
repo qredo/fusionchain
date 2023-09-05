@@ -27,8 +27,11 @@ func RegisterActionHandler[ResT any](k *Keeper, actionType string, handlerFn fun
 	}
 }
 
-// TryExecuteAction uses the provided policy function to determine what is the
-// policy currently being applied for the action's message.
+// TryExecuteAction checks if the policy attached to the action is satisfied
+// and executes it.
+//
+// policyFn is optional if a policy ID is provided in the action.
+//
 // If the policy is satisfied, the provided handler function is executed and
 // its response returned. If the policy is still not satisfied, nil is returned.
 //
@@ -54,9 +57,19 @@ func TryExecuteAction[ReqT sdk.Msg, ResT any](
 		return nil, fmt.Errorf("invalid message type, expected %T", new(ReqT))
 	}
 
-	pol, err := policyFn(ctx, msg)
-	if err != nil {
-		return nil, err
+	var pol policy.Policy
+	if act.PolicyId == 0 {
+		var err error
+		pol, err = policyFn(ctx, msg)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		p, ok := k.PolicyRepo().Get(ctx, act.PolicyId)
+		if !ok {
+			return nil, fmt.Errorf("policy not found: %d", act.PolicyId)
+		}
+		pol = types.NewPolicyHandle(cdc, p)
 	}
 
 	signersSet := policy.BuildApproverSet(act.Approvers)
@@ -73,7 +86,7 @@ func TryExecuteAction[ReqT sdk.Msg, ResT any](
 
 // AddAction creates a new action for the provided message with initial approvers.
 // Who calls this function should also immediately check if the action can be
-// executed with the provided initialApprovers.
+// executed with the provided initialApprovers, by calling TryExecuteAction.
 func (k Keeper) AddAction(ctx sdk.Context, msg sdk.Msg, initialApprovers ...string) (*types.Action, error) {
 	wrappedMsg, err := codectypes.NewAnyWithValue(msg)
 	if err != nil {
