@@ -123,15 +123,97 @@ func (m *MsgApproveActionResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgApproveActionResponse proto.InternalMessageInfo
 
+type MsgNewPolicy struct {
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+}
+
+func (m *MsgNewPolicy) Reset()         { *m = MsgNewPolicy{} }
+func (m *MsgNewPolicy) String() string { return proto.CompactTextString(m) }
+func (*MsgNewPolicy) ProtoMessage()    {}
+func (*MsgNewPolicy) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d319abc224f4b159, []int{2}
+}
+func (m *MsgNewPolicy) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgNewPolicy) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgNewPolicy.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgNewPolicy) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgNewPolicy.Merge(m, src)
+}
+func (m *MsgNewPolicy) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgNewPolicy) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgNewPolicy.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgNewPolicy proto.InternalMessageInfo
+
+func (m *MsgNewPolicy) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+type MsgNewPolicyResponse struct {
+}
+
+func (m *MsgNewPolicyResponse) Reset()         { *m = MsgNewPolicyResponse{} }
+func (m *MsgNewPolicyResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgNewPolicyResponse) ProtoMessage()    {}
+func (*MsgNewPolicyResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d319abc224f4b159, []int{3}
+}
+func (m *MsgNewPolicyResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgNewPolicyResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgNewPolicyResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgNewPolicyResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgNewPolicyResponse.Merge(m, src)
+}
+func (m *MsgNewPolicyResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgNewPolicyResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgNewPolicyResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgNewPolicyResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgApproveAction)(nil), "fusionchain.blackbird.MsgApproveAction")
 	proto.RegisterType((*MsgApproveActionResponse)(nil), "fusionchain.blackbird.MsgApproveActionResponse")
+	proto.RegisterType((*MsgNewPolicy)(nil), "fusionchain.blackbird.MsgNewPolicy")
+	proto.RegisterType((*MsgNewPolicyResponse)(nil), "fusionchain.blackbird.MsgNewPolicyResponse")
 }
 
 func init() { proto.RegisterFile("fusionchain/blackbird/tx.proto", fileDescriptor_d319abc224f4b159) }
 
 var fileDescriptor_d319abc224f4b159 = []byte{
-	// 249 bytes of a gzipped FileDescriptorProto
+	// 295 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x4b, 0x2b, 0x2d, 0xce,
 	0xcc, 0xcf, 0x4b, 0xce, 0x48, 0xcc, 0xcc, 0xd3, 0x4f, 0xca, 0x49, 0x4c, 0xce, 0x4e, 0xca, 0x2c,
 	0x4a, 0xd1, 0x2f, 0xa9, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x45, 0x92, 0xd7, 0x83,
@@ -141,13 +223,16 @@ var fileDescriptor_d319abc224f4b159 = []byte{
 	0xf1, 0x25, 0x95, 0x05, 0xa9, 0x12, 0x4c, 0x60, 0x59, 0x2e, 0x88, 0x50, 0x48, 0x65, 0x41, 0xaa,
 	0x90, 0x34, 0x17, 0x27, 0x54, 0x41, 0x66, 0x8a, 0x04, 0xb3, 0x02, 0xa3, 0x06, 0x4b, 0x10, 0x07,
 	0x44, 0xc0, 0x33, 0x45, 0x49, 0x8a, 0x4b, 0x02, 0xdd, 0xae, 0xa0, 0xd4, 0xe2, 0x82, 0xfc, 0xbc,
-	0xe2, 0x54, 0xa3, 0x02, 0x2e, 0x66, 0xdf, 0xe2, 0x74, 0xa1, 0x4c, 0x2e, 0x5e, 0x54, 0xb7, 0xa8,
-	0xeb, 0x61, 0x75, 0xb7, 0x1e, 0xba, 0x41, 0x52, 0xfa, 0x44, 0x2a, 0x84, 0xd9, 0xe8, 0xe4, 0x71,
-	0xe2, 0x91, 0x1c, 0xe3, 0x85, 0x47, 0x72, 0x8c, 0x0f, 0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7,
-	0x70, 0xe1, 0xb1, 0x1c, 0xc3, 0x8d, 0xc7, 0x72, 0x0c, 0x51, 0x7a, 0xe9, 0x99, 0x25, 0x19, 0xa5,
-	0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0x85, 0x45, 0xa9, 0x29, 0xf9, 0xfa, 0xc8, 0x61, 0x5b, 0x81,
-	0x1c, 0xba, 0x95, 0x05, 0xa9, 0xc5, 0x49, 0x6c, 0xe0, 0x10, 0x36, 0x06, 0x04, 0x00, 0x00, 0xff,
-	0xff, 0x10, 0xc9, 0xf9, 0x4c, 0x83, 0x01, 0x00, 0x00,
+	0xe2, 0x54, 0x25, 0x0d, 0x2e, 0x1e, 0xdf, 0xe2, 0x74, 0xbf, 0xd4, 0xf2, 0x80, 0xfc, 0x9c, 0xcc,
+	0xe4, 0x4a, 0xdc, 0x6e, 0x50, 0x12, 0xe3, 0x12, 0x41, 0x56, 0x09, 0x33, 0xc1, 0xe8, 0x3c, 0x23,
+	0x17, 0xb3, 0x6f, 0x71, 0xba, 0x50, 0x26, 0x17, 0x2f, 0xaa, 0x77, 0xd4, 0xf5, 0xb0, 0x7a, 0x5d,
+	0x0f, 0xdd, 0x2d, 0x52, 0xfa, 0x44, 0x2a, 0x84, 0x59, 0x29, 0x14, 0xcb, 0xc5, 0x89, 0x70, 0xb1,
+	0x32, 0x6e, 0xdd, 0x70, 0x45, 0x52, 0xda, 0x44, 0x28, 0x82, 0x19, 0xef, 0xe4, 0x71, 0xe2, 0x91,
+	0x1c, 0xe3, 0x85, 0x47, 0x72, 0x8c, 0x0f, 0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1,
+	0xb1, 0x1c, 0xc3, 0x8d, 0xc7, 0x72, 0x0c, 0x51, 0x7a, 0xe9, 0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a,
+	0xc9, 0xf9, 0xb9, 0xfa, 0x85, 0x45, 0xa9, 0x29, 0xf9, 0xfa, 0xc8, 0xb1, 0x5f, 0x81, 0x1c, 0xff,
+	0x95, 0x05, 0xa9, 0xc5, 0x49, 0x6c, 0xe0, 0x34, 0x60, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff, 0xc8,
+	0x9e, 0xfb, 0x94, 0x25, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -164,6 +249,8 @@ const _ = grpc.SupportPackageIsVersion4
 type MsgClient interface {
 	// Add an approval to an existing Action.
 	ApproveAction(ctx context.Context, in *MsgApproveAction, opts ...grpc.CallOption) (*MsgApproveActionResponse, error)
+	// TODO: document NewPolicy
+	NewPolicy(ctx context.Context, in *MsgNewPolicy, opts ...grpc.CallOption) (*MsgNewPolicyResponse, error)
 }
 
 type msgClient struct {
@@ -183,10 +270,21 @@ func (c *msgClient) ApproveAction(ctx context.Context, in *MsgApproveAction, opt
 	return out, nil
 }
 
+func (c *msgClient) NewPolicy(ctx context.Context, in *MsgNewPolicy, opts ...grpc.CallOption) (*MsgNewPolicyResponse, error) {
+	out := new(MsgNewPolicyResponse)
+	err := c.cc.Invoke(ctx, "/fusionchain.blackbird.Msg/NewPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// Add an approval to an existing Action.
 	ApproveAction(context.Context, *MsgApproveAction) (*MsgApproveActionResponse, error)
+	// TODO: document NewPolicy
+	NewPolicy(context.Context, *MsgNewPolicy) (*MsgNewPolicyResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -195,6 +293,9 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) ApproveAction(ctx context.Context, req *MsgApproveAction) (*MsgApproveActionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApproveAction not implemented")
+}
+func (*UnimplementedMsgServer) NewPolicy(ctx context.Context, req *MsgNewPolicy) (*MsgNewPolicyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewPolicy not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -219,6 +320,24 @@ func _Msg_ApproveAction_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_NewPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgNewPolicy)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).NewPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/fusionchain.blackbird.Msg/NewPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).NewPolicy(ctx, req.(*MsgNewPolicy))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "fusionchain.blackbird.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -226,6 +345,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ApproveAction",
 			Handler:    _Msg_ApproveAction_Handler,
+		},
+		{
+			MethodName: "NewPolicy",
+			Handler:    _Msg_NewPolicy_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -297,6 +420,59 @@ func (m *MsgApproveActionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgNewPolicy) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgNewPolicy) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgNewPolicy) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgNewPolicyResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgNewPolicyResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgNewPolicyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -329,6 +505,28 @@ func (m *MsgApproveAction) Size() (n int) {
 }
 
 func (m *MsgApproveActionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgNewPolicy) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgNewPolicyResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -503,6 +701,138 @@ func (m *MsgApproveActionResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgApproveActionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgNewPolicy) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgNewPolicy: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgNewPolicy: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgNewPolicyResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgNewPolicyResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgNewPolicyResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

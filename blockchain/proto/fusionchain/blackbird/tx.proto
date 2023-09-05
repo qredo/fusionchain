@@ -10,6 +10,9 @@ service Msg {
   // Add an approval to an existing Action.
   rpc ApproveAction(MsgApproveAction) returns (MsgApproveActionResponse);
 
+  // TODO: document NewPolicy
+  rpc NewPolicy(MsgNewPolicy) returns (MsgNewPolicyResponse);
+
   // this line is used by scaffolder # 1
 }
 
@@ -20,3 +23,7 @@ message MsgApproveAction {
 }
 
 message MsgApproveActionResponse {}
+
+message MsgNewPolicy { string creator = 1; }
+
+message MsgNewPolicyResponse {}
