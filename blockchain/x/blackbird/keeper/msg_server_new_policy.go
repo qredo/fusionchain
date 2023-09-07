@@ -10,8 +10,13 @@ import (
 func (k msgServer) NewPolicy(goCtx context.Context, msg *types.MsgNewPolicy) (*types.MsgNewPolicyResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	p := &types.Policy{
+		Name:   msg.Name,
+		Policy: msg.Policy,
+	}
+	id := k.PolicyRepo().Append(ctx, p)
 
-	return &types.MsgNewPolicyResponse{}, nil
+	return &types.MsgNewPolicyResponse{
+		Id: id,
+	}, nil
 }
