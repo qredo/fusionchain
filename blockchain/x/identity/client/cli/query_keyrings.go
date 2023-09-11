@@ -22,9 +22,16 @@ func CmdKeyrings() *cobra.Command {
 				return err
 			}
 
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryKeyringsRequest{}
+			params := &types.QueryKeyringsRequest{
+				Pagination: pageReq,
+			}
 
 			res, err := queryClient.Keyrings(cmd.Context(), params)
 			if err != nil {

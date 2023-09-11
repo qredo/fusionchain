@@ -5,8 +5,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/spf13/cobra"
 	"github.com/qredo/fusionchain/x/blackbird/types"
+	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
@@ -23,9 +23,16 @@ func CmdPolicies() *cobra.Command {
 				return err
 			}
 
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryPoliciesRequest{}
+			params := &types.QueryPoliciesRequest{
+				Pagination: pageReq,
+			}
 
 			res, err := queryClient.Policies(cmd.Context(), params)
 			if err != nil {
@@ -40,3 +47,4 @@ func CmdPolicies() *cobra.Command {
 
 	return cmd
 }
+
