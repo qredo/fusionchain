@@ -41,4 +41,3 @@ func (k Keeper) Policies(goCtx context.Context, req *types.QueryPoliciesRequest)
 		Pagination: pageRes,
 	}, nil
 }
-
