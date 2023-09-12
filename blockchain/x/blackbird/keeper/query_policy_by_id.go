@@ -18,8 +18,10 @@ func (k Keeper) PolicyById(goCtx context.Context, req *types.QueryPolicyByIdRequ
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	policy, found := k.PolicyRepo().Get(ctx, req.Id)
+	if !found {
+		return nil, status.Error(codes.NotFound, "not found")
+	}
 
-	return &types.QueryPolicyByIdResponse{}, nil
+	return &types.QueryPolicyByIdResponse{Policy: policy}, nil
 }
