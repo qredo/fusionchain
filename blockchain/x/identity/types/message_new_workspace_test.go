@@ -1,7 +1,6 @@
 package types
 
 import (
-	"encoding/json"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -123,8 +122,7 @@ func TestMsgNewWorkspace_GetSignBytes(t *testing.T) {
 			msg := NewMsgNewWorkspace(tt.msg.Creator, tt.msg.AdminPolicyId, tt.msg.SignPolicyId)
 			got := msg.GetSignBytes()
 
-			bz, err := json.Marshal(msg)
-			require.NoError(t, err, "failed to marshal message to JSON")
+			bz := ModuleCdc.MustMarshalJSON(msg)
 			sortedBz := sdk.MustSortJSON(bz)
 
 			require.Equal(t, sortedBz, got, "GetSignBytes() result doesn't match sorted JSON bytes")
