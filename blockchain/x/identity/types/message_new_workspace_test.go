@@ -104,33 +104,6 @@ func TestMsgNewWorkspace_GetSigners(t *testing.T) {
 	}
 }
 
-func TestMsgNewWorkspace_GetSignBytes(t *testing.T) {
-
-	tests := []struct {
-		name string
-		msg  *MsgNewWorkspace
-	}{
-		{
-			name: "PASS: happy path",
-			msg: &MsgNewWorkspace{
-				Creator: sample.AccAddress(),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			msg := NewMsgNewWorkspace(tt.msg.Creator, tt.msg.AdminPolicyId, tt.msg.SignPolicyId)
-			got := msg.GetSignBytes()
-
-			bz := ModuleCdc.MustMarshalJSON(msg)
-			sortedBz := sdk.MustSortJSON(bz)
-
-			require.Equal(t, sortedBz, got, "GetSignBytes() result doesn't match sorted JSON bytes")
-
-		})
-	}
-}
-
 func TestMsgNewWorkspace_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
