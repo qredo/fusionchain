@@ -10,7 +10,7 @@ export const chain: Chain = {
 
 export const chainDescriptor = {
   chainId: chain.cosmosChainId,
-  chainName: "Fusion Chain (localhost)",
+  chainName: "Fusion Chain",
   rpc: "http://localhost:27657",
   rest: "http://localhost:1717",
   bip44: {
