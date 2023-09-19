@@ -9,6 +9,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// nolint:stylecheck,st1003
+// revive:disable-next-line var-naming
 func (k Keeper) SignTransactionRequestById(goCtx context.Context, req *types.QuerySignTransactionRequestByIdRequest) (*types.QuerySignTransactionRequestByIdResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
@@ -16,8 +18,12 @@ func (k Keeper) SignTransactionRequestById(goCtx context.Context, req *types.Que
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	signTxRequest, found := k.SignTransactionRequestsRepo().Get(ctx, req.Id)
+	if !found {
+		return nil, status.Error(codes.NotFound, "not found")
+	}
 
-	return &types.QuerySignTransactionRequestByIdResponse{}, nil
+	return &types.QuerySignTransactionRequestByIdResponse{
+		SignTransactionRequest: signTxRequest,
+	}, nil
 }
