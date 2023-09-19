@@ -1,7 +1,7 @@
 import { protoInt64 } from "@bufbuild/protobuf";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLoaderData } from "react-router";
-import { Params } from "react-router-dom";
+import { Link, Params } from "react-router-dom";
 import { useKeplrAddress } from "../keplr";
 import { keplrBuildAndBroadcast } from "../newclient";
 import { MsgNewKeyRequest } from "../proto/fusionchain/treasury/tx_pb";
@@ -14,6 +14,7 @@ import Address from "../components/address";
 import { MsgRemoveWorkspaceOwner } from "../proto/fusionchain/identity/tx_pb";
 import AddWorkspaceOwnerForm from "@/components/add_workspace_owner_form";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
 
 async function requestNewKey(creator: string, workspaceAddr: string, keyringId: number) {
   await keplrBuildAndBroadcast([
@@ -48,6 +49,15 @@ function Workspace() {
 
   return (
     <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+      <Breadcrumb>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbItem isCurrentPage>
+          <BreadcrumbLink href={`/workspaces/${workspaceAddr}`}>Workspace {workspaceAddr}</BreadcrumbLink>
+        </BreadcrumbItem>
+      </Breadcrumb>
+
       <div className="flex items-center justify-between space-y-2">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Workspace {workspaceAddr}</h2>
