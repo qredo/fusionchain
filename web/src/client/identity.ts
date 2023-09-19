@@ -1,3 +1,4 @@
+import { QueryWorkspaceByAddressResponse } from "../proto/fusionchain/identity/query_pb";
 import { PaginatedResponse, path, query } from "./common";
 
 export interface Workspace {
@@ -16,6 +17,11 @@ export function workspaces(): Promise<WorkspacesResponse> {
 
 export function workspacesByOwner(owner: string): Promise<WorkspacesResponse> {
   return query(path(["fusionchain", "identity", "workspaces_by_owner"], { owner }));
+}
+
+export async function workspaceByAddress(address: string) {
+  const data = await query(path(["fusionchain", "identity", "workspace_by_address"], { address }));
+  return QueryWorkspaceByAddressResponse.fromJson(data);
 }
 
 export type Msg =
