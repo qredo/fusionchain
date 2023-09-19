@@ -20,7 +20,7 @@ type PolicyPayload struct {
 	any *cdctypes.Any
 }
 
-type PolicyPayloadI interface{}
+type PolicyPayloadI any
 
 func NewPolicyPayload(cdc codec.BinaryCodec, any *cdctypes.Any) PolicyPayload {
 	return PolicyPayload{
