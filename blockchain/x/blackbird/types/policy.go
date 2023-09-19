@@ -44,6 +44,16 @@ func (h *PolicyHandle) Verify(approvers policy.ApproverSet, payload policy.Polic
 
 var _ (policy.Policy) = (*BlackbirdPolicy)(nil)
 
-func (p *BlackbirdPolicy) Verify(approvers policy.ApproverSet) error {
-	return simple.Verify(p.Data, nil, nil, nil, approvers)
+func (p *BlackbirdPolicy) Verify(approvers policy.ApproverSet, policyPayload policy.PolicyPayload) error {
+	payload, err := policy.UnpackPayload[*BlackbirdPolicyPayload](policyPayload)
+	if err != nil {
+		return err
+	}
+
+	var witness []byte
+	if payload != nil {
+		witness = payload.Witness
+	}
+
+	return simple.Verify(p.Data, witness, nil, nil, approvers)
 }
