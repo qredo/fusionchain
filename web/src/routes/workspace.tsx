@@ -1,7 +1,7 @@
 import { protoInt64 } from "@bufbuild/protobuf";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLoaderData } from "react-router";
-import { Link, Params } from "react-router-dom";
+import { Params } from "react-router-dom";
 import { useKeplrAddress } from "../keplr";
 import { keplrBuildAndBroadcast } from "../newclient";
 import { MsgNewKeyRequest } from "../proto/fusionchain/treasury/tx_pb";

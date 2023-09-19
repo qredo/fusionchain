@@ -1,4 +1,3 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
 import Workspaces from "../components/workspaces";
 import { useKeplrAddress } from "../keplr";
 
