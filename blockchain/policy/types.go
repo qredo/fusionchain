@@ -1,6 +1,8 @@
 package policy
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 )
@@ -38,6 +40,14 @@ func UnpackPayload[P PolicyPayloadI](p PolicyPayload) (P, error) {
 		empty   P
 		payload PolicyPayloadI
 	)
+
+	if p.any != nil && p.cdc == nil {
+		return empty, fmt.Errorf("codec is nil")
+	}
+
+	if p.any == nil || p.cdc == nil {
+		return empty, nil
+	}
 
 	err := p.cdc.UnpackAny(p.any, &payload)
 	if err != nil {
