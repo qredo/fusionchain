@@ -20,6 +20,8 @@ type PolicyPayload struct {
 	any *cdctypes.Any
 }
 
+type PolicyPayloadI interface{}
+
 func NewPolicyPayload(cdc codec.BinaryCodec, any *cdctypes.Any) PolicyPayload {
 	return PolicyPayload{
 		cdc: cdc,
@@ -31,8 +33,21 @@ func EmptyPolicyPayload() PolicyPayload {
 	return NewPolicyPayload(nil, nil)
 }
 
-func (p PolicyPayload) Unpack(out any) error {
-	return p.cdc.UnpackAny(p.any, out)
+func UnpackPayload[P PolicyPayloadI](p PolicyPayload) (P, error) {
+	var (
+		empty   P
+		payload PolicyPayloadI
+	)
+
+	err := p.cdc.UnpackAny(p.any, &payload)
+	if err != nil {
+		return empty, err
+	}
+
+	if payload == nil {
+		return empty, nil
+	}
+	return payload.(P), nil
 }
 
 type Policy interface {

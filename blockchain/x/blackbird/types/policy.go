@@ -33,13 +33,13 @@ func NewPolicyHandle(cdc codec.BinaryCodec, p *Policy) *PolicyHandle {
 	}
 }
 
-func (h *PolicyHandle) Verify(approvers policy.ApproverSet) error {
+func (h *PolicyHandle) Verify(approvers policy.ApproverSet, payload policy.PolicyPayload) error {
 	var m policy.Policy
 	err := h.cdc.UnpackAny(h.policy.Policy, &m)
 	if err != nil {
 		return fmt.Errorf("unpacking Any: %w", err)
 	}
-	return m.Verify(approvers)
+	return m.Verify(approvers, payload)
 }
 
 var _ (policy.Policy) = (*BlackbirdPolicy)(nil)
