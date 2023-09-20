@@ -1,8 +1,8 @@
 package keeper
 
 import (
-	bbird "github.com/qredo/fusionchain/x/policy/keeper"
 	"github.com/qredo/fusionchain/x/identity/types"
+	bbird "github.com/qredo/fusionchain/x/policy/keeper"
 )
 
 type msgServer struct {
