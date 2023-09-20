@@ -20,7 +20,7 @@ func (k msgServer) AppendChildWorkspace(goCtx context.Context, msg *types.MsgApp
 		return nil, fmt.Errorf("workspace not found")
 	}
 
-	act, err := k.blackbirdKeeper.AddAction(ctx, msg, parent.AdminPolicyId, msg.Creator)
+	act, err := k.policyKeeper.AddAction(ctx, msg, parent.AdminPolicyId, msg.Creator)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (k msgServer) AppendChildWorkspace(goCtx context.Context, msg *types.MsgApp
 
 func (k msgServer) AppendChildWorkspaceActionHandler(ctx sdk.Context, act *bbirdtypes.Action, payload *cdctypes.Any) (*types.MsgAppendChildWorkspaceResponse, error) {
 	return bbird.TryExecuteAction(
-		k.blackbirdKeeper,
+		k.policyKeeper,
 		k.cdc,
 		ctx,
 		act,

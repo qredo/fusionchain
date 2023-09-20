@@ -1260,10 +1260,10 @@ TxResult is the value stored in eth tx indexer
 
 
 
-<a name="fusionchain/blackbird/params.proto"></a>
+<a name="fusionchain/policy/params.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## fusionchain/blackbird/params.proto
+## fusionchain/policy/params.proto
 
 
 
@@ -1286,10 +1286,10 @@ Params defines the parameters for the module.
 
 
 
-<a name="fusionchain/blackbird/genesis.proto"></a>
+<a name="fusionchain/policy/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## fusionchain/blackbird/genesis.proto
+## fusionchain/policy/genesis.proto
 
 
 
@@ -1317,10 +1317,10 @@ GenesisState defines the blackbird module's genesis state.
 
 
 
-<a name="fusionchain/blackbird/query.proto"></a>
+<a name="fusionchain/policy/query.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## fusionchain/blackbird/query.proto
+## fusionchain/policy/query.proto
 
 
 
@@ -1393,17 +1393,17 @@ Query defines the gRPC querier service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `Params` | [QueryParamsRequest](#fusionchain.policy.QueryParamsRequest) | [QueryParamsResponse](#fusionchain.policy.QueryParamsResponse) | Parameters queries the parameters of the module. | GET|/fusionchain/blackbird/params|
-| `Verify` | [QueryVerifyRequest](#fusionchain.policy.QueryVerifyRequest) | [QueryVerifyResponse](#fusionchain.policy.QueryVerifyResponse) | Queries a list of Verify items. | GET|/fusionchain/blackbird/verify/{policy}/{payload}|
+| `Params` | [QueryParamsRequest](#fusionchain.policy.QueryParamsRequest) | [QueryParamsResponse](#fusionchain.policy.QueryParamsResponse) | Parameters queries the parameters of the module. | GET|/fusionchain/policy/params|
+| `Verify` | [QueryVerifyRequest](#fusionchain.policy.QueryVerifyRequest) | [QueryVerifyResponse](#fusionchain.policy.QueryVerifyResponse) | Queries a list of Verify items. | GET|/fusionchain/policy/verify/{policy}/{payload}|
 
  <!-- end services -->
 
 
 
-<a name="fusionchain/blackbird/tx.proto"></a>
+<a name="fusionchain/policy/tx.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## fusionchain/blackbird/tx.proto
+## fusionchain/policy/tx.proto
 
 
  <!-- end messages -->

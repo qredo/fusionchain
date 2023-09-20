@@ -2,10 +2,10 @@ syntax = "proto3";
 package fusionchain.policy;
 
 import "gogoproto/gogo.proto";
-import "fusionchain/blackbird/params.proto";
+import "fusionchain/policy/params.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
-option go_package = "github.com/qredo/fusionchain/x/blackbird/types";
+option go_package = "github.com/qredo/fusionchain/x/policy/types";
 
 // GenesisState defines the blackbird module's genesis state.
 message GenesisState {

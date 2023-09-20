@@ -7,7 +7,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/qredo/fusionchain/policy"
-	"github.com/qredo/fusionchain/x/blackbird/types"
+	"github.com/qredo/fusionchain/x/policy/types"
 )
 
 // RegisterActionHandler registers a handler for a specific action type.

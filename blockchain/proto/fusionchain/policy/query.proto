@@ -4,37 +4,37 @@ package fusionchain.policy;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "fusionchain/blackbird/params.proto";
-import "fusionchain/blackbird/action.proto";
-import "fusionchain/blackbird/policy.proto";
+import "fusionchain/policy/params.proto";
+import "fusionchain/policy/action.proto";
+import "fusionchain/policy/policy.proto";
 
-option go_package = "github.com/qredo/fusionchain/x/blackbird/types";
+option go_package = "github.com/qredo/fusionchain/x/policy/types";
 
 // Query defines the gRPC querier service.
 service Query {
   // Parameters queries the parameters of the module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/fusionchain/blackbird/params";
+    option (google.api.http).get = "/fusionchain/policy/params";
   }
   // Queries a list of Verify items.
   rpc Verify(QueryVerifyRequest) returns (QueryVerifyResponse) {
     option (google.api.http).get =
-        "/fusionchain/blackbird/verify/{policy}/{payload}";
+        "/fusionchain/policy/verify/{policy}/{payload}";
   }
 
   // Queries a list of Actions items.
   rpc Actions(QueryActionsRequest) returns (QueryActionsResponse) {
-    option (google.api.http).get = "/fusionchain/blackbird/actions";
+    option (google.api.http).get = "/fusionchain/policy/actions";
   }
 
   // Queries a list of Policies items.
   rpc Policies(QueryPoliciesRequest) returns (QueryPoliciesResponse) {
-    option (google.api.http).get = "/fusionchain/blackbird/policies";
+    option (google.api.http).get = "/fusionchain/policy/policies";
   }
 
   // Queries a list of PolicyById items.
   rpc PolicyById(QueryPolicyByIdRequest) returns (QueryPolicyByIdResponse) {
-    option (google.api.http).get = "/fusionchain/blackbird/policy_by_id";
+    option (google.api.http).get = "/fusionchain/policy/policy_by_id";
   }
 
   // this line is used by starport scaffolding # 1

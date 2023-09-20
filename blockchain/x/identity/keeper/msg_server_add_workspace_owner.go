@@ -19,7 +19,7 @@ func (k msgServer) AddWorkspaceOwner(goCtx context.Context, msg *types.MsgAddWor
 		return nil, fmt.Errorf("workspace not found")
 	}
 
-	act, err := k.blackbirdKeeper.AddAction(ctx, msg, ws.AdminPolicyId, msg.Creator)
+	act, err := k.policyKeeper.AddAction(ctx, msg, ws.AdminPolicyId, msg.Creator)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +28,7 @@ func (k msgServer) AddWorkspaceOwner(goCtx context.Context, msg *types.MsgAddWor
 
 func (k msgServer) AddOwnerActionHandler(ctx sdk.Context, act *bbirdtypes.Action, payload *cdctypes.Any) (*types.MsgAddWorkspaceOwnerResponse, error) {
 	return bbird.TryExecuteAction(
-		k.blackbirdKeeper,
+		k.policyKeeper,
 		k.cdc,
 		ctx,
 		act,

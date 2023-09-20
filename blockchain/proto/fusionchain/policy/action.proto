@@ -3,7 +3,7 @@ package fusionchain.policy;
 
 import "google/protobuf/any.proto";
 
-option go_package = "github.com/qredo/fusionchain/x/blackbird/types";
+option go_package = "github.com/qredo/fusionchain/x/policy/types";
 
 // Action wraps a message that needs to be approved by a set of approvers.
 message Action {

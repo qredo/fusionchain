@@ -2,8 +2,8 @@ package blackbird
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/qredo/fusionchain/x/blackbird/keeper"
-	"github.com/qredo/fusionchain/x/blackbird/types"
+	"github.com/qredo/fusionchain/x/policy/keeper"
+	"github.com/qredo/fusionchain/x/policy/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

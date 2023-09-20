@@ -11,7 +11,7 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/qredo/fusionchain/repo"
-	"github.com/qredo/fusionchain/x/blackbird/types"
+	"github.com/qredo/fusionchain/x/policy/types"
 )
 
 type (

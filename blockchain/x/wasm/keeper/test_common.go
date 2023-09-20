@@ -78,8 +78,8 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	wasmappparams "github.com/CosmWasm/wasmd/app/params"
-	blackbirdmodulekeeper "github.com/qredo/fusionchain/x/policy/keeper"
-	blackbirdmoduletypes "github.com/qredo/fusionchain/x/policy/types"
+	policymodulekeeper "github.com/qredo/fusionchain/x/policy/keeper"
+	policymoduletypes "github.com/qredo/fusionchain/x/policy/types"
 	identitymodulekeeper "github.com/qredo/fusionchain/x/identity/keeper"
 	identitymoduletypes "github.com/qredo/fusionchain/x/identity/types"
 	qassetsmodulekeeper "github.com/qredo/fusionchain/x/qassets/keeper"
@@ -435,11 +435,11 @@ func createTestInputInner(
 	cfg := sdk.GetConfig()
 	cfg.SetAddressVerifier(types.VerifyAddressLen())
 
-	blackbirdKeeper := *blackbirdmodulekeeper.NewKeeper(
+	policyKeeper := *policymodulekeeper.NewKeeper(
 		appCodec,
-		keys[blackbirdmoduletypes.StoreKey],
-		keys[blackbirdmoduletypes.MemStoreKey],
-		subspace(blackbirdmoduletypes.ModuleName),
+		keys[policymoduletypes.StoreKey],
+		keys[policymoduletypes.MemStoreKey],
+		subspace(policymoduletypes.ModuleName),
 	)
 
 	identityKeeper := *identitymodulekeeper.NewKeeper(
@@ -447,7 +447,7 @@ func createTestInputInner(
 		keys[identitymoduletypes.StoreKey],
 		keys[identitymoduletypes.MemStoreKey],
 		subspace(identitymoduletypes.ModuleName),
-		&blackbirdKeeper,
+		&policyKeeper,
 	)
 
 	treasuryKeeper := *treasurymodulekeeper.NewKeeper(
@@ -456,7 +456,7 @@ func createTestInputInner(
 		keys[treasurymoduletypes.MemStoreKey],
 		subspace(treasurymoduletypes.ModuleName),
 		identityKeeper,
-		&blackbirdKeeper,
+		&policyKeeper,
 	)
 
 	qassetsKeeper := *qassetsmodulekeeper.NewKeeper(
@@ -480,7 +480,7 @@ func createTestInputInner(
 		ibcKeeper.ChannelKeeper,
 		&ibcKeeper.PortKeeper,
 		scopedWasmKeeper,
-		blackbirdKeeper,
+		policyKeeper,
 		qassetsKeeper,
 		wasmtesting.MockIBCTransferKeeper{},
 		msgRouter,

@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
-	"github.com/qredo/fusionchain/x/blackbird/types"
+	"github.com/qredo/fusionchain/x/policy/types"
 	"gitlab.qredo.com/edmund/blackbird/verifier/golang/simple"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

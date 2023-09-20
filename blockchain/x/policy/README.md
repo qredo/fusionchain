@@ -101,13 +101,13 @@ A user can query the `blackbird` module using REST endpoints.
 The `verify` command allows users to query for the state of a policy to a given payload. 
 
 ```bash
-/fusionchain/blackbird/verify/{policy}/{payload}
+/fusionchain/policy/verify/{policy}/{payload}
 ```
 
 Example:
 
 ```bash
-curl localhost:1717//fusionchain/blackbird/verify/{policy}/{payload}
+curl localhost:1717//fusionchain/policy/verify/{policy}/{payload}
 ```
 
 Example Output:

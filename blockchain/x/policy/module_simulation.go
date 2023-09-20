@@ -10,8 +10,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	blackbirdsimulation "github.com/qredo/fusionchain/x/blackbird/simulation"
-	"github.com/qredo/fusionchain/x/blackbird/types"
+	blackbirdsimulation "github.com/qredo/fusionchain/x/policy/simulation"
+	"github.com/qredo/fusionchain/x/policy/types"
 )
 
 // avoid unused import issue

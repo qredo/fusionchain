@@ -21,7 +21,7 @@ type (
 		memKey          storetypes.StoreKey
 		paramstore      paramtypes.Subspace
 		identityKeeper  types.IdentityKeeper
-		blackbirdKeeper *bbird.Keeper
+		policyKeeper *bbird.Keeper
 	}
 )
 
@@ -32,7 +32,7 @@ func NewKeeper(
 	ps paramtypes.Subspace,
 	identityKeeper types.IdentityKeeper,
 
-	blackbirdKeeper *bbird.Keeper,
+	policyKeeper *bbird.Keeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -45,7 +45,7 @@ func NewKeeper(
 		memKey:          memKey,
 		paramstore:      ps,
 		identityKeeper:  identityKeeper,
-		blackbirdKeeper: blackbirdKeeper,
+		policyKeeper: policyKeeper,
 	}
 }
 
