@@ -501,15 +501,15 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"fusionchain", "blackbird", "params"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"fusionchain", "policy", "params"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Verify_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"fusionchain", "blackbird", "verify", "policy", "payload"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Verify_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 3}, []string{"fusionchain", "policy", "verify", "payload"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Actions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"fusionchain", "blackbird", "actions"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Actions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"fusionchain", "policy", "actions"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Policies_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"fusionchain", "blackbird", "policies"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Policies_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"fusionchain", "policy", "policies"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PolicyById_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"fusionchain", "blackbird", "policy_by_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_PolicyById_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"fusionchain", "policy", "policy_by_id"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (
