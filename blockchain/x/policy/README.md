@@ -77,13 +77,13 @@ A user can query the `blackbird` module using gRPC endpoints.
 The `verify` command allows users to query for the state of a policy to a given payload. 
 
 ```bash
-fusionchain.blackbird.Query.Verify
+fusionchain.policy.Query.Verify
 ```
 
 Example:
 
 ```bash
-grpcurl -plaintext localhost:9790 fusionchain.blackbird.Query.Verify
+grpcurl -plaintext localhost:9790 fusionchain.policy.Query.Verify
 ```
 
 Example Output:

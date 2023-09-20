@@ -490,16 +490,16 @@ func (m *QueryPolicyByIdResponse) GetPolicy() *Policy {
 }
 
 func init() {
-	proto.RegisterType((*QueryParamsRequest)(nil), "fusionchain.blackbird.QueryParamsRequest")
-	proto.RegisterType((*QueryParamsResponse)(nil), "fusionchain.blackbird.QueryParamsResponse")
-	proto.RegisterType((*QueryVerifyRequest)(nil), "fusionchain.blackbird.QueryVerifyRequest")
-	proto.RegisterType((*QueryVerifyResponse)(nil), "fusionchain.blackbird.QueryVerifyResponse")
-	proto.RegisterType((*QueryActionsRequest)(nil), "fusionchain.blackbird.QueryActionsRequest")
-	proto.RegisterType((*QueryActionsResponse)(nil), "fusionchain.blackbird.QueryActionsResponse")
-	proto.RegisterType((*QueryPoliciesRequest)(nil), "fusionchain.blackbird.QueryPoliciesRequest")
-	proto.RegisterType((*QueryPoliciesResponse)(nil), "fusionchain.blackbird.QueryPoliciesResponse")
-	proto.RegisterType((*QueryPolicyByIdRequest)(nil), "fusionchain.blackbird.QueryPolicyByIdRequest")
-	proto.RegisterType((*QueryPolicyByIdResponse)(nil), "fusionchain.blackbird.QueryPolicyByIdResponse")
+	proto.RegisterType((*QueryParamsRequest)(nil), "fusionchain.policy.QueryParamsRequest")
+	proto.RegisterType((*QueryParamsResponse)(nil), "fusionchain.policy.QueryParamsResponse")
+	proto.RegisterType((*QueryVerifyRequest)(nil), "fusionchain.policy.QueryVerifyRequest")
+	proto.RegisterType((*QueryVerifyResponse)(nil), "fusionchain.policy.QueryVerifyResponse")
+	proto.RegisterType((*QueryActionsRequest)(nil), "fusionchain.policy.QueryActionsRequest")
+	proto.RegisterType((*QueryActionsResponse)(nil), "fusionchain.policy.QueryActionsResponse")
+	proto.RegisterType((*QueryPoliciesRequest)(nil), "fusionchain.policy.QueryPoliciesRequest")
+	proto.RegisterType((*QueryPoliciesResponse)(nil), "fusionchain.policy.QueryPoliciesResponse")
+	proto.RegisterType((*QueryPolicyByIdRequest)(nil), "fusionchain.policy.QueryPolicyByIdRequest")
+	proto.RegisterType((*QueryPolicyByIdResponse)(nil), "fusionchain.policy.QueryPolicyByIdResponse")
 }
 
 func init() { proto.RegisterFile("fusionchain/blackbird/query.proto", fileDescriptor_1159bdf24c368774) }
@@ -584,7 +584,7 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 
 func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
 	out := new(QueryParamsResponse)
-	err := c.cc.Invoke(ctx, "/fusionchain.blackbird.Query/Params", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/fusionchain.policy.Query/Params", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -593,7 +593,7 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 
 func (c *queryClient) Verify(ctx context.Context, in *QueryVerifyRequest, opts ...grpc.CallOption) (*QueryVerifyResponse, error) {
 	out := new(QueryVerifyResponse)
-	err := c.cc.Invoke(ctx, "/fusionchain.blackbird.Query/Verify", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/fusionchain.policy.Query/Verify", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -602,7 +602,7 @@ func (c *queryClient) Verify(ctx context.Context, in *QueryVerifyRequest, opts .
 
 func (c *queryClient) Actions(ctx context.Context, in *QueryActionsRequest, opts ...grpc.CallOption) (*QueryActionsResponse, error) {
 	out := new(QueryActionsResponse)
-	err := c.cc.Invoke(ctx, "/fusionchain.blackbird.Query/Actions", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/fusionchain.policy.Query/Actions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -611,7 +611,7 @@ func (c *queryClient) Actions(ctx context.Context, in *QueryActionsRequest, opts
 
 func (c *queryClient) Policies(ctx context.Context, in *QueryPoliciesRequest, opts ...grpc.CallOption) (*QueryPoliciesResponse, error) {
 	out := new(QueryPoliciesResponse)
-	err := c.cc.Invoke(ctx, "/fusionchain.blackbird.Query/Policies", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/fusionchain.policy.Query/Policies", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -620,7 +620,7 @@ func (c *queryClient) Policies(ctx context.Context, in *QueryPoliciesRequest, op
 
 func (c *queryClient) PolicyById(ctx context.Context, in *QueryPolicyByIdRequest, opts ...grpc.CallOption) (*QueryPolicyByIdResponse, error) {
 	out := new(QueryPolicyByIdResponse)
-	err := c.cc.Invoke(ctx, "/fusionchain.blackbird.Query/PolicyById", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/fusionchain.policy.Query/PolicyById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -675,7 +675,7 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/fusionchain.blackbird.Query/Params",
+		FullMethod: "/fusionchain.policy.Query/Params",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).Params(ctx, req.(*QueryParamsRequest))
@@ -693,7 +693,7 @@ func _Query_Verify_Handler(srv interface{}, ctx context.Context, dec func(interf
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/fusionchain.blackbird.Query/Verify",
+		FullMethod: "/fusionchain.policy.Query/Verify",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).Verify(ctx, req.(*QueryVerifyRequest))
@@ -711,7 +711,7 @@ func _Query_Actions_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/fusionchain.blackbird.Query/Actions",
+		FullMethod: "/fusionchain.policy.Query/Actions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).Actions(ctx, req.(*QueryActionsRequest))
@@ -729,7 +729,7 @@ func _Query_Policies_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/fusionchain.blackbird.Query/Policies",
+		FullMethod: "/fusionchain.policy.Query/Policies",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).Policies(ctx, req.(*QueryPoliciesRequest))
@@ -747,7 +747,7 @@ func _Query_PolicyById_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/fusionchain.blackbird.Query/PolicyById",
+		FullMethod: "/fusionchain.policy.Query/PolicyById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).PolicyById(ctx, req.(*QueryPolicyByIdRequest))
@@ -756,7 +756,7 @@ func _Query_PolicyById_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 var _Query_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "fusionchain.blackbird.Query",
+	ServiceName: "fusionchain.policy.Query",
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

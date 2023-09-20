@@ -1,5 +1,5 @@
 syntax = "proto3";
-package fusionchain.blackbird;
+package fusionchain.policy;
 
 import "google/protobuf/any.proto";
 

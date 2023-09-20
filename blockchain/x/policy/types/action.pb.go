@@ -106,7 +106,7 @@ func (m *Action) GetMsg() *types.Any {
 }
 
 func init() {
-	proto.RegisterType((*Action)(nil), "fusionchain.blackbird.Action")
+	proto.RegisterType((*Action)(nil), "fusionchain.policy.Action")
 }
 
 func init() {

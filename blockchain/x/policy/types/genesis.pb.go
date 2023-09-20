@@ -69,7 +69,7 @@ func (m *GenesisState) GetParams() Params {
 }
 
 func init() {
-	proto.RegisterType((*GenesisState)(nil), "fusionchain.blackbird.GenesisState")
+	proto.RegisterType((*GenesisState)(nil), "fusionchain.policy.GenesisState")
 }
 
 func init() {

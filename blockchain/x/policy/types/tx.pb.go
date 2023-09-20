@@ -239,10 +239,10 @@ func (m *MsgNewPolicyResponse) GetId() uint64 {
 }
 
 func init() {
-	proto.RegisterType((*MsgApproveAction)(nil), "fusionchain.blackbird.MsgApproveAction")
-	proto.RegisterType((*MsgApproveActionResponse)(nil), "fusionchain.blackbird.MsgApproveActionResponse")
-	proto.RegisterType((*MsgNewPolicy)(nil), "fusionchain.blackbird.MsgNewPolicy")
-	proto.RegisterType((*MsgNewPolicyResponse)(nil), "fusionchain.blackbird.MsgNewPolicyResponse")
+	proto.RegisterType((*MsgApproveAction)(nil), "fusionchain.policy.MsgApproveAction")
+	proto.RegisterType((*MsgApproveActionResponse)(nil), "fusionchain.policy.MsgApproveActionResponse")
+	proto.RegisterType((*MsgNewPolicy)(nil), "fusionchain.policy.MsgNewPolicy")
+	proto.RegisterType((*MsgNewPolicyResponse)(nil), "fusionchain.policy.MsgNewPolicyResponse")
 }
 
 func init() { proto.RegisterFile("fusionchain/blackbird/tx.proto", fileDescriptor_d319abc224f4b159) }
@@ -304,7 +304,7 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 
 func (c *msgClient) ApproveAction(ctx context.Context, in *MsgApproveAction, opts ...grpc.CallOption) (*MsgApproveActionResponse, error) {
 	out := new(MsgApproveActionResponse)
-	err := c.cc.Invoke(ctx, "/fusionchain.blackbird.Msg/ApproveAction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/fusionchain.policy.Msg/ApproveAction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -313,7 +313,7 @@ func (c *msgClient) ApproveAction(ctx context.Context, in *MsgApproveAction, opt
 
 func (c *msgClient) NewPolicy(ctx context.Context, in *MsgNewPolicy, opts ...grpc.CallOption) (*MsgNewPolicyResponse, error) {
 	out := new(MsgNewPolicyResponse)
-	err := c.cc.Invoke(ctx, "/fusionchain.blackbird.Msg/NewPolicy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/fusionchain.policy.Msg/NewPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +353,7 @@ func _Msg_ApproveAction_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/fusionchain.blackbird.Msg/ApproveAction",
+		FullMethod: "/fusionchain.policy.Msg/ApproveAction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).ApproveAction(ctx, req.(*MsgApproveAction))
@@ -371,7 +371,7 @@ func _Msg_NewPolicy_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/fusionchain.blackbird.Msg/NewPolicy",
+		FullMethod: "/fusionchain.policy.Msg/NewPolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).NewPolicy(ctx, req.(*MsgNewPolicy))
@@ -380,7 +380,7 @@ func _Msg_NewPolicy_Handler(srv interface{}, ctx context.Context, dec func(inter
 }
 
 var _Msg_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "fusionchain.blackbird.Msg",
+	ServiceName: "fusionchain.policy.Msg",
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

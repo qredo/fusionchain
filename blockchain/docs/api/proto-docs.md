@@ -1267,7 +1267,7 @@ TxResult is the value stored in eth tx indexer
 
 
 
-<a name="fusionchain.blackbird.Params"></a>
+<a name="fusionchain.policy.Params"></a>
 
 ### Params
 Params defines the parameters for the module.
@@ -1293,7 +1293,7 @@ Params defines the parameters for the module.
 
 
 
-<a name="fusionchain.blackbird.GenesisState"></a>
+<a name="fusionchain.policy.GenesisState"></a>
 
 ### GenesisState
 GenesisState defines the blackbird module's genesis state.
@@ -1301,7 +1301,7 @@ GenesisState defines the blackbird module's genesis state.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#fusionchain.blackbird.Params) |  | this line is used by starport scaffolding # genesis/proto/state |
+| `params` | [Params](#fusionchain.policy.Params) |  | this line is used by starport scaffolding # genesis/proto/state |
 
 
 
@@ -1324,7 +1324,7 @@ GenesisState defines the blackbird module's genesis state.
 
 
 
-<a name="fusionchain.blackbird.QueryParamsRequest"></a>
+<a name="fusionchain.policy.QueryParamsRequest"></a>
 
 ### QueryParamsRequest
 QueryParamsRequest is request type for the Query/Params RPC method.
@@ -1334,7 +1334,7 @@ QueryParamsRequest is request type for the Query/Params RPC method.
 
 
 
-<a name="fusionchain.blackbird.QueryParamsResponse"></a>
+<a name="fusionchain.policy.QueryParamsResponse"></a>
 
 ### QueryParamsResponse
 QueryParamsResponse is response type for the Query/Params RPC method.
@@ -1342,14 +1342,14 @@ QueryParamsResponse is response type for the Query/Params RPC method.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#fusionchain.blackbird.Params) |  | params holds all the parameters of this module. |
+| `params` | [Params](#fusionchain.policy.Params) |  | params holds all the parameters of this module. |
 
 
 
 
 
 
-<a name="fusionchain.blackbird.QueryVerifyRequest"></a>
+<a name="fusionchain.policy.QueryVerifyRequest"></a>
 
 ### QueryVerifyRequest
 
@@ -1365,7 +1365,7 @@ QueryParamsResponse is response type for the Query/Params RPC method.
 
 
 
-<a name="fusionchain.blackbird.QueryVerifyResponse"></a>
+<a name="fusionchain.policy.QueryVerifyResponse"></a>
 
 ### QueryVerifyResponse
 
@@ -1386,15 +1386,15 @@ QueryParamsResponse is response type for the Query/Params RPC method.
  <!-- end HasExtensions -->
 
 
-<a name="fusionchain.blackbird.Query"></a>
+<a name="fusionchain.policy.Query"></a>
 
 ### Query
 Query defines the gRPC querier service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `Params` | [QueryParamsRequest](#fusionchain.blackbird.QueryParamsRequest) | [QueryParamsResponse](#fusionchain.blackbird.QueryParamsResponse) | Parameters queries the parameters of the module. | GET|/fusionchain/blackbird/params|
-| `Verify` | [QueryVerifyRequest](#fusionchain.blackbird.QueryVerifyRequest) | [QueryVerifyResponse](#fusionchain.blackbird.QueryVerifyResponse) | Queries a list of Verify items. | GET|/fusionchain/blackbird/verify/{policy}/{payload}|
+| `Params` | [QueryParamsRequest](#fusionchain.policy.QueryParamsRequest) | [QueryParamsResponse](#fusionchain.policy.QueryParamsResponse) | Parameters queries the parameters of the module. | GET|/fusionchain/blackbird/params|
+| `Verify` | [QueryVerifyRequest](#fusionchain.policy.QueryVerifyRequest) | [QueryVerifyResponse](#fusionchain.policy.QueryVerifyResponse) | Queries a list of Verify items. | GET|/fusionchain/blackbird/verify/{policy}/{payload}|
 
  <!-- end services -->
 
@@ -1413,7 +1413,7 @@ Query defines the gRPC querier service.
  <!-- end HasExtensions -->
 
 
-<a name="fusionchain.blackbird.Msg"></a>
+<a name="fusionchain.policy.Msg"></a>
 
 ### Msg
 Msg defines the Msg service.

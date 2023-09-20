@@ -174,9 +174,9 @@ func (m *BlackbirdPolicyPayload) GetWitness() []byte {
 }
 
 func init() {
-	proto.RegisterType((*Policy)(nil), "fusionchain.blackbird.Policy")
-	proto.RegisterType((*BlackbirdPolicy)(nil), "fusionchain.blackbird.BlackbirdPolicy")
-	proto.RegisterType((*BlackbirdPolicyPayload)(nil), "fusionchain.blackbird.BlackbirdPolicyPayload")
+	proto.RegisterType((*Policy)(nil), "fusionchain.policy.Policy")
+	proto.RegisterType((*BlackbirdPolicy)(nil), "fusionchain.policy.BlackbirdPolicy")
+	proto.RegisterType((*BlackbirdPolicyPayload)(nil), "fusionchain.policy.BlackbirdPolicyPayload")
 }
 
 func init() {

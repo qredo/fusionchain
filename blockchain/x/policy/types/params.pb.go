@@ -60,7 +60,7 @@ func (m *Params) XXX_DiscardUnknown() {
 var xxx_messageInfo_Params proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*Params)(nil), "fusionchain.blackbird.Params")
+	proto.RegisterType((*Params)(nil), "fusionchain.policy.Params")
 }
 
 func init() {
