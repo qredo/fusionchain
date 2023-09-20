@@ -40,6 +40,15 @@ func (p *BlackbirdPolicy) Validate() error {
 	return err
 }
 
+func (p *BlackbirdPolicy) AddressToParticipant(addr string) (string, error) {
+	for abbr, participant := range p.Participants {
+		if participant == addr {
+			return abbr, nil
+		}
+	}
+	return "", fmt.Errorf("address not a participant of this policy")
+}
+
 func (p *BlackbirdPolicy) Verify(approvers policy.ApproverSet, policyPayload policy.PolicyPayload) error {
 	payload, err := policy.UnpackPayload[*BlackbirdPolicyPayload](policyPayload)
 	if err != nil {
