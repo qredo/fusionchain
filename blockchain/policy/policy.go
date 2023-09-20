@@ -13,9 +13,9 @@ type AnyInGroupPolicy struct {
 
 var _ Policy = &AnyInGroupPolicy{}
 
-func (p *AnyInGroupPolicy) Validate() error { return nil }
+func (*AnyInGroupPolicy) Validate() error { return nil }
 
-func (p *AnyInGroupPolicy) AddressToParticipant(addr string) (string, error) {
+func (*AnyInGroupPolicy) AddressToParticipant(addr string) (string, error) {
 	return addr, nil
 }
 

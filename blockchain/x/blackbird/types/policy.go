@@ -18,14 +18,14 @@ func (a *Policy) SetId(id uint64) {
 	a.Id = id
 }
 
-func UnpackPolicy(cdc codec.BinaryCodec, p *Policy) (policy.Policy, error) {
-	var policy policy.Policy
-	err := cdc.UnpackAny(p.Policy, &policy)
+func UnpackPolicy(cdc codec.BinaryCodec, policyPb *Policy) (policy.Policy, error) {
+	var p policy.Policy
+	err := cdc.UnpackAny(policyPb.Policy, &p)
 	if err != nil {
 		return nil, fmt.Errorf("unpacking Any: %w", err)
 	}
 
-	return policy, nil
+	return p, nil
 }
 
 var _ (policy.Policy) = (*BlackbirdPolicy)(nil)
@@ -35,8 +35,8 @@ func (p *BlackbirdPolicy) Validate() error {
 	for abbr, participant := range p.Participants {
 		participants[abbr] = impl.ParticipantAsAuthority(participant)
 	}
-	formatted_policy, err := simple.InstallCheck(p.Data, nil, participants)
-	p.Data = formatted_policy
+	cleanData, err := simple.InstallCheck(p.Data, nil, participants)
+	p.Data = cleanData
 	return err
 }
 
