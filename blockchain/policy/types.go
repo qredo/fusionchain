@@ -61,6 +61,10 @@ func UnpackPayload[P PolicyPayloadI](p PolicyPayload) (P, error) {
 }
 
 type Policy interface {
+	// Validate checks that the policy is valid (well formed).
+	// The returned error is nil if the policy is valid.
+	Validate() error
+
 	// Verify tries to verify the current policy. The returned error is nil if
 	// the policy is valid.
 	Verify(approvers ApproverSet, payload PolicyPayload) error
