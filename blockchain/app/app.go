@@ -169,12 +169,12 @@ import (
 	_ "github.com/ethereum/go-ethereum/eth/tracers/js"
 	_ "github.com/ethereum/go-ethereum/eth/tracers/native"
 
-	policymodule "github.com/qredo/fusionchain/x/policy"
-	policymodulekeeper "github.com/qredo/fusionchain/x/policy/keeper"
-	policymoduletypes "github.com/qredo/fusionchain/x/policy/types"
 	identitymodule "github.com/qredo/fusionchain/x/identity"
 	identitymodulekeeper "github.com/qredo/fusionchain/x/identity/keeper"
 	identitymoduletypes "github.com/qredo/fusionchain/x/identity/types"
+	policymodule "github.com/qredo/fusionchain/x/policy"
+	policymodulekeeper "github.com/qredo/fusionchain/x/policy/keeper"
+	policymoduletypes "github.com/qredo/fusionchain/x/policy/types"
 	qassetsmodule "github.com/qredo/fusionchain/x/qassets"
 	qassetsmodulekeeper "github.com/qredo/fusionchain/x/qassets/keeper"
 	qassetsmoduletypes "github.com/qredo/fusionchain/x/qassets/types"
@@ -355,7 +355,7 @@ type EthermintApp struct {
 	WasmKeeper      wasmkeeper.Keeper
 	IdentityKeeper  identitymodulekeeper.Keeper
 	TreasuryKeeper  treasurymodulekeeper.Keeper
-	PolicyKeeper policymodulekeeper.Keeper
+	PolicyKeeper    policymodulekeeper.Keeper
 	QAssetsKeeper   qassetsmodulekeeper.Keeper
 
 	// the module manager

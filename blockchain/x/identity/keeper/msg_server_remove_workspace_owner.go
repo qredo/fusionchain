@@ -7,9 +7,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/qredo/fusionchain/policy"
+	"github.com/qredo/fusionchain/x/identity/types"
 	bbird "github.com/qredo/fusionchain/x/policy/keeper"
 	bbirdtypes "github.com/qredo/fusionchain/x/policy/types"
-	"github.com/qredo/fusionchain/x/identity/types"
 )
 
 func (k msgServer) RemoveWorkspaceOwner(goCtx context.Context, msg *types.MsgRemoveWorkspaceOwner) (*types.MsgRemoveWorkspaceOwnerResponse, error) {
