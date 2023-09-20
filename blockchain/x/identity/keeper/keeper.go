@@ -10,7 +10,7 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/qredo/fusionchain/repo"
-	bbird "github.com/qredo/fusionchain/x/blackbird/keeper"
+	bbird "github.com/qredo/fusionchain/x/policy/keeper"
 	"github.com/qredo/fusionchain/x/identity/types"
 )
 

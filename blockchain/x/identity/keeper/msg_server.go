@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	bbird "github.com/qredo/fusionchain/x/blackbird/keeper"
+	bbird "github.com/qredo/fusionchain/x/policy/keeper"
 	"github.com/qredo/fusionchain/x/identity/types"
 )
 

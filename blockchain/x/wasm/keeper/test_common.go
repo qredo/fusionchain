@@ -78,8 +78,8 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	wasmappparams "github.com/CosmWasm/wasmd/app/params"
-	blackbirdmodulekeeper "github.com/qredo/fusionchain/x/blackbird/keeper"
-	blackbirdmoduletypes "github.com/qredo/fusionchain/x/blackbird/types"
+	blackbirdmodulekeeper "github.com/qredo/fusionchain/x/policy/keeper"
+	blackbirdmoduletypes "github.com/qredo/fusionchain/x/policy/types"
 	identitymodulekeeper "github.com/qredo/fusionchain/x/identity/keeper"
 	identitymoduletypes "github.com/qredo/fusionchain/x/identity/types"
 	qassetsmodulekeeper "github.com/qredo/fusionchain/x/qassets/keeper"

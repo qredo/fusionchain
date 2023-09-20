@@ -169,9 +169,9 @@ import (
 	_ "github.com/ethereum/go-ethereum/eth/tracers/js"
 	_ "github.com/ethereum/go-ethereum/eth/tracers/native"
 
-	blackbirdmodule "github.com/qredo/fusionchain/x/blackbird"
-	blackbirdmodulekeeper "github.com/qredo/fusionchain/x/blackbird/keeper"
-	blackbirdmoduletypes "github.com/qredo/fusionchain/x/blackbird/types"
+	blackbirdmodule "github.com/qredo/fusionchain/x/policy"
+	blackbirdmodulekeeper "github.com/qredo/fusionchain/x/policy/keeper"
+	blackbirdmoduletypes "github.com/qredo/fusionchain/x/policy/types"
 	identitymodule "github.com/qredo/fusionchain/x/identity"
 	identitymodulekeeper "github.com/qredo/fusionchain/x/identity/keeper"
 	identitymoduletypes "github.com/qredo/fusionchain/x/identity/types"
