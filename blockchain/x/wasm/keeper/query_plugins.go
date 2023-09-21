@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,6 +21,8 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
+	policykeeper "github.com/qredo/fusionchain/x/policy/keeper"
+	policy "github.com/qredo/fusionchain/x/policy/types"
 	"github.com/qredo/fusionchain/x/wasm/types"
 )
 
@@ -109,10 +112,11 @@ func DefaultQueryPlugins(
 	distKeeper types.DistributionKeeper,
 	channelKeeper types.ChannelKeeper,
 	wasm wasmQueryKeeper,
+	policyKeeper policykeeper.Keeper,
 ) QueryPlugins {
 	return QueryPlugins{
 		Bank:         BankQuerier(bank),
-		Custom:       NoCustomQuerier,
+		Custom:       PolicyQuerier(policyKeeper),
 		IBC:          IBCQuerier(wasm, channelKeeper),
 		Staking:      StakingQuerier(staking, distKeeper),
 		Stargate:     RejectStargateQuerier(),
@@ -762,4 +766,33 @@ type WasmVMQueryHandlerFn func(ctx sdk.Context, caller sdk.AccAddress, request w
 // HandleQuery delegates call into wrapped WasmVMQueryHandlerFn
 func (w WasmVMQueryHandlerFn) HandleQuery(ctx sdk.Context, caller sdk.AccAddress, request wasmvmtypes.QueryRequest) ([]byte, error) {
 	return w(ctx, caller, request)
+}
+
+type policyQuery struct {
+	Verify policy.QueryVerifyRequest `json:"verify"`
+}
+
+type InvalidRequest struct {
+	Kind string `json:"kind,omitempty"`
+}
+
+func (e InvalidRequest) Error() string {
+	return fmt.Sprintf("invalid request: %s", e.Kind)
+}
+
+func PolicyQuerier(k policykeeper.Keeper) func(ctx sdk.Context, request json.RawMessage) ([]byte, error) {
+	return func(ctx sdk.Context, request json.RawMessage) ([]byte, error) {
+		var query policyQuery
+		if err := json.Unmarshal(request, &query); err != nil {
+			return nil, InvalidRequest{Kind: "could not deserialise JSON-encoded blackbird query."}
+		}
+		if query.Verify.Policy == "" || query.Verify.Payload == "" {
+			return nil, InvalidRequest{Kind: "policy and/or payload fields cannot be empty."}
+		}
+		res, err := k.Verify(context.Background(), &policy.QueryVerifyRequest{Policy: query.Verify.Policy, Payload: query.Verify.Payload})
+		if err != nil {
+			return nil, err
+		}
+		return json.Marshal(policy.QueryVerifyResponse{Result: res.Result})
+	}
 }
