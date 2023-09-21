@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 
-	"github.com/qredo/fusionchain/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 // AddressGenerator abstract address generator to be used for a single contract address
@@ -16,7 +16,7 @@ type AddressGenerator func(ctx sdk.Context, codeID uint64, checksum []byte) sdk.
 // ClassicAddressGenerator generates a contract address using codeID and instanceID sequence
 func (k Keeper) ClassicAddressGenerator() AddressGenerator {
 	return func(ctx sdk.Context, codeID uint64, _ []byte) sdk.AccAddress {
-		instanceID := k.autoIncrementID(ctx, types.KeyLastInstanceID)
+		instanceID := k.autoIncrementID(ctx, types.KeySequenceInstanceID)
 		return BuildContractAddressClassic(codeID, instanceID)
 	}
 }

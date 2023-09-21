@@ -3,7 +3,7 @@ package simulation
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/qredo/fusionchain/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 // RandomizeGenState generates a random GenesisState for wasm
@@ -14,7 +14,7 @@ func RandomizedGenState(simstate *module.SimulationState) {
 		Codes:     nil,
 		Contracts: nil,
 		Sequences: []types.Sequence{
-			{IDKey: types.KeyLastCodeID, Value: simstate.Rand.Uint64()},
+			{IDKey: types.KeySequenceCodeID, Value: simstate.Rand.Uint64()},
 		},
 	}
 

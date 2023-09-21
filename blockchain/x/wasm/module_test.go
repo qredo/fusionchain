@@ -24,10 +24,10 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	"github.com/CosmWasm/wasmd/app/params"
-	"github.com/qredo/fusionchain/x/wasm/exported"
-	"github.com/qredo/fusionchain/x/wasm/keeper"
-	"github.com/qredo/fusionchain/x/wasm/keeper/testdata"
-	"github.com/qredo/fusionchain/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm/exported"
+	"github.com/CosmWasm/wasmd/x/wasm/keeper"
+	"github.com/CosmWasm/wasmd/x/wasm/keeper/testdata"
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 type mockSubspace struct {
@@ -57,7 +57,7 @@ type testData struct {
 
 func setupTest(t *testing.T) testData {
 	t.Helper()
-	ctx, keepers := keeper.CreateTestInput(t, false, "iterator,staking,stargate,cosmwasm_1_1")
+	ctx, keepers := keeper.CreateTestInput(t, false, "iterator,staking,stargate,cosmwasm_1_1,cosmwasm_1_2,cosmwasm_1_3,cosmwasm_1_4")
 	encConf := keeper.MakeEncodingConfig(t)
 	queryRouter := baseapp.NewGRPCQueryRouter()
 	serviceRouter := baseapp.NewMsgServiceRouter()

@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/qredo/fusionchain/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 var _ types.IBCContractKeeper = (*Keeper)(nil)
@@ -159,7 +159,7 @@ var _ ibcexported.Acknowledgement = ContractConfirmStateAck{}
 
 type ContractConfirmStateAck []byte
 
-func (ContractConfirmStateAck) Success() bool {
+func (w ContractConfirmStateAck) Success() bool {
 	return true // always commit state
 }
 

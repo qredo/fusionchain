@@ -13,8 +13,8 @@ import (
 	snapshot "github.com/cosmos/cosmos-sdk/snapshots/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/qredo/fusionchain/x/wasm/ioutils"
-	"github.com/qredo/fusionchain/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm/ioutils"
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 var _ snapshot.ExtensionSnapshotter = &WasmSnapshotter{}
@@ -34,15 +34,15 @@ func NewWasmSnapshotter(cms sdk.MultiStore, wasm *Keeper) *WasmSnapshotter {
 	}
 }
 
-func (*WasmSnapshotter) SnapshotName() string {
+func (ws *WasmSnapshotter) SnapshotName() string {
 	return types.ModuleName
 }
 
-func (*WasmSnapshotter) SnapshotFormat() uint32 {
+func (ws *WasmSnapshotter) SnapshotFormat() uint32 {
 	return SnapshotFormat
 }
 
-func (*WasmSnapshotter) SupportedFormats() []uint32 {
+func (ws *WasmSnapshotter) SupportedFormats() []uint32 {
 	// If we support older formats, add them here and handle them in Restore
 	return []uint32{SnapshotFormat}
 }

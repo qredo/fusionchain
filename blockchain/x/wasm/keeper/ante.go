@@ -6,7 +6,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/qredo/fusionchain/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 // CountTXDecorator ante handler to count the tx position in a block.
@@ -94,4 +94,19 @@ func (d LimitSimulationGasDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 		return next(ctx.WithGasMeter(sdk.NewGasMeter(sdk.Gas(maxGas))), tx, simulate)
 	}
 	return next(ctx, tx, simulate)
+}
+
+// GasRegisterDecorator ante decorator to store gas register in the context
+type GasRegisterDecorator struct {
+	gasRegister types.GasRegister
+}
+
+// NewGasRegisterDecorator constructor.
+func NewGasRegisterDecorator(gr types.GasRegister) *GasRegisterDecorator {
+	return &GasRegisterDecorator{gasRegister: gr}
+}
+
+// AnteHandle adds the gas register to the context.
+func (g GasRegisterDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
+	return next(types.WithGasRegister(ctx, g.gasRegister), tx, simulate)
 }

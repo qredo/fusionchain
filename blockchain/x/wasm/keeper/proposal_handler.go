@@ -11,7 +11,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	"github.com/qredo/fusionchain/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 // NewWasmProposalHandler creates a new governance Handler for wasm proposals
@@ -180,7 +180,7 @@ func handleStoreAndInstantiateContractProposal(ctx sdk.Context, k types.Contract
 	}
 
 	if !p.UnpinCode {
-		if err = k.PinCode(ctx, codeID); err != nil {
+		if err := k.PinCode(ctx, codeID); err != nil {
 			return err
 		}
 	}

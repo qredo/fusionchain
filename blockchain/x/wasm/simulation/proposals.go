@@ -8,8 +8,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/CosmWasm/wasmd/app/params"
-	"github.com/qredo/fusionchain/x/wasm/keeper/testdata"
-	"github.com/qredo/fusionchain/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm/keeper/testdata"
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 const (
@@ -122,7 +122,7 @@ func SimulateStoreCodeProposal(wasmKeeper WasmKeeper) simtypes.MsgSimulatorFn {
 }
 
 // Simulate instantiate contract proposal
-func SimulateInstantiateContractProposal(_ BankKeeper, wasmKeeper WasmKeeper, codeSelector CodeIDSelector) simtypes.MsgSimulatorFn {
+func SimulateInstantiateContractProposal(bk BankKeeper, wasmKeeper WasmKeeper, codeSelector CodeIDSelector) simtypes.MsgSimulatorFn {
 	return func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 		authority := wasmKeeper.GetAuthority()
 
@@ -150,7 +150,7 @@ func SimulateExecuteContractProposal(
 	_ BankKeeper,
 	wasmKeeper WasmKeeper,
 	contractSelector MsgExecuteContractSelector,
-	_ MsgExecuteSenderSelector,
+	senderSelector MsgExecuteSenderSelector,
 	payloader MsgExecutePayloader,
 ) simtypes.MsgSimulatorFn {
 	return func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {

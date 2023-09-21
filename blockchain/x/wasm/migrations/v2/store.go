@@ -5,8 +5,8 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/qredo/fusionchain/x/wasm/exported"
-	"github.com/qredo/fusionchain/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm/exported"
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 // MigrateStore migrates the x/wasm module state from the consensus version 2 to

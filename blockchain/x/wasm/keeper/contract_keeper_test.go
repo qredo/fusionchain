@@ -12,8 +12,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/qredo/fusionchain/x/wasm/keeper/wasmtesting"
-	"github.com/qredo/fusionchain/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 func TestInstantiate2(t *testing.T) {
@@ -22,7 +22,7 @@ func TestInstantiate2(t *testing.T) {
 
 	example := StoreHackatomExampleContract(t, parentCtx, keepers)
 	otherExample := StoreReflectContract(t, parentCtx, keepers)
-	mock := &wasmtesting.MockWasmer{}
+	mock := &wasmtesting.MockWasmEngine{}
 	wasmtesting.MakeInstantiable(mock)
 	keepers.WasmKeeper.wasmVM = mock // set mock to not fail on contract init message
 
