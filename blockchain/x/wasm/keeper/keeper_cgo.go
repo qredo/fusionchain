@@ -9,6 +9,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	policy "github.com/qredo/fusionchain/x/policy/keeper"
+	qassets "github.com/qredo/fusionchain/x/qassets/keeper"
 
 	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
@@ -26,6 +28,8 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	capabilityKeeper types.CapabilityKeeper,
+	policyKeeper policy.Keeper,
+	qassetsKeeper qassets.Keeper,
 	portSource types.ICS20TransferPortSource,
 	router MessageRouter,
 	_ GRPCQueryRouter,
