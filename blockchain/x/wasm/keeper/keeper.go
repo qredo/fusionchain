@@ -26,6 +26,8 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	vestingexported "github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 
+	policy "github.com/qredo/fusionchain/x/policy/keeper"
+	qassets "github.com/qredo/fusionchain/x/qassets/keeper"
 	"github.com/qredo/fusionchain/x/wasm/ioutils"
 	"github.com/qredo/fusionchain/x/wasm/types"
 )
@@ -85,6 +87,8 @@ type Keeper struct {
 	bank                  CoinTransferrer
 	portKeeper            types.PortKeeper
 	capabilityKeeper      types.CapabilityKeeper
+	policyKeeper          policy.Keeper
+	qassetsKeeper         qassets.Keeper
 	wasmVM                types.WasmEngine
 	wasmVMQueryHandler    WasmVMQueryHandler
 	wasmVMResponseHandler WasmVMResponseHandler
