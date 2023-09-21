@@ -39,15 +39,19 @@ func UnpackPayload[P PolicyPayloadI](p PolicyPayload) (*P, error) {
 	var payload P
 
 	if p.any != nil && p.cdc == nil {
-		return &payload, fmt.Errorf("codec is nil")
+		return nil, fmt.Errorf("codec is nil")
 	}
 
 	if p.any == nil || p.cdc == nil {
-		return &payload, nil
+		return nil, nil
 	}
 
 	err := p.cdc.UnpackAny(p.any, &payload)
-	return &payload, err
+	if err != nil {
+		return nil, err
+	}
+
+	return &payload, nil
 }
 
 type Policy interface {
