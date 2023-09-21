@@ -35,29 +35,19 @@ func EmptyPolicyPayload() PolicyPayload {
 	return NewPolicyPayload(nil, nil)
 }
 
-func UnpackPayload[P PolicyPayloadI](p PolicyPayload) (P, error) {
-	var (
-		empty   P
-		payload PolicyPayloadI
-	)
+func UnpackPayload[P PolicyPayloadI](p PolicyPayload) (*P, error) {
+	var payload P
 
 	if p.any != nil && p.cdc == nil {
-		return empty, fmt.Errorf("codec is nil")
+		return &payload, fmt.Errorf("codec is nil")
 	}
 
 	if p.any == nil || p.cdc == nil {
-		return empty, nil
+		return &payload, nil
 	}
 
 	err := p.cdc.UnpackAny(p.any, &payload)
-	if err != nil {
-		return empty, err
-	}
-
-	if payload == nil {
-		return empty, nil
-	}
-	return payload.(P), nil
+	return &payload, err
 }
 
 type Policy interface {
