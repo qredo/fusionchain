@@ -34,9 +34,9 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
-	"github.com/CosmWasm/wasmd/x/wasm/keeper/testdata"
-	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
-	"github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/qredo/fusionchain/x/wasm/keeper/testdata"
+	"github.com/qredo/fusionchain/x/wasm/keeper/wasmtesting"
+	"github.com/qredo/fusionchain/x/wasm/types"
 )
 
 //go:embed testdata/hackatom.wasm

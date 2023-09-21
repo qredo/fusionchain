@@ -20,8 +20,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 
-	"github.com/CosmWasm/wasmd/x/wasm/ioutils"
-	"github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/qredo/fusionchain/x/wasm/ioutils"
+	"github.com/qredo/fusionchain/x/wasm/types"
 )
 
 const (

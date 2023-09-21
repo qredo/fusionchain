@@ -75,10 +75,19 @@ import (
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
+	identitymodulekeeper "github.com/qredo/fusionchain/x/identity/keeper"
+	identitymoduletypes "github.com/qredo/fusionchain/x/identity/types"
+	policymodulekeeper "github.com/qredo/fusionchain/x/policy/keeper"
+	policymoduletypes "github.com/qredo/fusionchain/x/policy/types"
+	qassetsmodulekeeper "github.com/qredo/fusionchain/x/qassets/keeper"
+	qassetsmoduletypes "github.com/qredo/fusionchain/x/qassets/types"
+	treasurymodulekeeper "github.com/qredo/fusionchain/x/treasury/keeper"
+	treasurymoduletypes "github.com/qredo/fusionchain/x/treasury/types"
+
 	wasmappparams "github.com/CosmWasm/wasmd/app/params"
-	"github.com/CosmWasm/wasmd/x/wasm/keeper/testdata"
-	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
-	"github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/qredo/fusionchain/x/wasm/keeper/testdata"
+	"github.com/qredo/fusionchain/x/wasm/keeper/wasmtesting"
+	"github.com/qredo/fusionchain/x/wasm/types"
 )
 
 var moduleBasics = module.NewBasicManager(
@@ -425,6 +434,40 @@ func createTestInput(
 	cfg := sdk.GetConfig()
 	cfg.SetAddressVerifier(types.VerifyAddressLen())
 
+	policyKeeper := *policymodulekeeper.NewKeeper(
+		appCodec,
+		keys[policymoduletypes.StoreKey],
+		keys[policymoduletypes.MemStoreKey],
+		subspace(policymoduletypes.ModuleName),
+	)
+
+	identityKeeper := *identitymodulekeeper.NewKeeper(
+		appCodec,
+		keys[identitymoduletypes.StoreKey],
+		keys[identitymoduletypes.MemStoreKey],
+		subspace(identitymoduletypes.ModuleName),
+		&policyKeeper,
+	)
+
+	treasuryKeeper := *treasurymodulekeeper.NewKeeper(
+		appCodec,
+		keys[treasurymoduletypes.StoreKey],
+		keys[treasurymoduletypes.MemStoreKey],
+		subspace(treasurymoduletypes.ModuleName),
+		identityKeeper,
+		&policyKeeper,
+	)
+
+	qassetsKeeper := *qassetsmodulekeeper.NewKeeper(
+		appCodec,
+		keys[qassetsmoduletypes.StoreKey],
+		keys[qassetsmoduletypes.MemStoreKey],
+		subspace(qassetsmoduletypes.ModuleName),
+		bankKeeper,
+		treasuryKeeper,
+		identityKeeper,
+	)
+
 	keeper := NewKeeper(
 		appCodec,
 		keys[types.StoreKey],
@@ -436,6 +479,8 @@ func createTestInput(
 		ibcKeeper.ChannelKeeper,
 		&ibcKeeper.PortKeeper,
 		scopedWasmKeeper,
+		policyKeeper,
+		qassetsKeeper,
 		wasmtesting.MockIBCTransferKeeper{},
 		msgRouter,
 		querier,

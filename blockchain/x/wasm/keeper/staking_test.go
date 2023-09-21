@@ -19,8 +19,8 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/CosmWasm/wasmd/x/wasm/keeper/testdata"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/qredo/fusionchain/x/wasm/keeper/testdata"
+	wasmtypes "github.com/qredo/fusionchain/x/wasm/types"
 )
 
 type StakingInitMsg struct {

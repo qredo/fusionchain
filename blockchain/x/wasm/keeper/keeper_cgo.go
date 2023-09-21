@@ -12,7 +12,7 @@ import (
 	policy "github.com/qredo/fusionchain/x/policy/keeper"
 	qassets "github.com/qredo/fusionchain/x/qassets/keeper"
 
-	"github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/qredo/fusionchain/x/wasm/types"
 )
 
 // NewKeeper creates a new contract Keeper instance

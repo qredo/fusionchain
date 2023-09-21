@@ -17,10 +17,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	app2 "github.com/CosmWasm/wasmd/app"
-	wasmibctesting "github.com/CosmWasm/wasmd/x/wasm/ibctesting"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	wasmibctesting "github.com/qredo/fusionchain/x/wasm/ibctesting"
+	wasmkeeper "github.com/qredo/fusionchain/x/wasm/keeper"
+	"github.com/qredo/fusionchain/x/wasm/keeper/wasmtesting"
+	wasmtypes "github.com/qredo/fusionchain/x/wasm/types"
 )
 
 const (
