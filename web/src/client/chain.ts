@@ -8,6 +8,11 @@ interface RpcResponse<T> {
   jsonrpc: string;
   id: number;
   result: T;
+  error?: {
+    code: number;
+    message: string;
+    data: any;
+  }
 }
 
 async function rpcRequest<T>(method: string, params: any) {
@@ -100,6 +105,48 @@ function parseBlockResponse(res: BlockResponse): BlockResponseParsed {
       },
     },
   }
+}
+
+export async function txByHash(hash: string) {
+  const hashB64 = hexToBase64(hash);
+  const res = await rpcRequest<TxByHashResult>("tx", { hash: hashB64 });
+  return res;
+}
+
+export interface TxByHashResult {
+ // "hash": "A1F5D15A683853C5567EA71BC74309EAF0A58D04108A524DEBB936FF8E942445",
+ //    "height": "371",
+ //    "index": 0,
+ //    "tx_result": {
+ //      "code": 0,
+ //      "data": "EjQKLi9mdXNpb25jaGFpbi50cmVhc3VyeS5Nc2dOZXdLZXlSZXF1ZXN0UmVzcG9uc2USAggF",
+ //      "log": "[{\"msg_index\":0,\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"/fusionchain.treasury.MsgNewKeyRequest\"},{\"key\":\"sender\",\"value\":\"qredo1s05pvqhj9r4czcpajd39nj400rm0u6f9va4se6\"},{\"key\":\"module\",\"value\":\"treasury\"}]}]}]",
+ //      "info": "",
+ //      "gas_wanted": "200000",
+ //      "gas_used": "110254",
+ //      "events": [
+  hash: string,
+  height: string,
+  index: number,
+  tx_result: TxResult,
+  tx: string,
+}
+
+export interface TxResult {
+  code: number,
+  data: string,
+  log: string,
+  info: string,
+  gas_wanted: string,
+  gas_used: string,
+  events: any[],
+  codespace: string,
+}
+
+function hexToBase64(hexstring: string) {
+    return btoa(hexstring.match(/\w{2}/g)!.map(function(a) {
+        return String.fromCharCode(parseInt(a, 16));
+    }).join(""));
 }
 
 export type TxParsed = Pick<TxRaw, "bodyBytes"> & {
