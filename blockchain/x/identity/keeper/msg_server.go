@@ -35,6 +35,28 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 		"/fusionchain.identity.MsgRemoveWorkspaceOwner",
 		s.RemoveOwnerPolicyGenerator,
 	)
+
+	bbird.RegisterActionHandler(
+		keeper.policyKeeper,
+		"/fusionchain.identity.MsgAppendChildWorkspace",
+		s.AppendChildWorkspaceActionHandler,
+	)
+	bbird.RegisterPolicyGeneratorHandler(
+		keeper.policyKeeper,
+		"/fusionchain.identity.MsgAppendChildWorkspace",
+		s.AppendChildWorkspacePolicyGenerator,
+	)
+
+	bbird.RegisterActionHandler(
+		keeper.policyKeeper,
+		"/fusionchain.identity.MsgNewChildWorkspace",
+		s.NewChildWorkspaceActionHandler,
+	)
+	bbird.RegisterPolicyGeneratorHandler(
+		keeper.policyKeeper,
+		"/fusionchain.identity.MsgNewChildWorkspace",
+		s.NewChildWorkspacePolicyGenerator,
+	)
 	return s
 }
 
