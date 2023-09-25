@@ -67,7 +67,6 @@ function Wallets({ keyId }: { keyId: bigint }) {
 
   const possibleWallets = [
     { name: "Ethereum Sepolia", type: WalletType.ETH_SEPOLIA, onClick: () => {
-        // attachEthereumWallet(addr, keyId)
         broadcast([
           new MsgNewWalletRequest({
             creator: addr,

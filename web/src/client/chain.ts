@@ -114,17 +114,6 @@ export async function txByHash(hash: string) {
 }
 
 export interface TxByHashResult {
- // "hash": "A1F5D15A683853C5567EA71BC74309EAF0A58D04108A524DEBB936FF8E942445",
- //    "height": "371",
- //    "index": 0,
- //    "tx_result": {
- //      "code": 0,
- //      "data": "EjQKLi9mdXNpb25jaGFpbi50cmVhc3VyeS5Nc2dOZXdLZXlSZXF1ZXN0UmVzcG9uc2USAggF",
- //      "log": "[{\"msg_index\":0,\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"/fusionchain.treasury.MsgNewKeyRequest\"},{\"key\":\"sender\",\"value\":\"qredo1s05pvqhj9r4czcpajd39nj400rm0u6f9va4se6\"},{\"key\":\"module\",\"value\":\"treasury\"}]}]}]",
- //      "info": "",
- //      "gas_wanted": "200000",
- //      "gas_used": "110254",
- //      "events": [
   hash: string,
   height: string,
   index: number,
