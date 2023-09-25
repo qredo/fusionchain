@@ -133,6 +133,7 @@ func (k Keeper) AddAction(ctx sdk.Context, msg sdk.Msg, policyID uint64, initial
 		return nil, err
 	}
 	act := types.Action{
+		Status:    types.ActionStatus_ACTION_STATUS_PENDING,
 		Approvers: initialApprovers,
 		PolicyId:  policyID,
 		Msg:       wrappedMsg,
