@@ -84,7 +84,7 @@ func TryExecuteAction[ReqT sdk.Msg, ResT any](
 
 	// Execute action if policy is satified
 	if err := pol.Verify(signersSet, policy.NewPolicyPayload(cdc, payload)); err == nil {
-		act.Completed = true
+		act.Status = types.ActionStatus_ACTION_STATUS_COMPLETED
 		k.SetAction(ctx, act)
 		return handlerFn(ctx, msg)
 	}

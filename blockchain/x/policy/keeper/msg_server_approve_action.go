@@ -16,7 +16,7 @@ func (k msgServer) ApproveAction(goCtx context.Context, msg *types.MsgApproveAct
 		return nil, fmt.Errorf("action not found")
 	}
 
-	if act.Completed {
+	if act.Status != types.ActionStatus_ACTION_STATUS_PENDING {
 		return nil, fmt.Errorf("action already completed")
 	}
 
