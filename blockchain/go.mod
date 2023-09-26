@@ -24,8 +24,7 @@ require (
 	github.com/cosmos/ibc-go/v7 v7.3.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/docker/distribution v2.8.2+incompatible
-	github.com/ethereum/go-ethereum v1.11.5
-	github.com/evmos/evmos/v14 v14.1.0
+	github.com/ethereum/go-ethereum v1.10.26
 	github.com/go-git/go-git/v5 v5.5.2
 	github.com/golang/protobuf v1.5.3
 	github.com/google/gofuzz v1.2.0
