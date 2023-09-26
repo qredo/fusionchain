@@ -13,12 +13,12 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/evmos/evmos/v14/crypto/ethsecp256k1"
-	"github.com/evmos/evmos/v14/testutil"
-	utiltx "github.com/evmos/evmos/v14/testutil/tx"
-	"github.com/evmos/evmos/v14/utils"
-	evmtypes "github.com/evmos/evmos/v14/x/evm/types"
-	"github.com/evmos/evmos/v14/x/revenue/v1/types"
+	"github.com/qredo/fusionchain/crypto/ethsecp256k1"
+	"github.com/qredo/fusionchain/testutil"
+	utiltx "github.com/qredo/fusionchain/testutil/tx"
+	"github.com/qredo/fusionchain/utils"
+	evmtypes "github.com/qredo/fusionchain/x/evm/types"
+	"github.com/qredo/fusionchain/x/revenue/v1/types"
 	"github.com/stretchr/testify/require"
 )
 

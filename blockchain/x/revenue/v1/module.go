@@ -22,9 +22,9 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	"github.com/evmos/evmos/v14/x/revenue/v1/client/cli"
-	"github.com/evmos/evmos/v14/x/revenue/v1/keeper"
-	"github.com/evmos/evmos/v14/x/revenue/v1/types"
+	"github.com/qredo/fusionchain/x/revenue/v1/client/cli"
+	"github.com/qredo/fusionchain/x/revenue/v1/keeper"
+	"github.com/qredo/fusionchain/x/revenue/v1/types"
 )
 
 // consensusVersion defines the current x/v1/revenue module consensus version.
