@@ -6,11 +6,9 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useBroadcaster } from "@/hooks/keplr";
-import { useQuery } from "@tanstack/react-query";
-import { policyById } from "@/client/policy";
 import { useKeplrAddress } from "@/keplr";
-import Policy from "./policy";
 import { MsgUpdateWorkspace } from "@/proto/fusionchain/identity/tx_pb";
+import PolicyPreviewCard from "./policy_preview_card";
 
 export default function WorkspacePolicyCard({ workspace }: { workspace: Workspace }) {
   const addr = useKeplrAddress();
@@ -47,10 +45,10 @@ function ViewCardContent({ workspace, onEdit }: { workspace: Workspace, onEdit: 
     <>
       <CardContent className="flex flex-col gap-4">
         <CardRow label="Admin policy">
-          <PreviewPolicyCard id={workspace.adminPolicyId.toString()} />
+          <PolicyPreviewCard id={workspace.adminPolicyId.toString()} />
         </CardRow>
         <CardRow label="Sign policy">
-          <PreviewPolicyCard id={workspace.signPolicyId.toString()} />
+          <PolicyPreviewCard id={workspace.signPolicyId.toString()} />
         </CardRow>
       </CardContent>
       <CardFooter>
@@ -73,7 +71,7 @@ function EditCardContent({ workspace, onSave }: { workspace: Workspace, onSave: 
             <Input value={adminPolicyId} onChange={e => setAdminPolicyId(e.target.value)} />
           </div>
 
-          <PreviewPolicyCard id={adminPolicyId} />
+          <PolicyPreviewCard id={adminPolicyId} />
         </div>
 
         <div className="flex flex-col gap-2">
@@ -82,7 +80,7 @@ function EditCardContent({ workspace, onSave }: { workspace: Workspace, onSave: 
             <Input value={signPolicyId} onChange={e => setSignPolicyId(e.target.value)} />
           </div>
 
-          <PreviewPolicyCard id={signPolicyId} />
+          <PolicyPreviewCard id={signPolicyId} />
         </div>
       </CardContent>
       <CardFooter>
@@ -92,47 +90,3 @@ function EditCardContent({ workspace, onSave }: { workspace: Workspace, onSave: 
   );
 }
 
-function PreviewPolicyCard({ id }: { id: string }) {
-  const q = useQuery(["policy", id], () => policyById(id), {
-    refetchInterval: Infinity,
-    retry: false,
-  });
-
-  if (id === "0") {
-    return (
-      <Card>
-        <CardHeader>
-          <CardDescription>Default policy applied</CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
-
-  if (q.status === "loading") {
-    return (
-      <Card>
-        <CardHeader>
-          <CardDescription>Loading policy #{id}...</CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
-
-  if (q.status === "error") {
-    return (
-      <Card>
-        <CardHeader>
-          <CardDescription>Error loading policy</CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
-
-  if (!q.data?.policy) {
-    return null;
-  }
-
-  return (
-    <Policy response={q.data.policy} />
-  );
-}
