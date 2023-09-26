@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/core"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	"golang.org/x/exp/slices"
+	// "golang.org/x/exp/slices"
 
 	evmtypes "github.com/qredo/fusionchain/x/evm/types"
 
@@ -54,24 +54,24 @@ func (k Keeper) PostTxProcessing(
 		return nil
 	}
 
-	evmParams := k.evmKeeper.GetParams(ctx)
+	// evmParams := k.evmKeeper.GetParams(ctx)
 
 	var withdrawer sdk.AccAddress
-	containsPrecompile := slices.Contains(evmParams.ActivePrecompiles, contract.String())
+	// containsPrecompile := slices.Contains(evmParams.ActivePrecompiles, contract.String())
 	// if the contract is not a precompile, check if the contract is registered in the revenue module.
 	// else, return and avoid performing unnecessary logic
-	if !containsPrecompile {
-		// if the contract is not registered to receive fees, do nothing
-		revenue, found := k.GetRevenue(ctx, *contract)
-		if !found {
-			return nil
-		}
-
-		withdrawer = revenue.GetWithdrawerAddr()
-		if len(withdrawer) == 0 {
-			withdrawer = revenue.GetDeployerAddr()
-		}
+	// if !containsPrecompile {
+	// if the contract is not registered to receive fees, do nothing
+	revenue, found := k.GetRevenue(ctx, *contract)
+	if !found {
+		return nil
 	}
+
+	withdrawer = revenue.GetWithdrawerAddr()
+	if len(withdrawer) == 0 {
+		withdrawer = revenue.GetDeployerAddr()
+	}
+	// }
 
 	// calculate fees to be paid
 	txFee := sdk.NewIntFromUint64(receipt.GasUsed).Mul(sdk.NewIntFromBigInt(msg.GasPrice()))
@@ -80,26 +80,26 @@ func (k Keeper) PostTxProcessing(
 	fees := sdk.Coins{{Denom: evmDenom, Amount: developerFee}}
 
 	// get available precompiles from evm params and check if contract is in the list
-	if containsPrecompile {
-		if err := k.distributionKeeper.FundCommunityPool(ctx, fees, k.accountKeeper.GetModuleAddress(k.feeCollectorName)); err != nil {
-			return err
-		}
-	} else {
-		// distribute the fees to the contract deployer / withdraw address
-		err := k.bankKeeper.SendCoinsFromModuleToAccount(
-			ctx,
-			k.feeCollectorName,
-			withdrawer,
-			fees,
+	// if containsPrecompile {
+	// 	if err := k.distributionKeeper.FundCommunityPool(ctx, fees, k.accountKeeper.GetModuleAddress(k.feeCollectorName)); err != nil {
+	// 		return err
+	// 	}
+	// } else {
+	// distribute the fees to the contract deployer / withdraw address
+	err := k.bankKeeper.SendCoinsFromModuleToAccount(
+		ctx,
+		k.feeCollectorName,
+		withdrawer,
+		fees,
+	)
+	if err != nil {
+		return errorsmod.Wrapf(
+			err,
+			"fee collector account failed to distribute developer fees (%s) to withdraw address %s. contract %s",
+			fees, withdrawer, contract,
 		)
-		if err != nil {
-			return errorsmod.Wrapf(
-				err,
-				"fee collector account failed to distribute developer fees (%s) to withdraw address %s. contract %s",
-				fees, withdrawer, contract,
-			)
-		}
 	}
+	// }
 
 	ctx.EventManager().EmitEvents(
 		sdk.Events{
