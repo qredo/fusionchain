@@ -18,18 +18,17 @@ func CmdMsgUpdateWorkspace() *cobra.Command {
 		Short: "Broadcast message update-workspace",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
 			workspaceAddress := args[0]
-			adminPolicyId, err := strconv.ParseUint(args[1], 10, 64)
+			adminPolicyID, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
-			signPolicyId, err := strconv.ParseUint(args[2], 10, 64)
+			signPolicyID, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -37,8 +36,8 @@ func CmdMsgUpdateWorkspace() *cobra.Command {
 			msg := types.NewMsgUpdateWorkspace(
 				clientCtx.GetFromAddress().String(),
 				workspaceAddress,
-				adminPolicyId,
-				signPolicyId,
+				adminPolicyID,
+				signPolicyID,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

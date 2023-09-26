@@ -10,12 +10,12 @@ const TypeMsgUpdateWorkspace = "msg_update_workspace"
 
 var _ sdk.Msg = &MsgUpdateWorkspace{}
 
-func NewMsgUpdateWorkspace(creator string, workspaceAddr string, adminPolicyId uint64, signPolicyId uint64) *MsgUpdateWorkspace {
+func NewMsgUpdateWorkspace(creator string, workspaceAddr string, adminPolicyID uint64, signPolicyID uint64) *MsgUpdateWorkspace {
 	return &MsgUpdateWorkspace{
 		Creator:       creator,
 		WorkspaceAddr: workspaceAddr,
-		AdminPolicyId: adminPolicyId,
-		SignPolicyId:  signPolicyId,
+		AdminPolicyId: adminPolicyID,
+		SignPolicyId:  signPolicyID,
 	}
 }
 
