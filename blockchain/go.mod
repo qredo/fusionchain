@@ -49,7 +49,6 @@ require (
 	github.com/tidwall/sjson v1.2.5
 	github.com/tyler-smith/go-bip39 v1.1.0
 	gitlab.qredo.com/edmund/blackbird/verifier/golang v0.1.2
-	golang.org/x/exp v0.0.0-20230810033253-352e893a4cad
 	golang.org/x/net v0.12.0
 	golang.org/x/text v0.12.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20230629202037-9506855d4529
@@ -220,6 +219,7 @@ require (
 	go.etcd.io/bbolt v1.3.7 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
+	golang.org/x/exp v0.0.0-20230810033253-352e893a4cad // indirect
 	golang.org/x/mod v0.11.0 // indirect
 	golang.org/x/oauth2 v0.8.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
@@ -245,7 +245,6 @@ replace (
 	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.23.5-0.20230809234655-d776d9c105ae
 	github.com/cometbft/cometbft => github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-sdk => github.com/qredo/cosmos-sdk v0.47.5-0.20230920170111-78ae0ce1bec6
-	github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.10
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 	gitlab.qredo.com/edmund/blackbird/verifier/golang v0.1.2 => github.com/qredo/blackbird/verifier/golang v0.0.0-20230330094021-716ea13e0979
