@@ -50,8 +50,7 @@ func NewChainContext() *ChainContext {
 // Engine implements Ethereum's core.ChainContext interface. As a ChainContext
 // implements the consensus.Engine interface, it is simply returned.
 func (cc *ChainContext) Engine() ethcons.Engine {
-	// return cc
-	panic("manually disabled until next ethermint upgrade")
+	return cc
 }
 
 // SetHeader implements Ethereum's core.ChainContext interface. It sets the
