@@ -51,17 +51,21 @@ func (k msgServer) UpdateWorkspaceActionHandler(ctx sdk.Context, act *bbirdtypes
 			}
 
 			if msg.AdminPolicyId != ws.AdminPolicyId {
-				_, found := k.policyKeeper.PolicyRepo().Get(ctx, msg.AdminPolicyId)
-				if !found {
-					return nil, fmt.Errorf("admin policy not found")
+				if msg.AdminPolicyId != 0 {
+					_, found := k.policyKeeper.PolicyRepo().Get(ctx, msg.AdminPolicyId)
+					if !found {
+						return nil, fmt.Errorf("admin policy not found")
+					}
 				}
 				ws.AdminPolicyId = msg.AdminPolicyId
 			}
 
 			if msg.SignPolicyId != ws.SignPolicyId {
-				_, found := k.policyKeeper.PolicyRepo().Get(ctx, msg.SignPolicyId)
-				if !found {
-					return nil, fmt.Errorf("sign policy not found")
+				if msg.SignPolicyId != 0 {
+					_, found := k.policyKeeper.PolicyRepo().Get(ctx, msg.SignPolicyId)
+					if !found {
+						return nil, fmt.Errorf("sign policy not found")
+					}
 				}
 				ws.SignPolicyId = msg.SignPolicyId
 			}
