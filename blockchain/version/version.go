@@ -35,6 +35,7 @@ var (
 	linkedDate   string // overwritten by -ldflag "-X 'github.com/qredo/fusionchain/blockchain/version.linkedDate=$build_date'"
 )
 
+// CommitHash returns the first 8 characters of the git commit hash
 // https://icinga.com/blog/2022/05/25/embedding-git-commit-information-in-go-binaries/
 var CommitHash = func() string {
 	if len(linkedCommit) > 7 {
@@ -51,6 +52,7 @@ var CommitHash = func() string {
 	return "00000000"
 }()
 
+// Date returns the compilation build time
 var Date = func() string {
 	if linkedDate != "" {
 		return linkedDate
