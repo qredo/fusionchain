@@ -8,8 +8,8 @@ import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
 import { Params } from "./params_pb.js";
 import { PageRequest, PageResponse } from "../../cosmos/base/query/v1beta1/pagination_pb.js";
 import { Key, KeyRequest, KeyRequestStatus } from "./key_pb.js";
-import { SignRequest, SignRequestStatus, SignTransactionRequest } from "./mpcsign_pb.js";
 import { Wallet, WalletType } from "./wallet_pb.js";
+import { SignRequest, SignRequestStatus, SignTransactionRequest } from "./mpcsign_pb.js";
 
 /**
  * QueryParamsRequest is request type for the Query/Params RPC method.
@@ -275,6 +275,13 @@ export class QueryKeysRequest extends Message<QueryKeysRequest> {
    */
   workspaceAddr = "";
 
+  /**
+   * Optional
+   *
+   * @generated from field: fusionchain.treasury.WalletType type = 3;
+   */
+  type = WalletType.UNSPECIFIED;
+
   constructor(data?: PartialMessage<QueryKeysRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -285,6 +292,7 @@ export class QueryKeysRequest extends Message<QueryKeysRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "pagination", kind: "message", T: PageRequest },
     { no: 2, name: "workspace_addr", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "type", kind: "enum", T: proto3.getEnumType(WalletType) },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): QueryKeysRequest {
@@ -314,9 +322,9 @@ export class QueryKeysResponse extends Message<QueryKeysResponse> {
   pagination?: PageResponse;
 
   /**
-   * @generated from field: repeated fusionchain.treasury.Key keys = 2;
+   * @generated from field: repeated fusionchain.treasury.KeyResponse keys = 2;
    */
-  keys: Key[] = [];
+  keys: KeyResponse[] = [];
 
   constructor(data?: PartialMessage<QueryKeysResponse>) {
     super();
@@ -327,7 +335,7 @@ export class QueryKeysResponse extends Message<QueryKeysResponse> {
   static readonly typeName = "fusionchain.treasury.QueryKeysResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "pagination", kind: "message", T: PageResponse },
-    { no: 2, name: "keys", kind: "message", T: Key, repeated: true },
+    { no: 2, name: "keys", kind: "message", T: KeyResponse, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): QueryKeysResponse {
@@ -344,6 +352,49 @@ export class QueryKeysResponse extends Message<QueryKeysResponse> {
 
   static equals(a: QueryKeysResponse | PlainMessage<QueryKeysResponse> | undefined, b: QueryKeysResponse | PlainMessage<QueryKeysResponse> | undefined): boolean {
     return proto3.util.equals(QueryKeysResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message fusionchain.treasury.KeyResponse
+ */
+export class KeyResponse extends Message<KeyResponse> {
+  /**
+   * @generated from field: fusionchain.treasury.Key key = 1;
+   */
+  key?: Key;
+
+  /**
+   * @generated from field: string address = 2;
+   */
+  address = "";
+
+  constructor(data?: PartialMessage<KeyResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fusionchain.treasury.KeyResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "key", kind: "message", T: Key },
+    { no: 2, name: "address", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): KeyResponse {
+    return new KeyResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): KeyResponse {
+    return new KeyResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): KeyResponse {
+    return new KeyResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: KeyResponse | PlainMessage<KeyResponse> | undefined, b: KeyResponse | PlainMessage<KeyResponse> | undefined): boolean {
+    return proto3.util.equals(KeyResponse, a, b);
   }
 }
 
