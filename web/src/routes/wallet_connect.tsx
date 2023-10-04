@@ -1,14 +1,22 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Core } from '@walletconnect/core'
-import { RELAYER_EVENTS } from '@walletconnect/core'
-import { IWeb3Wallet, Web3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+import { IWeb3Wallet, Web3Wallet } from '@walletconnect/web3wallet'
 import { buildApprovedNamespaces } from '@walletconnect/utils'
 import { ProposalTypes, PendingRequestTypes } from "@walletconnect/types";
 import { AuthEngineTypes } from "@walletconnect/auth-client";
-import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { keys } from '@/client/treasury';
+import { WalletType } from '@/proto/fusionchain/treasury/wallet_pb';
+import { useBroadcaster } from '@/hooks/keplr';
+import { useKeplrAddress } from '@/keplr';
+import { MsgNewSignatureRequest } from '@/proto/fusionchain/treasury/tx_pb';
+import { protoInt64 } from "@bufbuild/protobuf";
+import { fromHex } from '@cosmjs/encoding';
+import { Any } from "@bufbuild/protobuf";
+import { registry } from '@/proto';
+import { TxResponse } from '@/proto/cosmos/base/abci/v1beta1/abci_pb';
 
 function useWeb3Wallet(relayUrl: string) {
   const [w, setW] = useState<IWeb3Wallet | null>(null);
@@ -95,9 +103,9 @@ function useWeb3Wallet(relayUrl: string) {
 const supportedNamespaces = {
   eip155: {
     chains: [
-      'eip155:1',
-      'eip155:5',
-      'eip155:11155111',
+      'eip155:1', // ETH mainnet
+      'eip155:5', // ETH Goerli testnet
+      'eip155:11155111', // ETH Sepolia testnet
     ],
     methods: [
       'personal_sign',
@@ -110,22 +118,39 @@ const supportedNamespaces = {
       'eth_sendTransaction'
     ],
     events: ['accountsChanged', 'chainChanged'],
-    accounts: [
-      // fake hardcoded ETH address
-      `eip155:1:0x965C8f3C371ef27B4aFD701821Aa3070AbE4b57d`, // mainnet
-      `eip155:5:0x965C8f3C371ef27B4aFD701821Aa3070AbE4b57d`, // goerli
-      `eip155:11155111:0x965C8f3C371ef27B4aFD701821Aa3070AbE4b57d`, // sepolia
-    ],
   },
+}
+
+async function fetchEthAddresses() {
+  const res = await keys("qredoworkspace10j06zdk5gyl6vrss5d5", WalletType.ETH_SEPOLIA);
+  return res.keys.map((key) => key.address);
+}
+
+async function findKeyByAddress(address: string) {
+  const res = await keys("qredoworkspace10j06zdk5gyl6vrss5d5", WalletType.ETH_SEPOLIA);
+  return res.keys.find((key) => key.address === address);
 }
 
 async function approveSession(w: IWeb3Wallet, proposal: any) {
   console.log('approving session proposal', proposal)
   const { id, relays } = proposal;
 
+  const ethereumAddresses = await fetchEthAddresses();
+  console.log('ethereum addresses', ethereumAddresses)
+
   const namespaces = buildApprovedNamespaces({
     proposal,
-    supportedNamespaces
+    supportedNamespaces: {
+      ...supportedNamespaces,
+      eip155: {
+        ...supportedNamespaces.eip155,
+        accounts: [
+          ...ethereumAddresses.map((address) => `eip155:1:${address}`),
+          ...ethereumAddresses.map((address) => `eip155:5:${address}`),
+          ...ethereumAddresses.map((address) => `eip155:11155111:${address}`),
+        ],
+      },
+    },
   })
 
   console.log('approving namespaces:', namespaces)
@@ -142,6 +167,42 @@ async function approveSession(w: IWeb3Wallet, proposal: any) {
   }
 }
 
+function useRequestSignature() {
+  const addr = useKeplrAddress();
+  const { broadcast } = useBroadcaster();
+  return async (keyId: number | bigint, dataHex: string) => {
+    if (dataHex.startsWith('0x')) {
+      dataHex = dataHex.slice(2);
+    }
+    const data = fromHex(dataHex);
+
+    const res = await broadcast([
+      new MsgNewSignatureRequest({
+        creator: addr,
+        keyId: protoInt64.parse(keyId),
+        dataForSigning: data,
+      }),
+    ]);
+
+    if (!res || !res.result) {
+      throw new Error('failed to broadcast tx');
+    }
+
+    if (res.result?.tx_result.code) {
+      throw new Error(`tx failed with code ${res.result?.tx_result.code}`);
+    }
+
+    console.log("XXXX", res.result.tx_result.data);
+    const bytes = Uint8Array.from(atob(res.result.tx_result.data), c => c.charCodeAt(0));
+    console.log("XXXX", bytes);
+    const any = Any.fromBinary(bytes);
+    console.log("XXXX", any);
+    const result = any.unpack(registry);
+    console.log("XXXX", result);
+
+  }
+}
+
 export default function WalletConnectPage() {
   return (
     <div>
@@ -151,6 +212,7 @@ export default function WalletConnectPage() {
 }
 
 function WalletConnect() {
+  const requestSignature = useRequestSignature();
   const { w, sessionProposals, authRequests, sessionRequests } = useWeb3Wallet('wss://relay.walletconnect.org');
   const [loading, setLoading] = useState(false)
   const [uri, setUri] = useState("");
@@ -222,9 +284,18 @@ function WalletConnect() {
 
                 switch (req.params.request.method) {
                   case 'personal_sign': {
-                    const msg = req.params.request.params[0];
                     const address = req.params.request.params[1];
-                    const signature = "0xdeadbeef";
+                    const key = await findKeyByAddress(address);
+                    if (!key) {
+                      console.error('Unknown address', address);
+                      return;
+                    }
+
+                    const msg = req.params.request.params[0];
+
+                    await requestSignature(key.key!.id, msg);
+
+                    const signature = "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef";
                     response = {
                       result: signature,
                       id: req.id,

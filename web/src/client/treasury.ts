@@ -1,3 +1,4 @@
+import { WalletType } from "@/proto/fusionchain/treasury/wallet_pb";
 import { QueryKeyRequestsResponse, QueryKeysResponse, QuerySignTransactionRequestsResponse, QuerySignatureRequestsResponse, QueryWalletByIdResponse, QueryWalletsResponse } from "../proto/fusionchain/treasury/query_pb";
 import { path, query } from "./common";
 
@@ -29,9 +30,10 @@ export async function keyRequests(
   return QueryKeyRequestsResponse.fromJson(data);
 }
 
-export async function keys(workspaceAddr: string): Promise<QueryKeysResponse> {
+export async function keys(workspaceAddr: string, walletType?: WalletType): Promise<QueryKeysResponse> {
   const data = await query(path(["fusionchain", "treasury", "keys"], {
     workspace_addr: workspaceAddr,
+    type: walletType,
   }));
   return QueryKeysResponse.fromJson(data);
 }
