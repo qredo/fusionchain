@@ -17,13 +17,15 @@ func TestMsgRevokeAction_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgRevokeAction{
-				Creator: "invalid_address",
+				Creator:    "invalid_address",
+				ActionType: "action_type",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgRevokeAction{
-				Creator: sample.AccAddress(),
+				Creator:    sample.AccAddress(),
+				ActionType: "action_type",
 			},
 		},
 	}
