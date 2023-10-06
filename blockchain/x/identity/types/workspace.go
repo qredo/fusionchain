@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+
 	"github.com/qredo/fusionchain/policy"
 )
 
