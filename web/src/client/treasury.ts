@@ -1,5 +1,5 @@
 import { WalletType } from "@/proto/fusionchain/treasury/wallet_pb";
-import { QueryKeyRequestsResponse, QueryKeysResponse, QuerySignTransactionRequestsResponse, QuerySignatureRequestsResponse, QueryWalletByIdResponse, QueryWalletsResponse } from "../proto/fusionchain/treasury/query_pb";
+import { QueryKeyRequestsResponse, QueryKeysResponse, QuerySignTransactionRequestsResponse, QuerySignatureRequestByIdResponse, QuerySignatureRequestsResponse, QueryWalletByIdResponse, QueryWalletsResponse } from "../proto/fusionchain/treasury/query_pb";
 import { path, query } from "./common";
 
 export enum KeyRequestStatus {
@@ -42,6 +42,12 @@ export async function signatureRequests(status: number): Promise<QuerySignatureR
   const p = path(["fusionchain", "treasury", "get_signature_requests"], { status });
   const data = await query(p);
   return QuerySignatureRequestsResponse.fromJson(data);
+}
+
+export async function signatureRequestByID(id: number | bigint): Promise<QuerySignatureRequestByIdResponse> {
+  const p = path(["fusionchain", "treasury", "signature_request_by_id"], { id });
+  const data = await query(p);
+  return QuerySignatureRequestByIdResponse.fromJson(data);
 }
 
 export async function signTransactionRequests(walletId: number | bigint | string, status: number) {
