@@ -21,7 +21,8 @@ message Action {
   uint64 creation_time = 7;
   uint64 ttl = 8;
   // the amount of time where an approvement of this action may be
-  // accepted. TTL contains number of blocks to wait until the rejection.
+  // accepted. TTL contains number of blocks to wait. Otherwise, the action will
+  // be rejected
 }
 
 // Current status of an action.

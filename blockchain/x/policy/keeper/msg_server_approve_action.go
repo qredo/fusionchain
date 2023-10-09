@@ -19,10 +19,9 @@ func (k msgServer) ApproveAction(goCtx context.Context, msg *types.MsgApproveAct
 	if act.Status != types.ActionStatus_ACTION_STATUS_PENDING {
 		return nil, fmt.Errorf("action not pending %s", act.Status.String())
 	}
-	if act.Ttl+act.CreationTime > uint64(ctx.BlockHeight()) {
+	if act.Ttl+act.CreationTime < uint64(ctx.BlockHeight()) {
 		act.Status = types.ActionStatus_ACTION_STATUS_REJECTED
 		k.SetAction(ctx, &act)
-		// it should be tested
 		return nil, fmt.Errorf("action is rejected")
 	}
 
