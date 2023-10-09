@@ -16,7 +16,7 @@ var _ = strconv.Itoa(0)
 
 func CmdNewKeyRequest() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   `new-key-request [workspace-addr] [keyring-id] [key-type: "secp256k1" | "ed25519"] [ttl]`,
+		Use:   `new-key-request [workspace-addr] [keyring-id] [key-type: "secp256k1" | "ed25519"] [btl]`,
 		Short: "Broadcast message NewKeyRequest",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -44,7 +44,7 @@ func CmdNewKeyRequest() *cobra.Command {
 				return fmt.Errorf("invalid key type: %s. Use one of: ecdsa, eddsa", args[1])
 			}
 
-			ttl, err := strconv.ParseUint(args[3], 10, 64)
+			btl, err := strconv.ParseUint(args[3], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -53,7 +53,7 @@ func CmdNewKeyRequest() *cobra.Command {
 				args[0],
 				keyringID,
 				keyType,
-				ttl,
+				btl,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
