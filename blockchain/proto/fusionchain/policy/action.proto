@@ -18,13 +18,10 @@ message Action {
   // policy is satisfied.
   google.protobuf.Any msg = 5;
   string creator = 6;
-  uint64 creation_time = 7;
-  uint64 ttl = 8;
-  // the amount of time where an approvement of this action may be
-  // accepted. TTL contains number of blocks to wait. Otherwise, the action will
-  // be rejected
+  uint64 ttl = 7;
+  //  TTL Time to live (TTL) represents the number of blocks in which my
+  //  action can be approved or rejected.
 }
-
 // Current status of an action.
 enum ActionStatus {
   // Unspecified status.
@@ -40,5 +37,5 @@ enum ActionStatus {
   ACTION_STATUS_REVOKED = 3;
 
   // Action has been rejected since Ttl is expired
-  ACTION_STATUS_REJECTED = 4;
+  ACTION_STATUS_TIMEOUT = 4;
 }
