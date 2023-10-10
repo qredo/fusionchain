@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdKeyringById() *cobra.Command {
+func CmdKeyringByID() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "keyring-by-id [id]",
 		Short: "Query keyring-by-id",

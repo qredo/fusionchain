@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) KeyringById(goCtx context.Context, req *types.QueryKeyringByIdRequest) (*types.QueryKeyringByIdResponse, error) {
+func (k Keeper) KeyringByID(goCtx context.Context, req *types.QueryKeyringByIdRequest) (*types.QueryKeyringByIdResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}

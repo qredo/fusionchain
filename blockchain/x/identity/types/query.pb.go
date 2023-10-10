@@ -680,7 +680,7 @@ func (c *queryClient) WorkspaceByAddress(ctx context.Context, in *QueryWorkspace
 
 func (c *queryClient) KeyringById(ctx context.Context, in *QueryKeyringByIdRequest, opts ...grpc.CallOption) (*QueryKeyringByIdResponse, error) {
 	out := new(QueryKeyringByIdResponse)
-	err := c.cc.Invoke(ctx, "/fusionchain.identity.Query/KeyringById", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/fusionchain.identity.Query/KeyringByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -700,7 +700,7 @@ type QueryServer interface {
 	// Queries a list of WorkspaceByAddress items.
 	WorkspaceByAddress(context.Context, *QueryWorkspaceByAddressRequest) (*QueryWorkspaceByAddressResponse, error)
 	// Queries a list of KeyringById items.
-	KeyringById(context.Context, *QueryKeyringByIdRequest) (*QueryKeyringByIdResponse, error)
+	KeyringByID(context.Context, *QueryKeyringByIdRequest) (*QueryKeyringByIdResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -722,8 +722,8 @@ func (*UnimplementedQueryServer) Keyrings(ctx context.Context, req *QueryKeyring
 func (*UnimplementedQueryServer) WorkspaceByAddress(ctx context.Context, req *QueryWorkspaceByAddressRequest) (*QueryWorkspaceByAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WorkspaceByAddress not implemented")
 }
-func (*UnimplementedQueryServer) KeyringById(ctx context.Context, req *QueryKeyringByIdRequest) (*QueryKeyringByIdResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method KeyringById not implemented")
+func (*UnimplementedQueryServer) KeyringByID(ctx context.Context, req *QueryKeyringByIdRequest) (*QueryKeyringByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method KeyringByID not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -826,14 +826,14 @@ func _Query_KeyringById_Handler(srv interface{}, ctx context.Context, dec func(i
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).KeyringById(ctx, in)
+		return srv.(QueryServer).KeyringByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/fusionchain.identity.Query/KeyringById",
+		FullMethod: "/fusionchain.identity.Query/KeyringByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).KeyringById(ctx, req.(*QueryKeyringByIdRequest))
+		return srv.(QueryServer).KeyringByID(ctx, req.(*QueryKeyringByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -863,7 +863,7 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_WorkspaceByAddress_Handler,
 		},
 		{
-			MethodName: "KeyringById",
+			MethodName: "KeyringByID",
 			Handler:    _Query_KeyringById_Handler,
 		},
 	},
