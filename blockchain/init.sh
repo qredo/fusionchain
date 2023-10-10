@@ -94,7 +94,7 @@ fusiond collect-gentxs
 # Run this to ensure everything worked and that the genesis file is setup correctly
 fusiond validate-genesis
 
-if [[ $1 != "--defaultports" ]]; then
+if [[ $1 == "--alternateports" ]]; then
 # Change ports to avoid conflicts with other chains running locally
   ssed -i 's/26656/27656/g' $HOME/.fusiond/config/config.toml
   ssed -i 's/26657/27657/g' $HOME/.fusiond/config/config.toml
