@@ -1,8 +1,8 @@
 package testutil
 
 const (
-	// TestnetChainID defines the Evmos EIP155 chain ID for testnet
-	TestnetChainID = "fusion_420"
-	// BaseDenom defines the Evmos mainnet denomination
+	// TestnetChainID defines the EIP155 chain ID for testnet
+	TestnetChainID = "qredofusiontestnet-0"
+	// BaseDenom defines the mainnet denomination
 	BaseDenom = "nQRDO"
 )

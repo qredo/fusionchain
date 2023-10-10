@@ -2,8 +2,8 @@
 
 K1="shulgin"
 K2="pootis"
-CHAINID="fusion_420-1"
-MONIKER="fusiontestnet"
+CHAINID="qredofusiontestnet-0"
+MONIKER="qredofusiontestnet"
 KEYRING="test"
 #KEYALGO="eth_secp256k1"
 LOGLEVEL="info"
