@@ -30,15 +30,16 @@ func (k Keeper) Keys(goCtx context.Context, req *types.QueryKeysRequest) (*types
 		response := &types.KeyResponse{
 			Key: value,
 		}
-		if req.Type != types.WalletType_WALLET_TYPE_UNSPECIFIED {
+
+		if req.Type != types.WalletRequestType_WALLET_REQUEST_TYPE_UNSPECIFIED {
 			var (
 				address string
 				err     error
 			)
 			switch req.Type {
-			case types.WalletType_WALLET_TYPE_QRDO:
+			case types.WalletRequestType_WALLET_REQUEST_TYPE_QRDO:
 				address, err = types.FusionChainAddress(value)
-			case types.WalletType_WALLET_TYPE_ETH, types.WalletType_WALLET_TYPE_ETH_SEPOLIA:
+			case types.WalletRequestType_WALLET_REQUEST_TYPE_ETH_SEPOLIA, types.WalletRequestType_WALLET_REQUEST_TYPE_ETH:
 				address, err = types.EthereumAddress(value)
 			}
 			if err != nil {

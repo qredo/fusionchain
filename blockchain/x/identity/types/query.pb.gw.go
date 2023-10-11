@@ -226,7 +226,7 @@ func local_request_Query_KeyringById_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.KeyringByID(ctx, &protoReq)
+	msg, err := server.KeyringById(ctx, &protoReq)
 	return msg, metadata, err
 
 }
