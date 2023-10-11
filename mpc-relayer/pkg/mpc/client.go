@@ -58,7 +58,7 @@ func newClient(node Node, logger *logrus.Entry) (*client, string) {
 		port:                  node.Port,
 	}
 
-	conn, trace := c.CheckMPC()
+	conn, trace := c.Ping()
 	c.isConnected = conn
 	return c, trace
 }
@@ -198,8 +198,8 @@ func (m *client) Signature(sigRequestData *SigRequestData, keyType CryptoSystem)
 	return mPCMPCResponse, traceID, nil
 }
 
-// CheckMPC - Status check MPC endpoint returns boolean value indicating connection status and a trace identifier
-func (m *client) CheckMPC() (bool, string) {
+// Ping - Status check MPC endpoint returns boolean value indicating connection status and a trace identifier
+func (m *client) Ping() (bool, string) {
 	return m.checkEndpoint(Status)
 }
 

@@ -62,7 +62,7 @@ var (
 		{name: "ec8", keyType: EcDSA, key: "02fb062ae96f23f9fce28473a3f5723b09a18130f839b05b13fe55d00820ffab72", EcR: "830f6206890625f5fb3ecd76ae4953de08231325b33ed9b2ab6c1d336ab141a1", EcS: "4bffc5b41f1b98cbd9b5f7198421d8328df3cd3689ce1172658e9dd0e7ca7348"},
 		{name: "ed1", keyType: EdDSA, EdPk: "c2224fafb6282fae4d49204afefec2de919fea1b1cfea8de188fc74328ea12be", EdR: "fccbd0f8907d069d93395c1e2107f380ab7d6566f74cb383a70c6105ef3df246", EdS: "ed08e2abc50edeeea1087a6c9fa342d36c551e950108e42d53911e14482d3900"},
 		{name: "ed2", keyType: EdDSA, EdPk: "8f9eebdf1e0499bb5dfd1076fea50f72d37a19dcb3a4e91c0fc19023ac9ba926", EdR: "cbe83bface18971f62c3e530df92b2729833f3ed36973ecfeef755e417ec3493", EdS: "6db6899521d9cb26a0750a5c4b844f76c65fa9d351f09319256c708bead97103"},
-		{name: "ec3", keyType: EdDSA, EdPk: "a50c3439c745cc1f79739df62b127edb3df18774bfc9973a598ae9d7f0879741", EdR: "ddc8382c2aaaf43b7a08f55a4c55af9b88f041ec9beedd51220e087b77b0e520", EdS: "e3d141c5cf2d513e3acac4cdeea6eb939ae3ab0e280bd12c4e2a7e3f814b6e01"},
+		{name: "ed3", keyType: EdDSA, EdPk: "a50c3439c745cc1f79739df62b127edb3df18774bfc9973a598ae9d7f0879741", EdR: "ddc8382c2aaaf43b7a08f55a4c55af9b88f041ec9beedd51220e087b77b0e520", EdS: "e3d141c5cf2d513e3acac4cdeea6eb939ae3ab0e280bd12c4e2a7e3f814b6e01"},
 		{name: "ed4", keyType: EdDSA, EdPk: "005f114779027ae05344bbeea3633b8fa675f427dbbbdaa48c57da68d91c354d", EdR: "d931895802e232bad99b8f5b3caab6741e8334ab9982261f23588056d031932c", EdS: "51b2c22f68cfc963f98fe9d1d9b35821b2c707ed1e0236d2f21a8daba865ec05"},
 	}
 )
@@ -102,8 +102,8 @@ func TestPubkeySignature(t *testing.T) {
 	}
 
 	serverURL, _ := url.Parse(server.URL)
-	classic := NewClient(Config{Node: []Node{{Host: serverURL.Hostname(), Port: serverURL.Port()}}}, log, 0)
-	local := NewClient(Config{Mock: true}, log, 0)
+	classic := NewClient(Config{Node: []Node{{Host: serverURL.Hostname(), Port: serverURL.Port()}}}, log)
+	local := NewClient(Config{Mock: true, Salt: 0}, log)
 
 	tt := []struct {
 		name   string
@@ -167,8 +167,8 @@ func TestSignature(t *testing.T) {
 
 	serverURL, _ := url.Parse(server.URL)
 
-	classic := NewClient(Config{Node: []Node{{Host: serverURL.Hostname(), Port: serverURL.Port()}}}, log, 0)
-	local := NewClient(Config{Mock: true}, log, 0)
+	classic := NewClient(Config{Node: []Node{{Host: serverURL.Hostname(), Port: serverURL.Port()}}}, log)
+	local := NewClient(Config{Mock: true, Salt: 0}, log)
 
 	var clients [2]Client
 	clients[0] = classic

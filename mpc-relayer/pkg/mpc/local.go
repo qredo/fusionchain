@@ -146,7 +146,7 @@ func (m *localMPC) Signature(sigRequestData *SigRequestData, keyType CryptoSyste
 	return response, traceID, err
 }
 
-func (m *localMPC) CheckMPC() (bool, string) {
+func (m *localMPC) Ping() (bool, string) {
 	b, err := common.RandomBytes(16)
 	if err != nil {
 		return false, ""

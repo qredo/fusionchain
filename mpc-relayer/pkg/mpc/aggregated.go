@@ -28,10 +28,10 @@ func (a aggregatedClient) Signature(sigRequestData *SigRequestData, keyType Cryp
 	return client.Signature(sigRequestData, keyType)
 }
 
-func (a aggregatedClient) CheckMPC() (bool, string) {
+func (a aggregatedClient) Ping() (bool, string) {
 	client := <-a.clients
 	defer func() {
 		a.clients <- client
 	}()
-	return client.CheckMPC()
+	return client.Ping()
 }

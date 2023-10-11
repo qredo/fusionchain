@@ -44,13 +44,14 @@ type Client interface {
 	PublicKey(keyID []byte, keyType CryptoSystem) ([]byte, string, error)
 	PubkeySignature(pubKey, keyID []byte, keyType CryptoSystem) ([]byte, string, error)
 	Signature(sigRequestData *SigRequestData, keyType CryptoSystem) (*SigResponse, string, error)
-	CheckMPC() (bool, string)
+	Ping() (bool, string)
 }
 
-// NewClient - Constructor
-func NewClient(config Config, logger *logrus.Entry, initVersion int) Client {
+// NewClient - Constructor creating a channel of MPC clients for multi-threaded access
+// to mpcclientparent endpoints
+func NewClient(config Config, logger *logrus.Entry) Client {
 	if config.Mock {
-		return newLocalClient(logger, initVersion)
+		return newLocalClient(logger, config.Salt)
 	}
 	clients := aggregatedClient{clients: make(chan Client, len(config.Node))}
 	for index, node := range config.Node {
@@ -139,5 +140,6 @@ type Node struct {
 // Config Stores MPC endpoint addresses
 type Config struct {
 	Mock bool `yaml:"mock"`
+	Salt int  `yaml:"salt"`
 	Node []Node
 }

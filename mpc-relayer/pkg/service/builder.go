@@ -1,33 +1,34 @@
 package service
 
-/*
 import (
+	"fmt"
+	"strconv"
+	"sync/atomic"
 	"time"
 
-	"github.com/qredo/assets/libs/nodeconnector"
-	"github.com/qredo/assets/libs/watcher/healthcheck"
-	"github.com/qredo/assets/libs/watcher/qredochain"
-	"github.com/qredo/assets/libs/watcher/services/writer"
+	"github.com/qredo/fusionchain/go-client"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/database"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/logger"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/mpc"
+	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
-type ServiceConfig struct {
-	Port        int        `yaml:"port"`
-	Path        string     `yaml:"path"`
-	FusionURL   string     `yaml:"fusion_url"`
-	Loglevel    string     `yaml:"loglevel"`
-	LogFormat   string     `yaml:"logformat"`
-	LogToFile   bool       `yaml:"logtofile"`
-	MPC         mpc.Config `yaml:"mpc"`
-	InitVersion int        `yaml:"initVersion"`
-	RetrySleep  int64      `yaml:"retrySleep"`
-	MaxTries    int64      `yaml:"maxTries"`
-	IndexStart  int64      `yaml:"indexStart"`
+const (
+	derivationPath = "m/44'/60'/0'/0/0"
+	fusionChainID  = "fusion_420-1"
+)
+
+type Module interface {
+	Start() error
+	Stop() error
 }
 
 func BuildService(config ServiceConfig) (*Service, error) {
+	if isEmpty(config) {
+		return nil, fmt.Errorf("no config file supplied")
+	}
 	log, err := logger.NewLogger(logger.Level(config.Loglevel), logger.Format(config.LogFormat), config.LogToFile, "signer")
 	if err != nil {
 		return nil, err
@@ -38,17 +39,66 @@ func BuildService(config ServiceConfig) (*Service, error) {
 		return nil, err
 	}
 
-	mpcClient := mpc.NewClient(config.MPC, log, config.InitVersion)
+	keyringID, identity, mpcClient, err := makeKeyringClient(&config, log)
+	if err != nil {
+		return nil, err
+	}
 
-	catchUp := qredochain.NewCatchUpFunc(nodeconnector.TendermintKeySearcher{Client: tmClient}, log)
-	processor := NewProcessor(nodeconnector.TendermintKeySearcher{Client: tmClient}, mpcClient, writer.NewClient(config.Writer))
-	retriever := NewRetriever(tmClient)
-	httpService := healthcheck.NewHTTPService(healthcheck.Config{Service: "signer"}, config.Qredochain)
-	service := New(kv, processor, catchUp, retriever, Config{
-		RetrySleep: time.Duration(config.RetrySleep) * time.Millisecond,
-		MaxTries:   config.MaxTries,
-		IndexStart: config.IndexStart,
-	}, httpService, tmClient)
+	queryClient, txClient, err := makeFusionGRPCClient(&config, identity)
+	if err != nil {
+		return nil, err
+	}
+	// make modules
 
-	return service, nil
+	keyChan := make(chan *keyRequestQueueItem)
+	sigchan := make(chan *signatureRequestQueueItem)
+
+	maxRetries := config.MaxTries
+	if maxRetries == 0 {
+		maxRetries = defaultMaxRetries
+	}
+	queryInterval := config.QueryInterval
+	if queryInterval == 0 {
+		queryInterval = defaultQueryInterval
+	}
+
+	return &Service{
+		keyringID: keyringID,
+		modules: []Module{
+			newQueryProcessor(keyringID, queryClient, keyChan, sigchan, log, time.Duration(queryInterval)*time.Second, int(maxRetries)),
+			newFusionKeyController(log, kv, keyChan, mpcClient, txClient),
+			newFusionSignatureController(log, kv, sigchan, mpcClient, txClient),
+		},
+		stop:    make(chan struct{}),
+		stopped: atomic.Bool{},
+	}, nil
+}
+
+func makeKeyringClient(config *ServiceConfig, log *logrus.Entry) (keyringID uint64, identity client.Identity, mpcClient mpc.Client, err error) {
+	mpcClient = mpc.NewClient(config.MPC, log)
+
+	keyringID, err = strconv.ParseUint(config.KeyRingID, 10, 64)
+	if err != nil {
+		return
+	}
+
+	identity, err = client.NewIdentityFromSeed(derivationPath, config.Mnemonic)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func makeFusionGRPCClient(config *ServiceConfig, identity client.Identity) (QueryClient, TxClient, error) {
+	fusionGRPCClient, err := grpc.Dial(
+		config.FusionURL,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+	queryClient := client.NewQueryClientWithConn(fusionGRPCClient)
+	txClient := client.NewTxClient(identity, fusionChainID, fusionGRPCClient, queryClient)
+	return queryClient, txClient, nil
+
 }

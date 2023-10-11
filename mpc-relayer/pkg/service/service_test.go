@@ -1,4 +1,5 @@
 package service
+
 /*
 
 import (
@@ -10,11 +11,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/qredo/assets/libs/assets"
-	"github.com/qredo/assets/libs/protobuffer"
-	"github.com/qredo/assets/libs/store"
-	"github.com/qredo/assets/libs/watcher/database"
-	"github.com/qredo/assets/libs/watcher/qredochain"
 )
 
 func TestService_Start(t *testing.T) {
@@ -216,3 +212,5 @@ func Test_TXDecoder(t *testing.T) {
 	}
 
 }
+
+*/
