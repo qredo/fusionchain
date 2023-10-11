@@ -106,7 +106,7 @@ func (m *client) PublicKey(keyID []byte, keyType CryptoSystem) ([]byte, string, 
 
 	var pubKey []byte
 	switch keyType {
-	case EcDSA:
+	case EdDSA:
 		if mpcKeysResp.EdPk == "" {
 			log.WithFields(logrus.Fields{"error": ErrNoPubKey, "timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2)}).Error("mpcPubKeyErr")
 			return nil, traceID, ErrNoPubKey
@@ -116,7 +116,7 @@ func (m *client) PublicKey(keyID []byte, keyType CryptoSystem) ([]byte, string, 
 			log.WithFields(logrus.Fields{"error": err, "timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2)}).Error("mpcPubKeyErr")
 			return nil, traceID, err
 		}
-	case EdDSA:
+	case EcDSA:
 		if mpcKeysResp.Pk == "" {
 			log.WithFields(logrus.Fields{"error": ErrNoPubKey, "timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2)}).Error("mpcPubKeyErr")
 			return nil, traceID, ErrNoPubKey
@@ -137,8 +137,7 @@ func (m *client) PubkeySignature(pubKey, keyID []byte, keyType CryptoSystem) ([]
 	dataToSign := pubKey
 	if keyType == EcDSA {
 		// Note, for public key signing we use SHA256 to derive the message hash
-		// independent of the address (network) type. This means that ETH public keys are also verified using SHA256
-		// while ETH transaction signatures use Keccak256
+		// independent of the address (network) type.
 		h := sha256.Sum256(pubKey)
 		dataToSign = h[:]
 	}

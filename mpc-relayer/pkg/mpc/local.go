@@ -59,8 +59,12 @@ func (m *localMPC) PublicKey(keyID []byte, keyType CryptoSystem) ([]byte, string
 	if req.KeyID != response.KeyID {
 		return nil, "", fmt.Errorf("mpc keyID mismatch expected %v, got %v", req.KeyID, response.KeyID)
 	}
-	// Use decompressed PK if ETH
-	pubKeyBytes, err := hex.DecodeString(response.Pk)
+	// Extract key based on keyType
+	pK := response.Pk
+	if keyType == EdDSA {
+		pK = response.EdPk
+	}
+	pubKeyBytes, err := hex.DecodeString(pK)
 	if err != nil {
 		return nil, "", ErrNoPubKey
 	}
@@ -68,9 +72,11 @@ func (m *localMPC) PublicKey(keyID []byte, keyType CryptoSystem) ([]byte, string
 }
 
 func (m *localMPC) PubkeySignature(pubKey, seedID []byte, keyType CryptoSystem) ([]byte, string, error) {
-
-	h := sha256.Sum256(pubKey)
-	dataToSign := h[:]
+	dataToSign := pubKey
+	if keyType == EcDSA {
+		h := sha256.Sum256(pubKey)
+		dataToSign = h[:]
+	}
 
 	req := &SigRequest{
 		KeyID:   hex.EncodeToString(seedID),
@@ -210,18 +216,18 @@ func localMPCSign(req *SigRequest, salt int, keyType CryptoSystem) (resp *SigRes
 	sigR := new(big.Int).SetBytes(sigBytes[0:32])
 	sigS := new(big.Int).SetBytes(sigBytes[32:64])
 	resp = &SigResponse{
-		Service: "mpc cltctl (mock)",
+		Service: "mpcclientparent",
 		Message: "ok",
 		Version: "1.0.0",
 		KeyID:   req.KeyID,
 	}
 	switch keyType {
-	case EcDSA:
+	case EdDSA:
 		resp.EdMessage = req.Message
 		resp.EdR = toHexInt(sigR)
 		resp.EdS = toHexInt(sigS)
 		resp.EdPk = hex.EncodeToString(pubKeyBytes)
-	case EdDSA:
+	case EcDSA:
 		resp.EcMessage = req.Message
 		resp.EcR = toHexInt(sigR)
 		resp.EcS = toHexInt(sigS)
