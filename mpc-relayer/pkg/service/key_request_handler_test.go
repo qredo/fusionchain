@@ -14,11 +14,11 @@ import (
 type mockQueryClient struct{}
 
 func (m mockQueryClient) PendingKeyRequests(ctx context.Context, page *client.PageRequest, keyringID uint64) ([]*types.KeyRequest, error) {
-	return []*types.KeyRequest{}, nil
+	return []*types.KeyRequest{&types.KeyRequest{}}, nil
 }
 
 func (m mockQueryClient) PendingSignatureRequests(ctx context.Context, page *client.PageRequest, keyringID uint64) ([]*types.SignRequest, error) {
-	return []*types.SignRequest{}, nil
+	return []*types.SignRequest{&types.SignRequest{}}, nil
 }
 
 type mockTxClient struct{}
@@ -47,6 +47,9 @@ func Test_NewFusionKeyController(t *testing.T) {
 	f := newFusionKeyController(log, memoryDB, make(chan *keyRequestQueueItem), cl, mockTxClient{})
 	if f == nil {
 		t.Fatal("empty")
+	}
+	if err := f.Stop(); err != nil {
+		t.Fatal(err)
 	}
 	if err := memoryDB.Close(); err != nil {
 		t.Fatal(err)
@@ -79,7 +82,6 @@ func Test_ExecuteKeyQuery(t *testing.T) {
 	}
 	cl := mpc.NewClient(mpc.Config{Mock: true}, log)
 	k := newFusionKeyController(log, memoryDB, make(chan *keyRequestQueueItem), cl, mockTxClient{})
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := k.executeRequest(&tt.item)
@@ -87,6 +89,9 @@ func Test_ExecuteKeyQuery(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 		})
+	}
+	if err := k.Stop(); err != nil {
+		t.Fatal(err)
 	}
 	close(k.queue)
 	close(k.stop)

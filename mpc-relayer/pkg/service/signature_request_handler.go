@@ -38,7 +38,7 @@ func newFusionSignatureController(logger *logrus.Entry, db database.Database, q 
 	return &signatureController{
 		queue:                    q,
 		signatureRequestsHandler: s,
-		stop:                     make(chan struct{}),
+		stop:                     make(chan struct{}, 1),
 		retrySleep:               defaultRetryTimeout,
 	}
 }

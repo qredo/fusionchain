@@ -48,10 +48,10 @@ func BuildService(config ServiceConfig) (*Service, error) {
 	if err != nil {
 		return nil, err
 	}
-	// make modules
 
-	keyChan := make(chan *keyRequestQueueItem)
-	sigchan := make(chan *signatureRequestQueueItem)
+	// make modules
+	keyChan := make(chan *keyRequestQueueItem, defaultChanSize)
+	sigchan := make(chan *signatureRequestQueueItem, defaultChanSize)
 
 	maxRetries := config.MaxTries
 	if maxRetries == 0 {
@@ -65,7 +65,8 @@ func BuildService(config ServiceConfig) (*Service, error) {
 	return &Service{
 		keyringID: keyringID,
 		modules: []Module{
-			newQueryProcessor(keyringID, queryClient, keyChan, sigchan, log, time.Duration(queryInterval)*time.Second, int(maxRetries)),
+			newKeyQueryProcessor(keyringID, queryClient, keyChan, log, time.Duration(queryInterval)*time.Second, int(maxRetries)),
+			newSigQueryProcessor(keyringID, queryClient, sigchan, log, time.Duration(queryInterval)*time.Second, int(maxRetries)),
 			newFusionKeyController(log, kv, keyChan, mpcClient, txClient),
 			newFusionSignatureController(log, kv, sigchan, mpcClient, txClient),
 		},

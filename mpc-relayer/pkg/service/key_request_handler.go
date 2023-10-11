@@ -34,7 +34,7 @@ func newFusionKeyController(logger *logrus.Entry, db database.Database, q chan *
 	return &keyController{
 		queue:              q,
 		keyRequestsHandler: k,
-		stop:               make(chan struct{}),
+		stop:               make(chan struct{}, 1),
 		retrySleep:         defaultRetryTimeout,
 	}
 }

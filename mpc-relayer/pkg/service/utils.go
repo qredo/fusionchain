@@ -14,6 +14,8 @@ var (
 	defaultQueryInterval int64 = 5
 
 	defaultRetryTimeout = 30 * time.Second
+
+	defaultChanSize = 1000
 )
 
 func requeueKeyItemWithTimeout(c chan *keyRequestQueueItem, item *keyRequestQueueItem, timeout time.Duration) {

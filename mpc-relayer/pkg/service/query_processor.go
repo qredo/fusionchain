@@ -2,17 +2,85 @@ package service
 
 import (
 	"context"
-	"sync"
 	"time"
 
 	"github.com/qredo/fusionchain/go-client"
 	"github.com/sirupsen/logrus"
 )
 
-type queryProcessor struct {
+type keyQueryProcessor struct {
 	keyRingID      uint64
 	queryClient    QueryClient
 	keyRequestChan chan *keyRequestQueueItem
+	stop           chan struct{}
+	tickDuration   time.Duration
+
+	log      *logrus.Entry
+	maxTries int
+}
+
+func newKeyQueryProcessor(keyringId uint64, q QueryClient, k chan *keyRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *keyQueryProcessor {
+	return &keyQueryProcessor{
+		keyRingID:      keyringId,
+		queryClient:    q,
+		keyRequestChan: k,
+		stop:           make(chan struct{}, 1),
+		tickDuration:   t,
+		log:            log,
+		maxTries:       maxTries,
+	}
+}
+
+func (q keyQueryProcessor) Start() error {
+	go q.startTicker()
+	return nil
+}
+
+func (q keyQueryProcessor) startTicker() {
+	ticker := time.NewTicker(q.tickDuration)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-q.stop:
+			return
+		case <-ticker.C:
+			// Process Key request queries
+			go func() {
+				if err := q.executeKeyQuery(); err != nil {
+					q.log.WithField("error", err.Error()).Error("pendingKeyQueryErr")
+				}
+			}()
+		}
+	}
+}
+
+func (q keyQueryProcessor) executeKeyQuery() error {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
+	defer cancelFunc()
+	pendingKeyRequests, err := q.queryClient.PendingKeyRequests(ctx, &client.PageRequest{
+		Limit: 10,
+	}, q.keyRingID)
+	if err != nil {
+		return err
+	}
+	for _, r := range pendingKeyRequests {
+		newItem := &keyRequestQueueItem{
+			request:  r,
+			maxTries: q.maxTries,
+		}
+		q.keyRequestChan <- newItem
+	}
+	return nil
+}
+
+func (q keyQueryProcessor) Stop() error {
+	q.stop <- struct{}{}
+	return nil
+}
+
+type sigQueryProcessor struct {
+	keyRingID      uint64
+	queryClient    QueryClient
 	sigRequestChan chan *signatureRequestQueueItem
 	stop           chan struct{}
 	tickDuration   time.Duration
@@ -21,26 +89,24 @@ type queryProcessor struct {
 	maxTries int
 }
 
-func newQueryProcessor(keyringId uint64, q QueryClient, k chan *keyRequestQueueItem, s chan *signatureRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *queryProcessor {
-	return &queryProcessor{
+func newSigQueryProcessor(keyringId uint64, q QueryClient, s chan *signatureRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *sigQueryProcessor {
+	return &sigQueryProcessor{
 		keyRingID:      keyringId,
 		queryClient:    q,
-		keyRequestChan: k,
 		sigRequestChan: s,
-		stop:           make(chan struct{}),
+		stop:           make(chan struct{}, 1),
 		tickDuration:   t,
 		log:            log,
 		maxTries:       maxTries,
 	}
 }
 
-func (q queryProcessor) Start() error {
+func (q sigQueryProcessor) Start() error {
 	go q.startTicker()
 	return nil
 }
 
-func (q queryProcessor) startTicker() {
-	mu := sync.Mutex{}
+func (q sigQueryProcessor) startTicker() {
 	ticker := time.NewTicker(q.tickDuration)
 	defer ticker.Stop()
 	for {
@@ -48,47 +114,10 @@ func (q queryProcessor) startTicker() {
 		case <-q.stop:
 			return
 		case <-ticker.C:
-
-			// Process Key request queries
-			go func() {
-				ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
-				defer cancelFunc()
-				mu.Lock()
-				pendingKeyRequests, err := q.queryClient.PendingKeyRequests(ctx, &client.PageRequest{
-					Limit: 10,
-				}, q.keyRingID)
-				mu.Unlock()
-				if err != nil {
-					q.log.WithField("error", err.Error()).Error("keyQueryErr")
-					return
-				}
-				for _, r := range pendingKeyRequests {
-					newItem := &keyRequestQueueItem{
-						request:  r,
-						maxTries: q.maxTries,
-					}
-					q.keyRequestChan <- newItem
-				}
-			}()
 			// Process Signature request queries
 			go func() {
-				ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
-				defer cancelFunc()
-				mu.Lock()
-				pendingSigRequests, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{
-					Limit: 10,
-				}, q.keyRingID)
-				mu.Unlock()
-				if err != nil {
-					q.log.WithField("error", err.Error()).Error("keyQueryErr")
-					return
-				}
-				for _, r := range pendingSigRequests {
-					newItem := &signatureRequestQueueItem{
-						request:  r,
-						maxTries: q.maxTries,
-					}
-					q.sigRequestChan <- newItem
+				if err := q.executeSignatureQuery(); err != nil {
+					q.log.WithField("error", err.Error()).Error("pendingSigQueryErr")
 				}
 			}()
 
@@ -96,7 +125,26 @@ func (q queryProcessor) startTicker() {
 	}
 }
 
-func (q queryProcessor) Stop() error {
+func (q sigQueryProcessor) executeSignatureQuery() error {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
+	defer cancelFunc()
+	pendingSigRequests, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{
+		Limit: 10,
+	}, q.keyRingID)
+	if err != nil {
+		return err
+	}
+	for _, r := range pendingSigRequests {
+		newItem := &signatureRequestQueueItem{
+			request:  r,
+			maxTries: q.maxTries,
+		}
+		q.sigRequestChan <- newItem
+	}
+	return nil
+}
+
+func (q sigQueryProcessor) Stop() error {
 	q.stop <- struct{}{}
 	return nil
 }
