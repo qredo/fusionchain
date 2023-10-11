@@ -60,6 +60,7 @@ func (q queryProcessor) startTicker() {
 				mu.Unlock()
 				if err != nil {
 					q.log.WithField("error", err.Error()).Error("keyQueryErr")
+					return
 				}
 				for _, r := range pendingKeyRequests {
 					newItem := &keyRequestQueueItem{
@@ -80,6 +81,7 @@ func (q queryProcessor) startTicker() {
 				mu.Unlock()
 				if err != nil {
 					q.log.WithField("error", err.Error()).Error("keyQueryErr")
+					return
 				}
 				for _, r := range pendingSigRequests {
 					newItem := &signatureRequestQueueItem{

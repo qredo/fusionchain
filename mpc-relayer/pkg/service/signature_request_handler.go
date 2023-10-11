@@ -58,7 +58,11 @@ func (s *signatureController) startExecutor() {
 		case <-s.stop:
 			return
 		case item := <-s.queue:
-			go s.executeRequest(item)
+			go func() {
+				if err := s.executeRequest(item); err != nil {
+					s.log.WithField("error", err.Error()).Error("signRequestErr")
+				}
+			}()
 		}
 	}
 }
@@ -67,15 +71,16 @@ func (s signatureController) Stop() error {
 	s.stop <- struct{}{}
 	return nil
 }
-func (s signatureController) executeRequest(item *signatureRequestQueueItem) {
+func (s signatureController) executeRequest(item *signatureRequestQueueItem) error {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultHandlerTimeout)
 	defer cancelFunc()
 	if err := s.signatureRequestsHandler.HandleSignatureRequest(ctx, item); err != nil {
-		s.log.WithField("error", err.Error()).Error("signRequestErr")
 		if item.retries <= item.maxTries {
 			requeueSigItemWithTimeout(s.queue, item, s.retrySleep)
 		}
+		return err
 	}
+	return nil
 }
 
 type SignatureRequestsHandler interface {

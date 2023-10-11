@@ -53,26 +53,33 @@ func (k *keyController) startExecutor() {
 		case <-k.stop:
 			return
 		case item := <-k.queue:
-			// take pending key requests from channel and process
-			go k.executeRequest(item)
+			// TODO
+			go func() {
+				if err := k.executeRequest(item); err != nil {
+					k.log.WithField("error", err.Error()).Error("keyRequestErr")
+				}
+			}()
 		}
 	}
 }
 
+// TODO
 func (k keyController) Stop() error {
 	k.stop <- struct{}{}
 	return nil
 }
 
-func (k keyController) executeRequest(item *keyRequestQueueItem) {
+// TODO
+func (k keyController) executeRequest(item *keyRequestQueueItem) error {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultHandlerTimeout)
 	defer cancelFunc()
 	if err := k.keyRequestsHandler.HandleKeyRequests(ctx, item); err != nil {
-		k.log.WithField("error", err.Error()).Error("keyRequestErr")
 		if item.retries <= item.maxTries {
 			requeueKeyItemWithTimeout(k.queue, item, k.retrySleep)
 		}
+		return err
 	}
+	return nil
 }
 
 type keyRequestQueueItem struct {
@@ -101,9 +108,6 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	// TODO
 	//
 	//
-	// In this mock implementation we process each item.request one by one.
-	// Each of them will generate a separate transaction to Fusion Chain as result.
-	// A production implementation might want to bundle all the ApproveKeyRequest messages into a single transaction.
 	l := h.Logger.WithField("request_id", item.request.Id)
 
 	// generate new key

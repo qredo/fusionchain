@@ -17,13 +17,17 @@ var (
 )
 
 func requeueKeyItemWithTimeout(c chan *keyRequestQueueItem, item *keyRequestQueueItem, timeout time.Duration) {
-	time.Sleep(timeout)
-	item.retries++
-	c <- item
+	go func() {
+		time.Sleep(timeout)
+		item.retries++
+		c <- item
+	}()
 }
 
 func requeueSigItemWithTimeout(c chan *signatureRequestQueueItem, item *signatureRequestQueueItem, timeout time.Duration) {
-	time.Sleep(timeout)
-	item.retries++
-	c <- item
+	go func() {
+		time.Sleep(timeout)
+		item.retries++
+		c <- item
+	}()
 }
