@@ -190,9 +190,14 @@ func TestSignature(t *testing.T) {
 
 					id := rand.Int63n(10)
 
+					requestID, err := hex.DecodeString(fmt.Sprintf("%064x", id))
+					if err != nil {
+						t.Fatal(err)
+					}
+
 					response, _, err := tc.client.Signature(&SigRequestData{
 						KeyID:   keyID,
-						ID:      id,
+						ID:      requestID,
 						SigHash: message[:],
 					}, c.keyType)
 					if err != nil {

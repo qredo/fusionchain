@@ -2,6 +2,10 @@ package service
 
 import "time"
 
+const (
+	mpcRequestKeyLength = 64
+)
+
 var (
 	defaultHandlerTimeout = 60 * time.Second
 	defaultQueryTimeout   = 5 * time.Second

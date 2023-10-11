@@ -72,7 +72,7 @@ const (
 // SigRequestData information required to build a signature request
 type SigRequestData struct {
 	KeyID   []byte
-	ID      int64
+	ID      []byte
 	SigHash []byte
 }
 

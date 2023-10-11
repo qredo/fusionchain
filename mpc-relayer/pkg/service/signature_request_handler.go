@@ -43,16 +43,24 @@ func newFusionSignatureController(logger *logrus.Entry, db database.Database, q 
 	}
 }
 
-func (s signatureController) Start() error {
+func (s *signatureController) Start() error {
+	if s.queue == nil || s.stop == nil {
+		return fmt.Errorf("empty work channels")
+	}
+	go s.startExecutor()
+	return nil
+
+}
+
+func (s *signatureController) startExecutor() {
 	for {
 		select {
 		case <-s.stop:
-			return nil
+			return
 		case item := <-s.queue:
 			go s.executeRequest(item)
 		}
 	}
-
 }
 
 func (s signatureController) Stop() error {
@@ -87,15 +95,19 @@ var _ SignatureRequestsHandler = &FusionSignatureRequestHandler{}
 func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Context, item *signatureRequestQueueItem) error {
 	l := h.Logger.WithField("request_id", item.request.Id)
 
-	keyID, err := hex.DecodeString(fmt.Sprintf("%032x", item.request.KeyID))
+	keyID, err := hex.DecodeString(fmt.Sprintf("%0*x", mpcRequestKeyLength, item.request.KeyId))
+	if err != nil {
+		return err
+	}
+	requestID, err := hex.DecodeString(fmt.Sprintf("%0*x", mpcRequestKeyLength, item.request.Id))
 	if err != nil {
 		return err
 	}
 
 	sigResponse, traceID, err := h.keyringClient.Signature(&mpc.SigRequestData{
 		KeyID:   keyID,
-		ID:      item.request.Id,
-		SigHash: item.request,
+		ID:      requestID,
+		SigHash: item.request.DataForSigning,
 	}, mpc.EcDSA)
 	l = l.WithField("traceID", traceID)
 	if err != nil {

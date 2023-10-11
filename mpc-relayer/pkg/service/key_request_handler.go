@@ -39,11 +39,19 @@ func newFusionKeyController(logger *logrus.Entry, db database.Database, q chan *
 	}
 }
 
-func (k keyController) Start() error {
+func (k *keyController) Start() error {
+	if k.queue == nil || k.stop == nil {
+		return fmt.Errorf("empty work channels")
+	}
+	go k.startExecutor()
+	return nil
+}
+
+func (k *keyController) startExecutor() {
 	for {
 		select {
 		case <-k.stop:
-			return nil
+			return
 		case item := <-k.queue:
 			// take pending key requests from channel and process
 			go k.executeRequest(item)
@@ -99,8 +107,9 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	l := h.Logger.WithField("request_id", item.request.Id)
 
 	// generate new key
+	keyIDStr := fmt.Sprintf("%0*x", mpcRequestKeyLength, item.request.Id)
 
-	keyID, err := hex.DecodeString(fmt.Sprintf("%032x", item.request.Id))
+	keyID, err := hex.DecodeString(keyIDStr)
 	if err != nil {
 		return err
 	}
@@ -116,7 +125,7 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	}
 
 	// store the generated secret key in our database, will be used when user requests signatures
-	err = h.KeyDB.Persist(item.request.Id, pk)
+	err = h.KeyDB.Persist(keyIDStr, pk)
 	if err != nil {
 		return err
 	}
