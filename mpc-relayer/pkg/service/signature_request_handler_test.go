@@ -9,8 +9,15 @@ import (
 	"github.com/qredo/fusionchain/x/treasury/types"
 )
 
-func Test_NewSigController(t *testing.T) {
-	// TODO
+func Test_SigControllerStart(t *testing.T) {
+	k := testSetupSignatureController(t)
+	if err := k.Start(); err != nil {
+		t.Fatal(err)
+	}
+	if err := k.Stop(); err != nil {
+		t.Fatal(err)
+	}
+	close(k.queue)
 }
 
 func Test_ExecuteSigQuery(t *testing.T) {
@@ -28,16 +35,7 @@ func Test_ExecuteSigQuery(t *testing.T) {
 			false,
 		},
 	}
-	log, err := logger.NewLogger("error", "plain", false, "test")
-	if err != nil {
-		t.Fatal(err)
-	}
-	memoryDB, err := database.NewBadger("", true)
-	if err != nil {
-		t.Fatal(err)
-	}
-	cl := mpc.NewClient(mpc.Config{Mock: true}, log)
-	k := newFusionSignatureController(log, memoryDB, make(chan *signatureRequestQueueItem), cl, mockTxClient{})
+	k := testSetupSignatureController(t)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -49,7 +47,17 @@ func Test_ExecuteSigQuery(t *testing.T) {
 	}
 	close(k.queue)
 	close(k.stop)
-	if err := memoryDB.Close(); err != nil {
+}
+
+func testSetupSignatureController(t *testing.T) *signatureController {
+	log, err := logger.NewLogger("error", "plain", false, "test")
+	if err != nil {
 		t.Fatal(err)
 	}
+	memoryDB, err := database.NewBadger("", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cl := mpc.NewClient(mpc.Config{Mock: true}, log)
+	return newFusionSignatureController(log, memoryDB, make(chan *signatureRequestQueueItem), cl, mockTxClient{})
 }

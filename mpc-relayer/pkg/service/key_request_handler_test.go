@@ -34,26 +34,15 @@ func (m mockTxClient) RejectSignatureRequest(ctx context.Context, requestID uint
 	return nil
 }
 
-func Test_NewFusionKeyController(t *testing.T) {
-	log, err := logger.NewLogger("error", "plain", false, "test")
-	if err != nil {
+func Test_KeyControllerStart(t *testing.T) {
+	k := testSetupKeyController(t)
+	if err := k.Start(); err != nil {
 		t.Fatal(err)
 	}
-	memoryDB, err := database.NewBadger("", true)
-	if err != nil {
+	if err := k.Stop(); err != nil {
 		t.Fatal(err)
 	}
-	cl := mpc.NewClient(mpc.Config{Mock: true}, log)
-	f := newFusionKeyController(log, memoryDB, make(chan *keyRequestQueueItem), cl, mockTxClient{})
-	if f == nil {
-		t.Fatal("empty")
-	}
-	if err := f.Stop(); err != nil {
-		t.Fatal(err)
-	}
-	if err := memoryDB.Close(); err != nil {
-		t.Fatal(err)
-	}
+	close(k.queue)
 }
 
 func Test_ExecuteKeyQuery(t *testing.T) {
@@ -72,16 +61,8 @@ func Test_ExecuteKeyQuery(t *testing.T) {
 			false,
 		},
 	}
-	log, err := logger.NewLogger("error", "plain", false, "test")
-	if err != nil {
-		t.Fatal(err)
-	}
-	memoryDB, err := database.NewBadger("", true)
-	if err != nil {
-		t.Fatal(err)
-	}
-	cl := mpc.NewClient(mpc.Config{Mock: true}, log)
-	k := newFusionKeyController(log, memoryDB, make(chan *keyRequestQueueItem), cl, mockTxClient{})
+
+	k := testSetupKeyController(t)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := k.executeRequest(&tt.item)
@@ -95,7 +76,17 @@ func Test_ExecuteKeyQuery(t *testing.T) {
 	}
 	close(k.queue)
 	close(k.stop)
-	if err := memoryDB.Close(); err != nil {
+}
+
+func testSetupKeyController(t *testing.T) *keyController {
+	log, err := logger.NewLogger("error", "plain", false, "test")
+	if err != nil {
 		t.Fatal(err)
 	}
+	memoryDB, err := database.NewBadger("", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cl := mpc.NewClient(mpc.Config{Mock: true}, log)
+	return newFusionKeyController(log, memoryDB, make(chan *keyRequestQueueItem), cl, mockTxClient{})
 }
