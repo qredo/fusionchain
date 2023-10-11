@@ -42,7 +42,7 @@ import { exec } from "child_process";
 
   const chain: Chain = {
     chainId: 257,
-    cosmosChainId: "qredofusiontestnet-0",
+    cosmosChainId: "qredofusiontestnet_257-1",
   };
 
   const sender: Sender = {

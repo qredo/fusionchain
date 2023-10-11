@@ -49,7 +49,7 @@ type Config struct {
 func ConfigFromEnv() Config {
 	return Config{
 		CliName:        envOrDefault("CLI_NAME", "fusiond"),
-		ChainID:        envOrDefault("CHAIN_ID", "qredofusiontestnet-0"),
+		ChainID:        envOrDefault("CHAIN_ID", "qredofusiontestnet_257-1"),
 		KeyringBackend: envOrDefault("KEYRING_BACKEND", "test"),
 		Node:           envOrDefault("NODE", "http://localhost:27657"),
 		SendDenom:      envOrDefault("DENOM", "10000000000nQRDO"),

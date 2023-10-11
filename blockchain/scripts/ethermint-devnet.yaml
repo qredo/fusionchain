@@ -1,5 +1,5 @@
 dotenv: .env
-qredofusiontestnet-0:
+qredofusiontestnet_257-1:
   cmd: fusiond
   start-flags: "--trace"
   app-config:

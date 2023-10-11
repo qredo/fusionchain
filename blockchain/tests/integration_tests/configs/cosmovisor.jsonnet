@@ -1,7 +1,7 @@
 local config = import 'default.jsonnet';
 
 config {
-  'qredofusiontestnet-0'+: {
+  'qredofusiontestnet_257-1'+: {
     'app-config'+: {
       'minimum-gas-prices': '100000000000nQRDO',
     },

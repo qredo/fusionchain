@@ -1,7 +1,7 @@
 #!/bin/bash
 
 KEY="mykey"
-CHAINID="qredofusiontestnet-0"
+CHAINID="qredofusiontestnet_257-1"
 MONIKER="localtestnet"
 
 # stop and remove existing daemon and client data and process(es)

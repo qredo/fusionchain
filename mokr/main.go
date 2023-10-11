@@ -19,7 +19,7 @@ import (
 // chain configuration
 var (
 	fusionChainGRPCAddr = envOrDefault("FUSION_URL", "localhost:9790")
-	chainID             = envOrDefault("CHAIN_ID", "qredofusiontestnet-0")
+	chainID             = envOrDefault("CHAIN_ID", "qredofusiontestnet_257-1")
 	derivationPath      = envOrDefault("DERIVATION_PATH", "m/44'/60'/0'/0/0")
 )
 

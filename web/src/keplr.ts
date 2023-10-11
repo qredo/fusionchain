@@ -5,7 +5,7 @@ export const bech32Prefix = "qredo";
 
 export const chain: Chain = {
   chainId: 257,
-  cosmosChainId: 'qredofusiontestnet-0',
+  cosmosChainId: 'qredofusiontestnet_257-1',
 }
 
 const FUSION_RPC_URL = import.meta.env.VITE_FUSION_RPC_URL || "http://127.0.0.1:27657";

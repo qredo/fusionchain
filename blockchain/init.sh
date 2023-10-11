@@ -2,7 +2,7 @@
 
 K1="shulgin"
 K2="pootis"
-CHAINID="qredofusiontestnet-0"
+CHAINID="qredofusiontestnet_257-1"
 MONIKER="qredofusiontestnet"
 KEYRING="test"
 #KEYALGO="eth_secp256k1"

@@ -45,7 +45,7 @@ import fs from "fs";
 
     const chainOpts: fusion.Options = {
         httpUrl: 'http://0.0.0.0:27657',
-        networkId: 'qredofusiontestnet-0',
+        networkId: 'qredofusiontestnet_257-1',
         bech32prefix: 'qredo',
         feeToken: 'qrdo',
         faucetUrl: '',

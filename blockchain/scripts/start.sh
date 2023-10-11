@@ -15,7 +15,7 @@ IP_ADDR="127.0.0.1"
 MODE="rpc"
 
 KEY="mykey"
-CHAINID="qredofusiontestnet-0"
+CHAINID="qredofusiontestnet_257-1"
 MONIKER="mymoniker"
 
 ## default port prefixes for fusiond
