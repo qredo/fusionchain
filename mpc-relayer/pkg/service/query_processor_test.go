@@ -46,10 +46,8 @@ func Test_ExecuteKeyQueryProcessor(t *testing.T) {
 	if err := k.executeKeyQuery(); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if err := k.Stop(); err != nil {
-		t.Fatal(err)
-	}
 	close(k.stop)
+	close(k.wait)
 }
 
 func Test_ExecuteSigQueryProcessor(t *testing.T) {
@@ -61,7 +59,6 @@ func Test_ExecuteSigQueryProcessor(t *testing.T) {
 	if err := s.executeSignatureQuery(); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if err := s.Stop(); err != nil {
-		t.Fatal(err)
-	}
+	close(s.stop)
+	close(s.wait)
 }

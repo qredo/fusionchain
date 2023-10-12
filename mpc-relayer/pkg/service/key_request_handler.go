@@ -20,21 +20,25 @@ type keyController struct {
 	log                *logrus.Entry
 
 	stop chan struct{}
+	wait chan struct{}
 
 	retrySleep time.Duration
 }
 
-func newFusionKeyController(logger *logrus.Entry, db database.Database, q chan *keyRequestQueueItem, keyringClient mpc.Client, txc TxClient) *keyController {
+func newFusionKeyController(logger *logrus.Entry, prefixDB database.Database, q chan *keyRequestQueueItem, keyringClient mpc.Client, txc TxClient) *keyController {
 	k := &FusionKeyRequestHandler{
-		KeyDB:         db,
+		KeyDB:         prefixDB,
 		keyringClient: keyringClient,
 		TxClient:      txc,
 		Logger:        logger,
 	}
+
 	return &keyController{
 		queue:              q,
 		keyRequestsHandler: k,
+		log:                logger,
 		stop:               make(chan struct{}, 1),
+		wait:               make(chan struct{}, 1),
 		retrySleep:         defaultRetryTimeout,
 	}
 }
@@ -47,14 +51,25 @@ func (k *keyController) Start() error {
 	return nil
 }
 
+// TODO
 func (k *keyController) startExecutor() {
+	var processing bool
 	for {
 		select {
 		case <-k.stop:
+			k.log.Info("keyController received shutdown signal")
+			for {
+				if !processing {
+					break
+				}
+			}
+			k.log.Info("terminated keyController")
+			k.wait <- struct{}{}
 			return
 		case item := <-k.queue:
-			// TODO
 			go func() {
+				processing = true
+				defer func() { processing = false }()
 				if err := k.executeRequest(item); err != nil {
 					k.log.WithField("error", err.Error()).Error("keyRequestErr")
 				}
@@ -64,13 +79,14 @@ func (k *keyController) startExecutor() {
 }
 
 // TODO
-func (k keyController) Stop() error {
+func (k *keyController) Stop() error {
 	k.stop <- struct{}{}
+	<-k.wait
 	return nil
 }
 
 // TODO
-func (k keyController) executeRequest(item *keyRequestQueueItem) error {
+func (k *keyController) executeRequest(item *keyRequestQueueItem) error {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultHandlerTimeout)
 	defer cancelFunc()
 	if err := k.keyRequestsHandler.HandleKeyRequests(ctx, item); err != nil {
@@ -80,6 +96,10 @@ func (k keyController) executeRequest(item *keyRequestQueueItem) error {
 		return err
 	}
 	return nil
+}
+
+func (k *keyController) healthcheck() *Response {
+	return &Response{}
 }
 
 type keyRequestQueueItem struct {
@@ -103,22 +123,25 @@ type FusionKeyRequestHandler struct {
 // HandleKeyRequests - TODO
 func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *keyRequestQueueItem) error {
 
-	//
-	//
-	// TODO
-	//
-	//
-	l := h.Logger.WithField("request_id", item.request.Id)
+	if item == nil || item.request == nil {
+		return fmt.Errorf("malformed keyRequest item")
+	}
 
-	// generate new key
 	keyIDStr := fmt.Sprintf("%0*x", mpcRequestKeyLength, item.request.Id)
 
 	keyID, err := hex.DecodeString(keyIDStr)
 	if err != nil {
 		return err
 	}
-	pk, traceID, err := h.keyringClient.PublicKey(keyID, mpc.EcDSA)
-	l = l.WithField("trace_id", traceID)
+
+	pk, _, err := h.keyringClient.PublicKey(keyID, mpc.EcDSA)
+	if err != nil {
+		return err
+	}
+
+	// verify that a signature can be generated for the supplied public key
+	// the response is validated by the mpcclient
+	pkSig, _, err := h.keyringClient.PubkeySignature(pk, keyID, mpc.EcDSA)
 	if err != nil {
 		return err
 	}
@@ -134,6 +157,10 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 		return err
 	}
 
-	l.Info("fulfilled")
+	h.Logger.WithFields(logrus.Fields{
+		"keyID":     keyIDStr,
+		"publicKey": fmt.Sprintf("%x", pk),
+		"signature": fmt.Sprintf("%x", pkSig),
+	}).Info("keyRequestFulfilled")
 	return nil
 }

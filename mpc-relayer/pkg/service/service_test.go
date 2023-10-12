@@ -1,216 +1,212 @@
 package service
 
-/*
-
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
-	"sync/atomic"
+	"net/http"
+	"net/http/httptest"
+	"os"
 	"testing"
-	"time"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/qredo/fusionchain/mpc-relayer/pkg/common"
+	"github.com/qredo/fusionchain/mpc-relayer/pkg/database"
+	"github.com/qredo/fusionchain/mpc-relayer/pkg/logger"
 )
 
-func TestService_Start(t *testing.T) {
-	tests := []struct {
-		name        string
-		walletIDs   []string
-		failAttempt map[string]int64
-		success     int64
+var testConfig = ServiceConfig{
+	Port:      8080,
+	KeyRingID: "1",
+	Loglevel:  "fatal",
+	LogFormat: "plain",
+	LogToFile: false,
+	Mnemonic:  "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge",
+}
+
+var (
+	tests = []struct {
+		name                        string
+		config                      ServiceConfig
+		modules                     []Module
+		buildErr, startErr, stopErr bool
 	}{
 		{
-			name:      "success",
-			walletIDs: []string{"1", "2"},
-			failAttempt: map[string]int64{
-				"1": 0,
-				"2": 0,
-			},
-			success: 2,
+			"empty config",
+			ServiceConfig{},
+			nil,
+			true,
+			true,
+			true,
 		},
 		{
-			name:      "with retry",
-			walletIDs: []string{"1", "2"},
-			failAttempt: map[string]int64{
-				"1": 0,
-				"2": 1,
+			"no mnemonic",
+			ServiceConfig{
+				Port:      8080,
+				KeyRingID: "1",
+				Loglevel:  "fatal",
+				LogFormat: "plain",
+				LogToFile: false,
 			},
-			success: 2,
+			nil,
+			true,
+			true,
+			true,
 		},
 		{
-			name:      "with discard",
-			walletIDs: []string{"1", "2"},
-			failAttempt: map[string]int64{
-				"1": 0,
-				"2": defaultMaxTries + 1,
-			},
-			success: 1,
+			"no modules",
+			testConfig,
+			nil,
+			false,
+			false,
+			false,
+		},
+		{
+			"single module",
+			testConfig,
+			[]Module{mockModule{}},
+			false,
+			false,
+			false,
+		},
+		{
+			"multiple module",
+			testConfig,
+			[]Module{mockModule{}, mockModule{}},
+			false,
+			false,
+			false,
+		},
+		{
+			"module with error",
+			testConfig,
+			[]Module{mockModuleErr{}},
+			false,
+			true,
+			true,
 		},
 	}
+)
+
+type mockModule struct{}
+
+func (m mockModule) Start() error {
+	return nil
+}
+
+func (m mockModule) Stop() error {
+	return nil
+}
+
+func (m mockModule) healthcheck() *Response {
+	return &Response{}
+}
+
+type mockModuleErr struct{}
+
+func (m mockModuleErr) Start() error {
+	return errors.New("error")
+}
+
+func (m mockModuleErr) Stop() error {
+	return errors.New("error")
+}
+
+func (m mockModuleErr) healthcheck() *Response {
+	return &Response{Failures: []string{"some failure"}}
+}
+
+func Test_ServiceStartStop(t *testing.T) {
+	// build service with different 'module' combinations
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			processor := newFakeProcessor(tt.failAttempt)
-			s := &Service{
-				processor: processor,
-				catchUpFunc: func(start int64) ([]*qredochain.QueueItem, error) {
-					return nil, nil
-				},
-				retriever: fakeRetriever{
-					walletIDs: tt.walletIDs,
-					out:       make(chan *qredochain.QueueItem),
-				},
-				db:         database.NewIndex(store.NewMemory()),
-				waiting:    make(chan *retryableQueueItem),
-				stop:       make(chan struct{}),
-				retrySleep: 1 * time.Millisecond,
-				maxTries:   defaultMaxTries,
+			s, err := buildTestService(t, tt.config, tt.modules...)
+			if (err != nil) != tt.buildErr {
+				t.Fatalf("unexpected build error %v", err)
 			}
-			if err := s.Start(); err != nil {
-				t.Fatal(err)
+			if err != nil {
+				return
 			}
-			time.Sleep(time.Millisecond) // sleep to ensure retriever send item
-			if got, want := processor.success.Load(), tt.success; got != want {
-				t.Fatalf("got %v want %v", got, want)
+			if err := s.Start(); (err != nil) != tt.startErr {
+				t.Fatalf("unexpected start error %v", err)
 			}
-			s.Stop()
+			if err := s.Stop(os.Interrupt); (err != nil) != tt.stopErr {
+				t.Fatalf("unexpected stop error %v", err)
+			}
 		})
 	}
+
 }
 
-func TestService_Stop(t *testing.T) {
-	tests := []struct {
-		name        string
-		walletIDs   []string
-		failAttempt map[string]int64
+func Test_ServiceAPI(t *testing.T) {
+	s, err := buildTestService(t, tests[3].config)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	apiTests := []struct {
+		name             string
+		endpoint         string
+		method           func(w http.ResponseWriter, req *http.Request)
+		expectedResponse *Response
+		expectedCode     int
 	}{
 		{
-			name:      "stop with waiting tx",
-			walletIDs: []string{"1"},
-			failAttempt: map[string]int64{
-				"1": time.Minute.Milliseconds(),
-			},
+			"status",
+			statusEndPnt,
+			s.status,
+			&Response{Message: "OK", Version: common.FullVersion, Service: serviceName},
+			http.StatusOK,
+		},
+		{
+			"healthcheck",
+			healthEndPnt,
+			s.healthcheck,
+			&Response{Version: common.FullVersion, Service: serviceName, Failures: []string{}},
+			http.StatusOK,
+		},
+		{
+			"pubkeys",
+			pubKeysEndPnt,
+			s.pubKeys,
+			&Response{Message: "OK", Version: common.FullVersion, Service: serviceName},
+			http.StatusOK,
 		},
 	}
 
-	for _, tt := range tests {
+	for _, tt := range apiTests {
 		t.Run(tt.name, func(t *testing.T) {
-			processor := newFakeProcessor(tt.failAttempt)
-			s := &Service{
-				processor: processor,
-				catchUpFunc: func(start int64) ([]*qredochain.QueueItem, error) {
-					return nil, nil
-				},
-				retriever: fakeRetriever{
-					walletIDs: tt.walletIDs,
-					out:       make(chan *qredochain.QueueItem),
-				},
-				waiting:    make(chan *retryableQueueItem),
-				db:         database.NewIndex(store.NewMemory()),
-				stop:       make(chan struct{}),
-				retrySleep: time.Millisecond,
-				maxTries:   time.Minute.Milliseconds(),
-				indexStart: 0,
+			httpReq := httptest.NewRequest(http.MethodGet, tt.endpoint, nil)
+			respRecorder := httptest.NewRecorder()
+			tt.method(respRecorder, httpReq)
+			if g, w := respRecorder.Code, tt.expectedCode; g != w {
+				t.Errorf("unexpected response code, want %v got %v", w, g)
 			}
-			if err := s.Start(); err != nil {
-				t.Fatal(err)
-			}
-			time.Sleep(time.Millisecond) // sleep to ensure retriever send item
-			s.Stop()
-			time.Sleep(10 * time.Millisecond) // sleep to ensure all retry process exit
-		})
-	}
-}
+			expectedJSON, _ := json.Marshal(tt.expectedResponse)
 
-type fakeProcessor struct {
-	success   atomic.Int64
-	returnErr map[string]*atomic.Int64
-}
-
-func newFakeProcessor(returnErr map[string]int64) *fakeProcessor {
-	returnErrAtomic := make(map[string]*atomic.Int64)
-	for k, v := range returnErr {
-		value := &atomic.Int64{}
-		value.Store(v)
-		returnErrAtomic[k] = value
-	}
-	return &fakeProcessor{
-		returnErr: returnErrAtomic,
-	}
-}
-
-func (f *fakeProcessor) SignOnlyProcess(walletID []byte, mutableIndex int64, description string) (signResult, error) {
-	if f.returnErr[string(walletID)].Load() != 0 {
-		f.returnErr[string(walletID)].Add(-1)
-		return signResult{}, fmt.Errorf("test error")
-	}
-	f.success.Add(1)
-	return signResult{}, nil
-}
-
-type fakeRetriever struct {
-	walletIDs []string
-	out       chan *qredochain.QueueItem
-}
-
-func (f fakeRetriever) Start(int64) (chan *qredochain.QueueItem, error) {
-	go func() {
-		for _, id := range f.walletIDs {
-			f.out <- &qredochain.QueueItem{
-				TxAsset: &assets.Wallet{
-					SignedAsset: assets.SignedAsset{
-						CurrentAsset: &protobuffer.PBSignedAsset{
-							Asset: &protobuffer.PBAsset{
-								ID: []byte(id),
-							},
-						},
-					},
-				},
-				Index: 0,
-			}
-		}
-	}()
-	return f.out, nil
-}
-
-func (f fakeRetriever) Stop() {
-}
-
-func Test_TXDecoder(t *testing.T) {
-	test := []struct {
-		name     string
-		txBytes  []byte
-		methodID []byte
-	}{
-		{
-			"MMI Example 1",
-			hexutil.MustDecode("0xb9013302f9012f82a4b1268084080befc08317401e947d5ba536ab244aaa1ea42ab88428847f25e3e67680b90104c7ca587000000000000000000000000000000000000000000000000000000000000033b400000000000000000000000000000000000000000000000000a9afdc1df1dbb8000000000000000000000000000000000000000000000002c282da34e96ef8da0000000000000000000000000000000000000000000000000000000002a687120000000000000000000000000000000000000000000000000000000064fae732000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001c0808080"),
-			hexutil.MustDecode("0xc7ca5870"),
-		},
-		{
-			"MMI Example 2",
-			hexutil.MustDecode("0xb87502f87282e70808849502f900849502f90e83030853940b3a25ae91de4825b52d51ca54dfc8867367c72a80b844441a3e7000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007907373e23ad7380c0808080"),
-			hexutil.MustDecode("0x441a3e70"),
-		},
-		{
-			"MMI Example 3",
-			hexutil.MustDecode("0xb87502f87282e70809849502f900849502f90e830110e6940b15a5e3ca0d4b492c3b476d0f807535f9b7207980b844095ea7b3000000000000000000000000bf05db69176e47bf89a6b19f7492d50751d20452ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc0808080"),
-			hexutil.MustDecode("0x095ea7b3"),
-		},
-	}
-
-	for _, tt := range test {
-		tx := &types.Transaction{}
-		t.Run(tt.name, func(t *testing.T) {
-			if err := decodeETHRLPTx(tx, tt.txBytes); err != nil {
-				t.Fatal(err)
-			}
-			if g, w := tx.Data()[0:4], tt.methodID; !bytes.Equal(g, w) {
-				t.Fatalf("incorrect methodID expected %x, got %x", w, g)
+			if g, w := respRecorder.Body.Bytes(), expectedJSON; !bytes.Equal(g, w) {
+				t.Fatalf("unexpected reponse, want %s, got %s", w, g)
 			}
 		})
 	}
 
 }
 
-*/
+func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*Service, error) {
+	if isEmpty(config) {
+		return nil, fmt.Errorf("no config file supplied")
+	}
+	log, err := logger.NewLogger(logger.Level(config.Loglevel), logger.Format(config.LogFormat), config.LogToFile, "test")
+	if err != nil {
+		return nil, err
+	}
+	keyringID, _, _, err := makeKeyringClient(&config, log)
+	if err != nil {
+		return nil, err
+	}
+	memoryDB, err := database.NewBadger("", true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return New(keyringID, config.Port, log, memoryDB, modules...), nil
+}

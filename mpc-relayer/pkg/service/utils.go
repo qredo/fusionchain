@@ -3,10 +3,13 @@ package service
 import "time"
 
 const (
+	serviceName         = "mpc-relayer"
 	mpcRequestKeyLength = 64
 )
 
 var (
+	defaultPort = 8080
+
 	defaultHandlerTimeout = 60 * time.Second
 	defaultQueryTimeout   = 5 * time.Second
 

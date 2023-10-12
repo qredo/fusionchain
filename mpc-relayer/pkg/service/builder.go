@@ -3,7 +3,6 @@ package service
 import (
 	"fmt"
 	"strconv"
-	"sync/atomic"
 	"time"
 
 	"github.com/qredo/fusionchain/go-client"
@@ -20,16 +19,11 @@ const (
 	fusionChainID  = "fusion_420-1"
 )
 
-type Module interface {
-	Start() error
-	Stop() error
-}
-
 func BuildService(config ServiceConfig) (*Service, error) {
 	if isEmpty(config) {
 		return nil, fmt.Errorf("no config file supplied")
 	}
-	log, err := logger.NewLogger(logger.Level(config.Loglevel), logger.Format(config.LogFormat), config.LogToFile, "signer")
+	log, err := logger.NewLogger(logger.Level(config.Loglevel), logger.Format(config.LogFormat), config.LogToFile, "mpc-relayer")
 	if err != nil {
 		return nil, err
 	}
@@ -38,6 +32,7 @@ func BuildService(config ServiceConfig) (*Service, error) {
 	if err != nil {
 		return nil, err
 	}
+	keyDB := database.NewPrefixDB("pk", kv)
 
 	keyringID, identity, mpcClient, err := makeKeyringClient(&config, log)
 	if err != nil {
@@ -49,10 +44,6 @@ func BuildService(config ServiceConfig) (*Service, error) {
 		return nil, err
 	}
 
-	// make modules
-	keyChan := make(chan *keyRequestQueueItem, defaultChanSize)
-	sigchan := make(chan *signatureRequestQueueItem, defaultChanSize)
-
 	maxRetries := config.MaxTries
 	if maxRetries == 0 {
 		maxRetries = defaultMaxRetries
@@ -61,18 +52,20 @@ func BuildService(config ServiceConfig) (*Service, error) {
 	if queryInterval == 0 {
 		queryInterval = defaultQueryInterval
 	}
+	port := config.Port
+	if port == 0 {
+		port = defaultPort
+	}
+	// make modules
+	keyChan := make(chan *keyRequestQueueItem, defaultChanSize)
+	sigchan := make(chan *signatureRequestQueueItem, defaultChanSize)
+	return New(keyringID, port, log, keyDB,
+		newKeyQueryProcessor(keyringID, queryClient, keyChan, log, time.Duration(queryInterval)*time.Second, int(maxRetries)),
+		newSigQueryProcessor(keyringID, queryClient, sigchan, log, time.Duration(queryInterval)*time.Second, int(maxRetries)),
+		newFusionKeyController(log, keyDB, keyChan, mpcClient, txClient),
+		newFusionSignatureController(log, keyDB, sigchan, mpcClient, txClient),
+	), nil
 
-	return &Service{
-		keyringID: keyringID,
-		modules: []Module{
-			newKeyQueryProcessor(keyringID, queryClient, keyChan, log, time.Duration(queryInterval)*time.Second, int(maxRetries)),
-			newSigQueryProcessor(keyringID, queryClient, sigchan, log, time.Duration(queryInterval)*time.Second, int(maxRetries)),
-			newFusionKeyController(log, kv, keyChan, mpcClient, txClient),
-			newFusionSignatureController(log, kv, sigchan, mpcClient, txClient),
-		},
-		stop:    make(chan struct{}),
-		stopped: atomic.Bool{},
-	}, nil
 }
 
 func makeKeyringClient(config *ServiceConfig, log *logrus.Entry) (keyringID uint64, identity client.Identity, mpcClient mpc.Client, err error) {

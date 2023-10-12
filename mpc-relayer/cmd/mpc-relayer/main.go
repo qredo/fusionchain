@@ -10,14 +10,14 @@ import (
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/service"
 )
 
-const envPrefix = "EVMVALIDATOR"
+const envPrefix = "MPCRELAYER"
 
 var (
 	configFilePath string
-	configFilePtr  = flag.String("config", "genesis.json.tpl", "path to config file")
+	configFilePtr  = flag.String("config", "config.yml", "path to config file")
 )
 
-//go run main.go --config ./genesis.json
+//go run main.go --config ./config.yml
 //go run main.go --config {path_to_config_file}
 
 func init() {
@@ -39,7 +39,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	mpcRelayer.Start()
+	if err := mpcRelayer.Start(); err != nil {
+		panic(err)
+	}
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 	sig := <-sigChan

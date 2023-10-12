@@ -1,0 +1,6 @@
+port: 8080
+path: db
+loglevel: debug
+logformat: plain
+logtofile: false
+fusion_url: 127.0.0.1:26657

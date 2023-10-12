@@ -13,6 +13,7 @@ type keyQueryProcessor struct {
 	queryClient    QueryClient
 	keyRequestChan chan *keyRequestQueueItem
 	stop           chan struct{}
+	wait           chan struct{}
 	tickDuration   time.Duration
 
 	log      *logrus.Entry
@@ -25,27 +26,39 @@ func newKeyQueryProcessor(keyringId uint64, q QueryClient, k chan *keyRequestQue
 		queryClient:    q,
 		keyRequestChan: k,
 		stop:           make(chan struct{}, 1),
+		wait:           make(chan struct{}, 1),
 		tickDuration:   t,
 		log:            log,
 		maxTries:       maxTries,
 	}
 }
 
-func (q keyQueryProcessor) Start() error {
+func (q *keyQueryProcessor) Start() error {
 	go q.startTicker()
 	return nil
 }
 
-func (q keyQueryProcessor) startTicker() {
+func (q *keyQueryProcessor) startTicker() {
 	ticker := time.NewTicker(q.tickDuration)
+	var processing bool
 	defer ticker.Stop()
 	for {
 		select {
 		case <-q.stop:
+			q.log.Info("keyQueryProcessor received shutdown signal")
+			for {
+				if !processing {
+					break
+				}
+			}
+			q.log.Info("terminated keyQueryProcessor")
+			q.wait <- struct{}{}
 			return
 		case <-ticker.C:
 			// Process Key request queries
 			go func() {
+				processing = true
+				defer func() { processing = false }()
 				if err := q.executeKeyQuery(); err != nil {
 					q.log.WithField("error", err.Error()).Error("pendingKeyQueryErr")
 				}
@@ -54,12 +67,10 @@ func (q keyQueryProcessor) startTicker() {
 	}
 }
 
-func (q keyQueryProcessor) executeKeyQuery() error {
+func (q *keyQueryProcessor) executeKeyQuery() error {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancelFunc()
-	pendingKeyRequests, err := q.queryClient.PendingKeyRequests(ctx, &client.PageRequest{
-		Limit: 10,
-	}, q.keyRingID)
+	pendingKeyRequests, err := q.queryClient.PendingKeyRequests(ctx, &client.PageRequest{}, q.keyRingID)
 	if err != nil {
 		return err
 	}
@@ -73,9 +84,14 @@ func (q keyQueryProcessor) executeKeyQuery() error {
 	return nil
 }
 
-func (q keyQueryProcessor) Stop() error {
+func (q *keyQueryProcessor) Stop() error {
 	q.stop <- struct{}{}
+	<-q.wait
 	return nil
+}
+
+func (q *keyQueryProcessor) healthcheck() *Response {
+	return &Response{}
 }
 
 type sigQueryProcessor struct {
@@ -83,6 +99,7 @@ type sigQueryProcessor struct {
 	queryClient    QueryClient
 	sigRequestChan chan *signatureRequestQueueItem
 	stop           chan struct{}
+	wait           chan struct{}
 	tickDuration   time.Duration
 
 	log      *logrus.Entry
@@ -95,6 +112,7 @@ func newSigQueryProcessor(keyringId uint64, q QueryClient, s chan *signatureRequ
 		queryClient:    q,
 		sigRequestChan: s,
 		stop:           make(chan struct{}, 1),
+		wait:           make(chan struct{}, 1),
 		tickDuration:   t,
 		log:            log,
 		maxTries:       maxTries,
@@ -108,14 +126,25 @@ func (q sigQueryProcessor) Start() error {
 
 func (q sigQueryProcessor) startTicker() {
 	ticker := time.NewTicker(q.tickDuration)
+	var processing bool
 	defer ticker.Stop()
 	for {
 		select {
 		case <-q.stop:
+			q.log.Info("sigQueryProcessor received shutdown signal")
+			for {
+				if !processing {
+					break
+				}
+			}
+			q.log.Info("terminated sigQueryProcessor")
+			q.wait <- struct{}{}
 			return
 		case <-ticker.C:
 			// Process Signature request queries
 			go func() {
+				processing = true
+				defer func() { processing = false }()
 				if err := q.executeSignatureQuery(); err != nil {
 					q.log.WithField("error", err.Error()).Error("pendingSigQueryErr")
 				}
@@ -125,12 +154,10 @@ func (q sigQueryProcessor) startTicker() {
 	}
 }
 
-func (q sigQueryProcessor) executeSignatureQuery() error {
+func (q *sigQueryProcessor) executeSignatureQuery() error {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancelFunc()
-	pendingSigRequests, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{
-		Limit: 10,
-	}, q.keyRingID)
+	pendingSigRequests, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{}, q.keyRingID)
 	if err != nil {
 		return err
 	}
@@ -144,7 +171,12 @@ func (q sigQueryProcessor) executeSignatureQuery() error {
 	return nil
 }
 
-func (q sigQueryProcessor) Stop() error {
+func (q *sigQueryProcessor) Stop() error {
 	q.stop <- struct{}{}
+	<-q.wait
 	return nil
+}
+
+func (q *sigQueryProcessor) healthcheck() *Response {
+	return &Response{}
 }

@@ -62,24 +62,23 @@ func Test_ExecuteKeyQuery(t *testing.T) {
 		},
 	}
 
-	k := testSetupKeyController(t)
 	for _, tt := range tests {
+		k := testSetupKeyController(t)
 		t.Run(tt.name, func(t *testing.T) {
 			err := k.executeRequest(&tt.item)
 			if (err != nil) != tt.expectErr {
 				t.Fatalf("unexpected error: %v", err)
 			}
 		})
+		close(k.queue)
+		close(k.wait)
+		close(k.stop)
 	}
-	if err := k.Stop(); err != nil {
-		t.Fatal(err)
-	}
-	close(k.queue)
-	close(k.stop)
+
 }
 
 func testSetupKeyController(t *testing.T) *keyController {
-	log, err := logger.NewLogger("error", "plain", false, "test")
+	log, err := logger.NewLogger("info", "plain", false, "test")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,5 +87,5 @@ func testSetupKeyController(t *testing.T) *keyController {
 		t.Fatal(err)
 	}
 	cl := mpc.NewClient(mpc.Config{Mock: true}, log)
-	return newFusionKeyController(log, memoryDB, make(chan *keyRequestQueueItem), cl, mockTxClient{})
+	return newFusionKeyController(log, memoryDB, make(chan *keyRequestQueueItem, defaultChanSize), cl, mockTxClient{})
 }
