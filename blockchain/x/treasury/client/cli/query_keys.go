@@ -16,7 +16,7 @@ var _ = strconv.Itoa(0)
 func CmdKeys() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "keys [wallet-type] [workspace-addr]",
-		Short: "Query Keys, optionally by workspace address",
+		Short: "Query Keys, optionally by wallet type and workspace address",
 		Args:  cobra.MaximumNArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -64,7 +64,6 @@ func CmdKeys() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-	cmd.Flags().String("wallet-type", "", "derive an address for type")
 
 	return cmd
 }
