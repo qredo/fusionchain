@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -31,19 +32,22 @@ func init() {
 func main() {
 	var config service.ServiceConfig
 
-	if err := common.ParseJSONConfig(configFilePath, &config, envPrefix); err != nil {
-		log.Fatal(err)
+	fmt.Println(configFilePath)
+	if err := common.ParseYAMLConfig(configFilePath, &config, envPrefix); err != nil {
+		log.Fatal(fmt.Errorf("parse config error: %v", err))
 	}
 	mpcRelayer, err := service.BuildService(config)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(fmt.Errorf("build service error: %v", err))
 	}
 
 	if err := mpcRelayer.Start(); err != nil {
-		panic(err)
+		log.Fatal(fmt.Errorf("start service error: %v", err))
 	}
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 	sig := <-sigChan
-	mpcRelayer.Stop(sig)
+	if err := mpcRelayer.Stop(sig); err != nil {
+		log.Fatal(err)
+	}
 }

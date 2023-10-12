@@ -1,23 +1,27 @@
 package common
 
 import (
-	"encoding/json"
 	"os"
 	"path/filepath"
+
+	"github.com/vrischmann/envconfig"
+	"gopkg.in/yaml.v3"
 )
 
-// ParseJSONConfig parse configuration file or environment variables, receiver must be a pointer
-func ParseJSONConfig(configFile string, receiver interface{}, prefix string) error {
-	if configFile != "" {
-		b, err := os.ReadFile(filepath.Clean(configFile))
-		if err != nil && !os.IsNotExist(err) {
+// ParseYAMLConfig parse configuration file or environment variables, receiver must be a pointer
+func ParseYAMLConfig(configFile string, receiver interface{}, prefix string) error {
+	b, err := os.ReadFile(filepath.Clean(configFile))
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	if b != nil {
+		if err := yaml.Unmarshal(b, receiver); err != nil {
 			return err
 		}
-		if b != nil {
-			if err := json.Unmarshal(b, receiver); err != nil {
-				return err
-			}
-		}
+	}
+	// environment variables supersede config yaml files
+	if err := envconfig.InitWithOptions(receiver, envconfig.Options{Prefix: prefix, AllOptional: true}); err != nil {
+		return err
 	}
 	return nil
 }

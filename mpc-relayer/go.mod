@@ -9,9 +9,6 @@ replace (
 	github.com/ChainSafe/go-schnorrkel => github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d
 	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.23.5-0.20230809234655-d776d9c105ae
 	github.com/cometbft/cometbft => github.com/cometbft/cometbft v0.37.2
-	// github.com/cometbft/cometbft-db => github.com/crypto-org-chain/cometbft-db v0.0.0-20230412133340-ac70df4b45f6
-	// github.com/cosmos/cosmos-sdk => github.com/mmsqe/cosmos-sdk v0.47.0-rc1.0.20230726065139-713089f44416
-	// github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.37.1
 	github.com/cosmos/cosmos-sdk => github.com/qredo/cosmos-sdk v0.47.5-0.20230920170111-78ae0ce1bec6
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
@@ -31,7 +28,10 @@ require (
 	github.com/qredo/fusionchain v0.0.0
 	github.com/qredo/fusionchain/go-client v0.0.0-00010101000000-000000000000
 	github.com/sirupsen/logrus v1.9.3
+	github.com/stretchr/testify v1.8.4
+	github.com/vrischmann/envconfig v1.3.0
 	google.golang.org/grpc v1.56.2
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -196,7 +196,6 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.16.0 // indirect
 	github.com/status-im/keycard-go v0.2.0 // indirect
-	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20220721030215-126854af5e6d // indirect
 	github.com/tendermint/go-amino v0.16.0 // indirect
@@ -232,7 +231,6 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	nhooyr.io/websocket v1.8.7 // indirect
 	pgregory.net/rapid v0.5.5 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect

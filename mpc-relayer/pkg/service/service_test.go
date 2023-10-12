@@ -11,14 +11,13 @@ import (
 	"testing"
 
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/common"
-	"github.com/qredo/fusionchain/mpc-relayer/pkg/database"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/logger"
 )
 
 var testConfig = ServiceConfig{
 	Port:      8080,
 	KeyRingID: "1",
-	Loglevel:  "fatal",
+	LogLevel:  "fatal",
 	LogFormat: "plain",
 	LogToFile: false,
 	Mnemonic:  "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge",
@@ -44,7 +43,7 @@ var (
 			ServiceConfig{
 				Port:      8080,
 				KeyRingID: "1",
-				Loglevel:  "fatal",
+				LogLevel:  "fatal",
 				LogFormat: "plain",
 				LogToFile: false,
 			},
@@ -196,7 +195,7 @@ func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*S
 	if isEmpty(config) {
 		return nil, fmt.Errorf("no config file supplied")
 	}
-	log, err := logger.NewLogger(logger.Level(config.Loglevel), logger.Format(config.LogFormat), config.LogToFile, "test")
+	log, err := logger.NewLogger(logger.Level(config.LogLevel), logger.Format(config.LogFormat), config.LogToFile, "test")
 	if err != nil {
 		return nil, err
 	}
@@ -204,9 +203,9 @@ func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*S
 	if err != nil {
 		return nil, err
 	}
-	memoryDB, err := database.NewBadger("", true)
+	memoryKeyDB, err := makeKeyDB("", true)
 	if err != nil {
 		t.Fatal(err)
 	}
-	return New(keyringID, config.Port, log, memoryDB, modules...), nil
+	return New(keyringID, config.Port, log, memoryKeyDB, modules...), nil
 }

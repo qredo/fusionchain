@@ -78,7 +78,7 @@ func Test_ExecuteKeyQuery(t *testing.T) {
 }
 
 func testSetupKeyController(t *testing.T) *keyController {
-	log, err := logger.NewLogger("info", "plain", false, "test")
+	log, err := logger.NewLogger("fatal", "plain", false, "test")
 	if err != nil {
 		t.Fatal(err)
 	}

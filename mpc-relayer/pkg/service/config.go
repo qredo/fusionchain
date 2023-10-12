@@ -2,9 +2,9 @@ package service
 
 import (
 	"bytes"
-	"encoding/json"
 
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/mpc"
+	"gopkg.in/yaml.v3"
 )
 
 type ServiceConfig struct {
@@ -13,7 +13,7 @@ type ServiceConfig struct {
 	KeyRingID     string     `yaml:"keyring_id"`
 	FusionURL     string     `yaml:"fusion_url"`
 	Mnemonic      string     `yaml:"mnemonic"`
-	Loglevel      string     `yaml:"loglevel"`
+	LogLevel      string     `yaml:"loglevel"`
 	LogFormat     string     `yaml:"logformat"`
 	LogToFile     bool       `yaml:"logtofile"`
 	MPC           mpc.Config `yaml:"mpc"`
@@ -25,7 +25,7 @@ type ServiceConfig struct {
 var emptyConfig = ServiceConfig{}
 
 func isEmpty(c ServiceConfig) bool {
-	b, _ := json.Marshal(c)
-	e, _ := json.Marshal(emptyConfig)
+	b, _ := yaml.Marshal(c)
+	e, _ := yaml.Marshal(emptyConfig)
 	return bytes.Equal(b, e)
 }

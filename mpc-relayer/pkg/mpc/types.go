@@ -29,6 +29,8 @@ import (
 const (
 	isKey    int = 1
 	isNotKey int = 0
+
+	keyIDLength = 64
 )
 
 var (
@@ -38,6 +40,8 @@ var (
 	EdDSAKeys  = "/eddsa/keys"
 	EdDSASig   = "/eddsa/sign"
 	mpcTimeout = 60 * time.Second
+
+	EmptyConfig = Config{}
 )
 
 type Client interface {
@@ -69,6 +73,12 @@ const (
 	EdDSA CryptoSystem = "eddsa"
 )
 
+// KeyRequestData information required to build a public key request
+type KeyRequestData struct {
+	KeyID  []byte
+	PubKey []byte
+}
+
 // SigRequestData information required to build a signature request
 type SigRequestData struct {
 	KeyID   []byte
@@ -80,7 +90,6 @@ type SigRequestData struct {
 type SigRequest struct {
 	KeyID     string `json:"key_id"`        // Unique identifier for key-shares needed to construct a signature
 	ID        string `json:"id"`            // Unique identifier for the signature request
-	Message   string `json:"message"`       // message to be signed
 	EcMessage string `json:"ecdsa_message"` // message signed (ECDSA)
 	EdMessage string `json:"eddsa_message"` // message to be signed (EdDSA)
 	IsKey     int    `json:"is_key"`        // isKey boolean true if the message is a hash of the public key used to verify the signature
@@ -94,6 +103,7 @@ type SigResponse struct {
 	TraceID   string `json:"trace_id"`
 	IsKey     int    `json:"is_key"`
 	KeyID     string `json:"key_id"`
+	ID        string `json:"id"`
 	EcMessage string `json:"ecdsa_message"` // Message signed (ECDSA)
 	EcR       string `json:"ecdsa_r"`
 	EcS       string `json:"ecdsa_s"`

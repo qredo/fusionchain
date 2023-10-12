@@ -228,3 +228,115 @@ func TestSignature(t *testing.T) {
 		})
 	}
 }
+
+func Test_LocalMPC(t *testing.T) {
+
+	log, err := logger.NewLogger("fatal", "plain", false, "test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cl := newLocalClient(log, 0)
+
+	system := []struct {
+		name    string
+		keyType CryptoSystem
+	}{
+		{
+			"ecdsa",
+			EcDSA,
+		},
+		{
+			"eddsa",
+			EdDSA,
+		},
+	}
+
+	sigTests := []struct {
+		name                                                string
+		req                                                 *SigRequestData
+		expectPubKeyErr, expectPubKeySignErr, expectSignErr bool
+	}{
+		{
+			"valid",
+			&SigRequestData{
+				KeyID:   hexutil.MustDecode("0x" + fmt.Sprintf("%0*x", 64, 1)),
+				ID:      hexutil.MustDecode("0x" + fmt.Sprintf("%0*x", 64, 2)),
+				SigHash: hash([]byte("some message")),
+			},
+			false,
+			false,
+			false,
+		},
+		{
+			"bad key_id",
+			&SigRequestData{
+				KeyID:   hexutil.MustDecode("0x" + fmt.Sprintf("%0*x", 62, 1)),
+				ID:      hexutil.MustDecode("0x" + fmt.Sprintf("%0*x", 64, 2)),
+				SigHash: hash([]byte("some message")),
+			},
+			true,
+			true,
+			true,
+		},
+		{
+			"bad id",
+			&SigRequestData{
+				KeyID:   hexutil.MustDecode("0x" + fmt.Sprintf("%0*x", 64, 1)),
+				ID:      hexutil.MustDecode("0x" + fmt.Sprintf("%0*x", 62, 2)),
+				SigHash: hash([]byte("some message")),
+			},
+			false,
+			false,
+			true,
+		},
+		{
+			"bad sig hash",
+			&SigRequestData{
+				KeyID:   hexutil.MustDecode("0x" + fmt.Sprintf("%0*x", 64, 1)),
+				ID:      hexutil.MustDecode("0x" + fmt.Sprintf("%0*x", 64, 2)),
+				SigHash: hash([]byte("some message"))[0:16],
+			},
+			false,
+			false,
+			true,
+		},
+	}
+
+	dummyPk := hexutil.MustDecode("0x03247b3e83e7af4181b7f1bb8f8accc2ce517a7864271f8fd783f6d97345a8fbb5")
+
+	for _, tc := range system {
+		t.Run(tc.name, func(t *testing.T) {
+			for _, tt := range sigTests {
+				t.Run(tt.name, func(t *testing.T) {
+
+					pk, _, err := cl.PublicKey(tt.req.KeyID, tc.keyType)
+					if (err != nil) != tt.expectPubKeyErr {
+						t.Fatalf("unexpected pubkey creation error %v", err)
+					}
+					if err != nil {
+						pk = dummyPk
+					}
+
+					_, _, err = cl.PubkeySignature(pk, tt.req.KeyID, tc.keyType)
+					if (err != nil) != tt.expectPubKeySignErr {
+						t.Fatalf("unexpected pubKey sign error %v", err)
+					}
+
+					_, _, err = cl.Signature(tt.req, tc.keyType)
+					if tc.keyType == EcDSA {
+						if (err != nil) != tt.expectSignErr {
+							t.Fatalf("unexpected sign error %v", err)
+						}
+					}
+				})
+			}
+		})
+
+	}
+
+}
+
+func hash(b []byte) []byte {
+	h := sha256.Sum256(b)
+	return h[:]
+}

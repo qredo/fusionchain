@@ -27,10 +27,10 @@ func newLocalClient(logger *logrus.Entry, initVersion int) *localMPC {
 	}
 }
 
-func (m *localMPC) logger(assetID []byte, traceID string) *logrus.Entry {
+func (m *localMPC) logger(keyID []byte, traceID string) *logrus.Entry {
 	return m._logger.WithFields(logrus.Fields{
 		"dd":      TraceID{Trace: traceID},
-		"keyID":   fmt.Sprintf("%x", assetID),
+		"keyID":   fmt.Sprintf("%x", keyID),
 		"traceID": traceID,
 	})
 }
@@ -71,17 +71,27 @@ func (m *localMPC) PublicKey(keyID []byte, keyType CryptoSystem) ([]byte, string
 	return pubKeyBytes, traceID, nil
 }
 
-func (m *localMPC) PubkeySignature(pubKey, seedID []byte, keyType CryptoSystem) ([]byte, string, error) {
+func (m *localMPC) PubkeySignature(pubKey, keyID []byte, keyType CryptoSystem) ([]byte, string, error) {
+
+	req := &SigRequest{
+		KeyID: hex.EncodeToString(keyID),
+		IsKey: isKey,
+	}
+
 	dataToSign := pubKey
 	if keyType == EcDSA {
 		h := sha256.Sum256(pubKey)
 		dataToSign = h[:]
 	}
+	sigHash := hex.EncodeToString(dataToSign)
 
-	req := &SigRequest{
-		KeyID:   hex.EncodeToString(seedID),
-		Message: hex.EncodeToString(dataToSign),
-		IsKey:   isKey,
+	switch keyType {
+	case EcDSA:
+		req.EcMessage = sigHash
+	case EdDSA:
+		req.EdMessage = sigHash
+	default:
+		return nil, "", fmt.Errorf("invalid key type: %v", keyType)
 	}
 
 	// Trace ID
@@ -91,7 +101,7 @@ func (m *localMPC) PubkeySignature(pubKey, seedID []byte, keyType CryptoSystem) 
 	}
 	traceID := fmt.Sprintf("%16x", b)
 
-	m.logger(seedID, traceID).Info("mpcPubKeySign")
+	m.logger(keyID, traceID).Info("mpcPubKeySign")
 	//do the post to the MPC server
 	response, err := localMPCSign(req, m.initVersion, keyType)
 	if err != nil {
@@ -116,10 +126,21 @@ func (m *localMPC) PubkeySignature(pubKey, seedID []byte, keyType CryptoSystem) 
 
 func (m *localMPC) Signature(sigRequestData *SigRequestData, keyType CryptoSystem) (*SigResponse, string, error) {
 	keyID := hex.EncodeToString(sigRequestData.KeyID)
+	requestID := hex.EncodeToString(sigRequestData.ID)
 	req := &SigRequest{
-		KeyID:   keyID,
-		Message: hex.EncodeToString(sigRequestData.SigHash),
-		IsKey:   isNotKey,
+		KeyID: keyID,
+		ID:    requestID,
+		IsKey: isNotKey,
+	}
+
+	sigHash := hex.EncodeToString(sigRequestData.SigHash)
+	switch keyType {
+	case EcDSA:
+		req.EcMessage = sigHash
+	case EdDSA:
+		req.EdMessage = sigHash
+	default:
+		return nil, "", fmt.Errorf("invalid key type: %v", keyType)
 	}
 
 	// Trace ID
@@ -137,6 +158,10 @@ func (m *localMPC) Signature(sigRequestData *SigRequestData, keyType CryptoSyste
 		return nil, traceID, err
 	}
 
+	// Check matching request ID
+	if req.ID != response.ID {
+		return nil, "", fmt.Errorf("mpc keyID mismatch expected %v, got %v", req.KeyID, response.KeyID)
+	}
 	// Check matching KeyID
 	if req.KeyID != response.KeyID {
 		return nil, "", fmt.Errorf("mpc keyID mismatch expected %v, got %v", req.KeyID, response.KeyID)
@@ -162,6 +187,10 @@ func (m *localMPC) Ping() (bool, string) {
 
 // localMPCKeys - emulate the MPCKeys request
 func localMPCKeys(req *KeysRequest, salt int, keyType CryptoSystem) (resp *KeysResponse, err error) {
+	// validate inputs
+	if len(req.KeyID) != keyIDLength {
+		return nil, fmt.Errorf("invalid keyID %v, length %v", req.KeyID, len(req.KeyID))
+	}
 	keyID, err := hex.DecodeString(req.KeyID)
 	if err != nil {
 		return nil, err
@@ -190,7 +219,16 @@ func localMPCKeys(req *KeysRequest, salt int, keyType CryptoSystem) (resp *KeysR
 
 // localMPCSign - emulate the MPC sign request
 func localMPCSign(req *SigRequest, salt int, keyType CryptoSystem) (resp *SigResponse, err error) {
-	//AssetID - used for validation only
+	// validate inputs
+	if len(req.KeyID) != keyIDLength {
+		return nil, fmt.Errorf("invalid keyID %v, length %v", req.KeyID, len(req.KeyID))
+	}
+	if req.IsKey != isKey {
+		if len(req.ID) != keyIDLength {
+			return nil, fmt.Errorf("invalid requestID %v, length %v", req.ID, len(req.ID))
+		}
+	}
+
 	keyID, err := hex.DecodeString(req.KeyID)
 	if err != nil {
 		return nil, err
@@ -198,9 +236,20 @@ func localMPCSign(req *SigRequest, salt int, keyType CryptoSystem) (resp *SigRes
 	// Handle engine key differently
 	seed := sha256.Sum256(append(keyID, byte(salt)))
 
-	m, err := hex.DecodeString(req.Message)
-	if err != nil {
-		return nil, err
+	var m []byte
+	switch keyType {
+	case EcDSA:
+		m, err = hex.DecodeString(req.EcMessage)
+		if err != nil {
+			return nil, err
+		}
+	case EdDSA:
+		m, err = hex.DecodeString(req.EdMessage)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("invalid key type: %v", keyType)
 	}
 
 	sigBytes, pubKeyBytes, err := generateSignature(seed[:], m, keyType)
@@ -220,15 +269,16 @@ func localMPCSign(req *SigRequest, salt int, keyType CryptoSystem) (resp *SigRes
 		Message: "ok",
 		Version: "1.0.0",
 		KeyID:   req.KeyID,
+		ID:      req.ID,
 	}
 	switch keyType {
 	case EdDSA:
-		resp.EdMessage = req.Message
+		resp.EdMessage = req.EdMessage
 		resp.EdR = toHexInt(sigR)
 		resp.EdS = toHexInt(sigS)
 		resp.EdPk = hex.EncodeToString(pubKeyBytes)
 	case EcDSA:
-		resp.EcMessage = req.Message
+		resp.EcMessage = req.EcMessage
 		resp.EcR = toHexInt(sigR)
 		resp.EcS = toHexInt(sigS)
 		resp.Pk = hex.EncodeToString(pubKeyBytes)
@@ -242,11 +292,4 @@ func localMPCSign(req *SigRequest, salt int, keyType CryptoSystem) (resp *SigRes
 func toHexInt(n *big.Int) string {
 	b := math.PaddedBigBytes(n, 32)
 	return fmt.Sprintf("%x", b) // or %X or upper case
-}
-
-func padZerosRight(msg string, n int) string {
-	for len(msg) < n {
-		msg += "0"
-	}
-	return msg
 }

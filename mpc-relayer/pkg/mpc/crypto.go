@@ -213,11 +213,11 @@ func generateSignature(seed, message []byte, keyType CryptoSystem) (sigBytes, pu
 		ecdsaPriv := privateKey.ToECDSA()
 		prvD := math.PaddedBigBytes(ecdsaPriv.D, 32)
 		if len(prvD) != 32 {
-			return nil, nil, fmt.Errorf("error genertaing ecdsa private key: Priv key bitlength: %v", 8*len(prvD))
+			return nil, nil, fmt.Errorf("error generating ecdsa private key: Priv key bitlength: %v", 8*len(prvD))
 		}
 		prv, err := crypto.ToECDSA(prvD)
 		if err != nil {
-			return nil, nil, fmt.Errorf("error genertaing ecdsa private key: Error %v. Priv key length: %v", err, 8*len(seed))
+			return nil, nil, fmt.Errorf("error generating ecdsa private key: Error %v. Priv key length: %v", err, 8*len(seed))
 		}
 		sigBytes, err = crypto.Sign(message, prv)
 		if err != nil {
@@ -229,7 +229,7 @@ func generateSignature(seed, message []byte, keyType CryptoSystem) (sigBytes, pu
 		// Sign the encoded transaction
 		privateKey, err := EDDSAPrivFromSeed(seed[:])
 		if err != nil {
-			return nil, nil, fmt.Errorf("error generating eddsa signature %v", err)
+			return nil, nil, fmt.Errorf("error generating eddsa prviate key %v", err)
 		}
 		pubKeyBytes = make([]byte, ed25519.PublicKeySize)
 		copy(pubKeyBytes, privateKey[32:])

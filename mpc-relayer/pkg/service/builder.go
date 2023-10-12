@@ -19,20 +19,20 @@ const (
 	fusionChainID  = "fusion_420-1"
 )
 
+// BuildService constructs the main application based on supplied config parameters
 func BuildService(config ServiceConfig) (*Service, error) {
 	if isEmpty(config) {
 		return nil, fmt.Errorf("no config file supplied")
 	}
-	log, err := logger.NewLogger(logger.Level(config.Loglevel), logger.Format(config.LogFormat), config.LogToFile, "mpc-relayer")
+	log, err := logger.NewLogger(logger.Level(config.LogLevel), logger.Format(config.LogFormat), config.LogToFile, "mpc-relayer")
 	if err != nil {
 		return nil, err
 	}
 
-	kv, err := database.NewBadger(config.Path, false)
+	keyDB, err := makeKeyDB(config.Path, false)
 	if err != nil {
 		return nil, err
 	}
-	keyDB := database.NewPrefixDB("pk", kv)
 
 	keyringID, identity, mpcClient, err := makeKeyringClient(&config, log)
 	if err != nil {
@@ -66,6 +66,14 @@ func BuildService(config ServiceConfig) (*Service, error) {
 		newFusionSignatureController(log, keyDB, sigchan, mpcClient, txClient),
 	), nil
 
+}
+
+func makeKeyDB(path string, inMemory bool) (database.Database, error) {
+	kv, err := database.NewBadger(path, inMemory)
+	if err != nil {
+		return nil, err
+	}
+	return database.NewPrefixDB("pk", kv), nil
 }
 
 func makeKeyringClient(config *ServiceConfig, log *logrus.Entry) (keyringID uint64, identity client.Identity, mpcClient mpc.Client, err error) {

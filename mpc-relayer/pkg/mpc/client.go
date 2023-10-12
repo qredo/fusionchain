@@ -150,7 +150,7 @@ func (m *client) PubkeySignature(pubKey, keyID []byte, keyType CryptoSystem) ([]
 	start := time.Now()
 	log := m.logger(keyID, traceID)
 
-	response, err := m.mpcSignRequest(dataToSign[:], keyID, traceID, isKey, keyType)
+	response, err := m.mpcSignRequest(dataToSign[:], keyID, nil, traceID, isKey, keyType)
 	if err != nil {
 		log.WithFields(logrus.Fields{"error": err, "timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2)}).Error("mpcPubKeySignErr")
 		return nil, traceID, err
@@ -173,6 +173,7 @@ func (m *client) Signature(sigRequestData *SigRequestData, keyType CryptoSystem)
 		return nil, "", err
 	}
 	keyID := sigRequestData.KeyID
+	requestID := sigRequestData.ID
 	traceID := fmt.Sprintf("%16x", b)
 	start := time.Now()
 
@@ -181,7 +182,7 @@ func (m *client) Signature(sigRequestData *SigRequestData, keyType CryptoSystem)
 		"keyID": hex.EncodeToString(keyID),
 	})
 
-	response, err := m.mpcSignRequest(sigRequestData.SigHash, keyID, traceID, isNotKey, keyType)
+	response, err := m.mpcSignRequest(sigRequestData.SigHash, keyID, requestID, traceID, isNotKey, keyType)
 	if err != nil {
 		log.WithFields(logrus.Fields{"error": err, "timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2)}).Error("mpcSignErr")
 		return nil, traceID, err
@@ -303,8 +304,8 @@ func (m *client) decodeAndVerifyMPCKeysResponse(response *http.Response) (MPCRes
 }
 
 // mpcSignRequest makes a mpc signature generation request over http and returns the response
-func (m *client) mpcSignRequest(message, keyID []byte, traceID string, isKey int, keyType CryptoSystem) (*http.Response, error) {
-	buf, url, err := m.prepareMPCSignRequest(message, keyID, isKey, keyType)
+func (m *client) mpcSignRequest(message, keyID, requestID []byte, traceID string, isKey int, keyType CryptoSystem) (*http.Response, error) {
+	buf, url, err := m.prepareMPCSignRequest(message, keyID, requestID, isKey, keyType)
 	if err != nil {
 		return nil, err
 	}
@@ -329,22 +330,24 @@ func (m *client) mpcSignRequest(message, keyID []byte, traceID string, isKey int
 }
 
 // prepareMPCSignRequest prepares the http request buffer from supplied input parameters
-func (m *client) prepareMPCSignRequest(message []byte, keyID []byte, isKey int, keyType CryptoSystem) (*bytes.Buffer, string, error) {
+func (m *client) prepareMPCSignRequest(message, keyID, requestID []byte, isKey int, keyType CryptoSystem) (*bytes.Buffer, string, error) {
 	postReq := &SigRequest{
-		KeyID:   hex.EncodeToString(keyID),
-		Message: hex.EncodeToString(message),
-		IsKey:   isKey,
+		KeyID: hex.EncodeToString(keyID),
+		ID:    hex.EncodeToString(requestID),
+		IsKey: isKey,
 	}
+
+	msg := hex.EncodeToString(message)
 
 	var url string
 	switch keyType {
 	case EdDSA:
 		url = fmt.Sprintf("http://%s:%s%v", m.host, m.port, EdDSASig)
 		// TODO check
-		postReq.EdMessage = postReq.Message
+		postReq.EdMessage = msg
 	case EcDSA:
 		url = fmt.Sprintf("http://%s:%s%v", m.host, m.port, ECDSASig)
-		postReq.EcMessage = postReq.Message
+		postReq.EcMessage = msg
 	default:
 		return nil, "", fmt.Errorf("key type %v not supported", keyType)
 	}

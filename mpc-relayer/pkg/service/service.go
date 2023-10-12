@@ -56,7 +56,7 @@ func (s *Service) Start() error {
 }
 
 func (s *Service) Stop(sig os.Signal) error {
-	s.log.WithFields(logrus.Fields{"signal": sig}).Info("received shutdown signal")
+	s.log.WithFields(logrus.Fields{"signal": sig.String()}).Warn("received shutdown signal")
 	if s.stopped.Load() {
 		s.log.WithFields(logrus.Fields{"signal": sig}).Warn("already shutting down")
 		return fmt.Errorf("already shutting down")

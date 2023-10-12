@@ -70,7 +70,7 @@ func (q *keyQueryProcessor) startTicker() {
 func (q *keyQueryProcessor) executeKeyQuery() error {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancelFunc()
-	pendingKeyRequests, err := q.queryClient.PendingKeyRequests(ctx, &client.PageRequest{}, q.keyRingID)
+	pendingKeyRequests, err := q.queryClient.PendingKeyRequests(ctx, &client.PageRequest{Limit: defaultPageLimit}, q.keyRingID)
 	if err != nil {
 		return err
 	}
@@ -157,7 +157,7 @@ func (q sigQueryProcessor) startTicker() {
 func (q *sigQueryProcessor) executeSignatureQuery() error {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancelFunc()
-	pendingSigRequests, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{}, q.keyRingID)
+	pendingSigRequests, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{Limit: defaultPageLimit}, q.keyRingID)
 	if err != nil {
 		return err
 	}

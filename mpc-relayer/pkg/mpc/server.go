@@ -9,7 +9,6 @@ import (
 
 type LocalMPCServer struct {
 	initVersion int
-	keyType     CryptoSystem
 }
 
 func NewLocalMPCServer(initVersion int) LocalMPCServer {
