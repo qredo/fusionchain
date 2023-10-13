@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/qredo/fusionchain/go-client"
+	"github.com/qredo/fusionchain/x/treasury/types"
 	"github.com/sirupsen/logrus"
 )
 
@@ -75,6 +76,9 @@ func (q *keyQueryProcessor) executeKeyQuery() error {
 		return err
 	}
 	for _, r := range pendingKeyRequests {
+		if r.Status != types.KeyRequestStatus_KEY_REQUEST_STATUS_PENDING { // ignore rogue completed or rejected requests
+			continue
+		}
 		newItem := &keyRequestQueueItem{
 			request:  r,
 			maxTries: q.maxTries,
@@ -162,6 +166,9 @@ func (q *sigQueryProcessor) executeSignatureQuery() error {
 		return err
 	}
 	for _, r := range pendingSigRequests {
+		if r.Status != types.SignRequestStatus_SIGN_REQUEST_STATUS_PENDING { // ignore rogue completed or rejected requests
+			continue
+		}
 		newItem := &signatureRequestQueueItem{
 			request:  r,
 			maxTries: q.maxTries,

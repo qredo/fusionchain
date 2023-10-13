@@ -8,6 +8,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/qredo/fusionchain/mpc-relayer/pkg/common"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/database"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/mpc"
 	"github.com/qredo/fusionchain/x/treasury/types"
@@ -130,6 +131,7 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	if item == nil || item.request == nil {
 		return fmt.Errorf("malformed keyRequest item")
 	}
+	start := time.Now()
 
 	// make 64 character keyID from the ID supplied for the keys request
 	keyIDStr := fmt.Sprintf("%0*x", mpcRequestKeyLength, item.request.Id)
@@ -151,8 +153,7 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 
 	// verify that a signature can be generated for the supplied public key
 	// the response is validated by the mpcclient
-	pkSig, _, err := h.keyringClient.PubkeySignature(pk, keyID, mpc.EcDSA)
-	if err != nil {
+	if _, _, err = h.keyringClient.PubkeySignature(pk, keyID, mpc.EcDSA); err != nil {
 		return err
 	}
 
@@ -166,11 +167,8 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	if err != nil {
 		return err
 	}
-
 	h.Logger.WithFields(logrus.Fields{
-		"keyID":     keyIDStr,
-		"publicKey": fmt.Sprintf("%x", pk),
-		"signature": fmt.Sprintf("%x", pkSig),
+		"timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2),
 	}).Info("keyRequestFulfilled")
 	return nil
 }

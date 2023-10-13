@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/qredo/fusionchain/mpc-relayer/pkg/common"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/database"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/mpc"
 	"github.com/qredo/fusionchain/x/treasury/types"
@@ -124,6 +125,7 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 	if item == nil || item.request == nil {
 		return fmt.Errorf("malformed keyRequest item")
 	}
+	start := time.Now()
 
 	keyID, err := hex.DecodeString(fmt.Sprintf("%0*x", mpcRequestKeyLength, item.request.KeyId))
 	if err != nil {
@@ -157,11 +159,11 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 	if err = h.TxClient.FulfilSignatureRequest(ctx, item.request.Id, signature); err != nil {
 		return err
 	}
-
 	h.Logger.WithFields(logrus.Fields{
 		"keyID":     fmt.Sprintf("%x", keyID),
 		"requestID": fmt.Sprintf("%x", requestID),
-		"signature": fmt.Sprintf("%x", signature),
+		"timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2),
 	}).Info("sigRequestFulfilled")
+
 	return nil
 }

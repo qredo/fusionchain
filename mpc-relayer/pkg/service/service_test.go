@@ -195,7 +195,7 @@ func Test_ServiceAPI(t *testing.T) {
 }
 
 func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*Service, error) {
-	config, err := sanitiseConfig(config)
+	config, err := sanitizeConfig(config)
 	if err != nil {
 		return nil, err
 	}

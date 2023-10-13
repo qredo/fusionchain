@@ -32,7 +32,7 @@ func isEmpty(c ServiceConfig) bool {
 	return bytes.Equal(b, e)
 }
 
-func sanitiseConfig(config ServiceConfig) (cfg ServiceConfig, err error) {
+func sanitizeConfig(config ServiceConfig) (cfg ServiceConfig, err error) {
 	if isEmpty(config) {
 		err = fmt.Errorf("no config file supplied")
 		return

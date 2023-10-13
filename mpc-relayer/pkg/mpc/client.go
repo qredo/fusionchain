@@ -156,14 +156,18 @@ func (m *client) PubkeySignature(pubKey, keyID []byte, keyType CryptoSystem) ([]
 		return nil, traceID, err
 	}
 
-	_, rsSerializedSig, err := m.decodeAndVerifyMPCSignResponse(response, hex.EncodeToString(dataToSign[:]), keyType)
+	resp, sig, err := m.decodeAndVerifyMPCSignResponse(response, hex.EncodeToString(dataToSign[:]), keyType)
 	if err != nil {
 		log.WithFields(logrus.Fields{"error": err, "timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2)}).Error("mpcPubKeySignErr")
 		return nil, traceID, err
 	}
-	log.WithFields(logrus.Fields{"timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2)}).Info("mpcPubKeySign")
+	log.WithFields(logrus.Fields{
+		"pubKey":    resp.EdPk + resp.Pk, // only one returned
+		"signature": fmt.Sprintf("%x", sig),
+		"timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2),
+	}).Info("mpcPubKeySign")
 
-	return rsSerializedSig, traceID, nil
+	return sig, traceID, nil
 }
 
 // InputSignature Return a signature for the supplied transaction input required to construct a transaction
@@ -188,14 +192,18 @@ func (m *client) Signature(sigRequestData *SigRequestData, keyType CryptoSystem)
 		return nil, traceID, err
 	}
 
-	mPCMPCResponse, _, err := m.decodeAndVerifyMPCSignResponse(response, hex.EncodeToString(sigRequestData.SigHash), keyType)
+	resp, sig, err := m.decodeAndVerifyMPCSignResponse(response, hex.EncodeToString(sigRequestData.SigHash), keyType)
 	if err != nil {
 		log.WithFields(logrus.Fields{"error": err, "timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2)}).Error("mpcSignErr")
 		return nil, traceID, err
 	}
-	log.WithFields(logrus.Fields{"timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2)}).Info("mpcSign")
+	log.WithFields(logrus.Fields{
+		"pubKey":    resp.EdPk + resp.Pk,
+		"signature": fmt.Sprintf("%x", sig),
+		"timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2),
+	}).Info("mpcSign")
 
-	return mPCMPCResponse, traceID, nil
+	return resp, traceID, nil
 }
 
 // Ping - Status check MPC endpoint returns boolean value indicating connection status and a trace identifier

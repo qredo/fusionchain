@@ -27,11 +27,13 @@ func newLocalClient(logger *logrus.Entry, initVersion int) *localMPC {
 	}
 }
 
-func (m *localMPC) logger(keyID []byte, traceID string) *logrus.Entry {
+func (m *localMPC) logger(keyID []byte, traceID string, pubKey string, k CryptoSystem) *logrus.Entry {
 	return m._logger.WithFields(logrus.Fields{
 		"dd":      TraceID{Trace: traceID},
 		"keyID":   fmt.Sprintf("%x", keyID),
 		"traceID": traceID,
+		"pubKey":  pubKey,
+		"keyType": k,
 	})
 }
 
@@ -47,13 +49,13 @@ func (m *localMPC) PublicKey(keyID []byte, keyType CryptoSystem) ([]byte, string
 	}
 	traceID := fmt.Sprintf("%16x", b)
 
-	m.logger(keyID, traceID).Info("mpcPubKey")
-
 	//Fake a public Key from the MPC
 	response, err := localMPCKeys(req, m.initVersion, keyType)
 	if err != nil {
 		return nil, traceID, err
 	}
+
+	m.logger(keyID, traceID, response.EdPk+response.Pk, keyType).Info("mpcPubKey")
 
 	// Check matching KeyID
 	if req.KeyID != response.KeyID {
@@ -101,12 +103,13 @@ func (m *localMPC) PubkeySignature(pubKey, keyID []byte, keyType CryptoSystem) (
 	}
 	traceID := fmt.Sprintf("%16x", b)
 
-	m.logger(keyID, traceID).Info("mpcPubKeySign")
 	//do the post to the MPC server
 	response, err := localMPCSign(req, m.initVersion, keyType)
 	if err != nil {
 		return nil, traceID, err
 	}
+
+	m.logger(keyID, traceID, response.EdPk+response.Pk, keyType).Info("mpcPubKeySign")
 
 	// Check matching KeyID
 	if req.KeyID != response.KeyID {
@@ -150,13 +153,13 @@ func (m *localMPC) Signature(sigRequestData *SigRequestData, keyType CryptoSyste
 	}
 	traceID := fmt.Sprintf("%16x", b)
 
-	m.logger(sigRequestData.KeyID, traceID).Info("mpcSign")
-
 	//do the post to the MPC server
 	response, err := localMPCSign(req, m.initVersion, keyType)
 	if err != nil {
 		return nil, traceID, err
 	}
+
+	m.logger(sigRequestData.KeyID, traceID, response.EdPk+response.Pk, keyType).Info("mpcSign")
 
 	// Check matching request ID
 	if req.ID != response.ID {

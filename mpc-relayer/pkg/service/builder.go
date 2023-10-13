@@ -21,7 +21,7 @@ const (
 
 // BuildService constructs the main application based on supplied config parameters
 func BuildService(config ServiceConfig) (*Service, error) {
-	cfg, err := sanitiseConfig(config)
+	cfg, err := sanitizeConfig(config)
 	if err != nil {
 		return nil, err
 	}
