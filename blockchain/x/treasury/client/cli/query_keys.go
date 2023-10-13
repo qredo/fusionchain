@@ -39,10 +39,10 @@ func CmdKeys() *cobra.Command {
 				case "sepolia":
 					walletType = types.WalletType_WALLET_TYPE_ETH_SEPOLIA
 				case "all":
-					walletType = types.WalletType_WALLET_TYPE_ALL
+					walletType = types.WalletType_WALLET_TYPE_UNSPECIFIED
 				default:
 					fmt.Printf("invalid wallet type '%s', defaulting to 'all'", args[0])
-					walletType = types.WalletType_WALLET_TYPE_ALL
+					walletType = types.WalletType_WALLET_TYPE_UNSPECIFIED
 				}
 			}
 			params := &types.QueryKeysRequest{
