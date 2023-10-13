@@ -10,6 +10,8 @@ type Wallet interface {
 	Address() string
 }
 
+var ErrUnknownWalletType = fmt.Errorf("error in NewWallet: unknown wallet type")
+
 func NewWallet(k *Key, w WalletType) (Wallet, error) {
 	switch w {
 	case WalletType_WALLET_TYPE_QRDO:
@@ -19,7 +21,7 @@ func NewWallet(k *Key, w WalletType) (Wallet, error) {
 	case WalletType_WALLET_TYPE_ETH_SEPOLIA:
 		return NewEthereumWallet(k)
 	}
-	return nil, fmt.Errorf("error in NewWallet: unknown wallet type")
+	return nil, ErrUnknownWalletType
 }
 
 // Transfer represents a generic transfer of tokens on a layer 1 blockchain.
