@@ -30,7 +30,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 
 # Download dependencies
-#RUN go mod download
+RUN go mod download
 
 # Copy the rest of the source code
 COPY . .
