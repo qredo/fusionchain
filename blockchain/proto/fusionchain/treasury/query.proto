@@ -48,16 +48,6 @@ service Query {
         "/fusionchain/treasury/signature_request_by_id";
   }
 
-  // Queries a list of Wallet items.
-  rpc Wallets(QueryWalletsRequest) returns (QueryWalletsResponse) {
-    option (google.api.http).get = "/fusionchain/treasury/wallets";
-  }
-
-  // Queries a list of WalletById items.
-  rpc WalletById(QueryWalletByIdRequest) returns (QueryWalletByIdResponse) {
-    option (google.api.http).get = "/fusionchain/treasury/wallet_by_id";
-  }
-
   // Queries a list of SignTransactionRequests items.
   rpc SignTransactionRequests(QuerySignTransactionRequestsRequest)
       returns (QuerySignTransactionRequestsResponse) {
@@ -102,8 +92,8 @@ message QueryKeyRequestByIdResponse { KeyRequest key_request = 1; }
 
 message QueryKeysRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
-  string workspace_addr = 2;  // Optional
-  WalletRequestType type = 3; // Optional
+  string workspace_addr = 2; // Optional
+  WalletType type = 3;       // Optional
 }
 
 message QueryKeysResponse {

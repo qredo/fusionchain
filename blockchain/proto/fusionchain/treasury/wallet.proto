@@ -9,7 +9,7 @@ enum WalletType {
   // The wallet type is missing
   WALLET_TYPE_UNSPECIFIED = 0;
   // The wallet type for all wallets to be derived
-  WALLET_REQUEST_TYPE_ALL = 1;
+  WALLET_TYPE_ALL = 1;
   // The wallet type for native Fusion chain cosmos accounts (not ERC-20 QRDO
   // tokens)
   WALLET_TYPE_QRDO = 2;
