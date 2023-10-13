@@ -20,7 +20,7 @@ var (
 
 	defaultChanSize = 1000
 
-	defaultPageLimit uint64 = 100
+	defaultPageLimit uint64 = 10
 )
 
 func requeueKeyItemWithTimeout(c chan *keyRequestQueueItem, item *keyRequestQueueItem, timeout time.Duration) {

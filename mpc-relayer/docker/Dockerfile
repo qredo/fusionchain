@@ -30,7 +30,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 
 # Download dependencies
-RUN go mod download
+#RUN go mod download
 
 # Copy the rest of the source code
 COPY . .
@@ -41,7 +41,7 @@ RUN GO111MODULES=on \
     -tags netgo \
     -o /out/service ./cmd/mpc-relayer/
 
-# Copy the .json config file to the working directory
+# Copy the .yml config file to the working directory
 COPY /cmd/mpc-relayer/config.yml /out/config.yml
 
 # Create linux svcuser

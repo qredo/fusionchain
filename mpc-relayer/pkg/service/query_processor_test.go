@@ -38,7 +38,7 @@ func Test_SigStartStop(t *testing.T) {
 }
 
 func Test_ExecuteKeyQueryProcessor(t *testing.T) {
-	log, err := logger.NewLogger("error", "plain", false, "test")
+	log, err := logger.NewLogger("fatal", "plain", false, "test")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +51,7 @@ func Test_ExecuteKeyQueryProcessor(t *testing.T) {
 }
 
 func Test_ExecuteSigQueryProcessor(t *testing.T) {
-	log, err := logger.NewLogger("error", "plain", false, "test")
+	log, err := logger.NewLogger("fatal", "plain", false, "test")
 	if err != nil {
 		t.Fatal(err)
 	}

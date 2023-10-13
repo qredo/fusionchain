@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -15,14 +14,16 @@ import (
 )
 
 const (
-	derivationPath = "m/44'/60'/0'/0/0"
-	fusionChainID  = "fusion_420-1"
+	derivationPath       = "m/44'/60'/0'/0/0"
+	defaultFusionURL     = "localhost:9090"
+	defaultFusionChainID = "qredofusiontestnet_257-1"
 )
 
 // BuildService constructs the main application based on supplied config parameters
 func BuildService(config ServiceConfig) (*Service, error) {
-	if isEmpty(config) {
-		return nil, fmt.Errorf("no config file supplied")
+	cfg, err := sanitiseConfig(config)
+	if err != nil {
+		return nil, err
 	}
 	log, err := logger.NewLogger(logger.Level(config.LogLevel), logger.Format(config.LogFormat), config.LogToFile, "mpc-relayer")
 	if err != nil {
@@ -34,34 +35,22 @@ func BuildService(config ServiceConfig) (*Service, error) {
 		return nil, err
 	}
 
-	keyringID, identity, mpcClient, err := makeKeyringClient(&config, log)
+	keyringID, identity, mpcClient, err := makeKeyringClient(&cfg, log)
 	if err != nil {
 		return nil, err
 	}
 
-	queryClient, txClient, err := makeFusionGRPCClient(&config, identity)
+	queryClient, txClient, err := makeFusionGRPCClient(&cfg, identity)
 	if err != nil {
 		return nil, err
 	}
 
-	maxRetries := config.MaxTries
-	if maxRetries == 0 {
-		maxRetries = defaultMaxRetries
-	}
-	queryInterval := config.QueryInterval
-	if queryInterval == 0 {
-		queryInterval = defaultQueryInterval
-	}
-	port := config.Port
-	if port == 0 {
-		port = defaultPort
-	}
 	// make modules
 	keyChan := make(chan *keyRequestQueueItem, defaultChanSize)
 	sigchan := make(chan *signatureRequestQueueItem, defaultChanSize)
-	return New(keyringID, port, log, keyDB,
-		newKeyQueryProcessor(keyringID, queryClient, keyChan, log, time.Duration(queryInterval)*time.Second, int(maxRetries)),
-		newSigQueryProcessor(keyringID, queryClient, sigchan, log, time.Duration(queryInterval)*time.Second, int(maxRetries)),
+	return New(keyringID, cfg.Port, log, keyDB,
+		newKeyQueryProcessor(keyringID, queryClient, keyChan, log, time.Duration(cfg.QueryInterval)*time.Second, int(cfg.MaxTries)),
+		newSigQueryProcessor(keyringID, queryClient, sigchan, log, time.Duration(cfg.QueryInterval)*time.Second, int(cfg.MaxTries)),
 		newFusionKeyController(log, keyDB, keyChan, mpcClient, txClient),
 		newFusionSignatureController(log, keyDB, sigchan, mpcClient, txClient),
 	), nil
@@ -100,7 +89,7 @@ func makeFusionGRPCClient(config *ServiceConfig, identity client.Identity) (Quer
 		return nil, nil, err
 	}
 	queryClient := client.NewQueryClientWithConn(fusionGRPCClient)
-	txClient := client.NewTxClient(identity, fusionChainID, fusionGRPCClient, queryClient)
+	txClient := client.NewTxClient(identity, config.ChainID, fusionGRPCClient, queryClient)
 	return queryClient, txClient, nil
 
 }

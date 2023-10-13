@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"fmt"
 
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/mpc"
 	"gopkg.in/yaml.v3"
@@ -11,6 +12,7 @@ type ServiceConfig struct {
 	Port          int        `yaml:"port"`
 	Path          string     `yaml:"path"`
 	KeyRingID     string     `yaml:"keyring_id"`
+	ChainID       string     `yaml:"chain_id"`
 	FusionURL     string     `yaml:"fusion_url"`
 	Mnemonic      string     `yaml:"mnemonic"`
 	LogLevel      string     `yaml:"loglevel"`
@@ -28,4 +30,38 @@ func isEmpty(c ServiceConfig) bool {
 	b, _ := yaml.Marshal(c)
 	e, _ := yaml.Marshal(emptyConfig)
 	return bytes.Equal(b, e)
+}
+
+func sanitiseConfig(config ServiceConfig) (cfg ServiceConfig, err error) {
+	if isEmpty(config) {
+		err = fmt.Errorf("no config file supplied")
+		return
+	}
+	mpcConfig := config.MPC
+	if len(mpcConfig.Node) == 0 && !mpcConfig.Mock {
+		err = fmt.Errorf("invalid (empty) mpc config")
+		return
+	}
+	cfg = config
+
+	if config.MaxTries == 0 {
+		cfg.MaxTries = defaultMaxRetries
+	}
+
+	if config.QueryInterval == 0 {
+		cfg.QueryInterval = defaultQueryInterval
+	}
+
+	if config.Port == 0 {
+		cfg.Port = defaultPort
+	}
+
+	if config.FusionURL == "" {
+		cfg.FusionURL = defaultFusionURL
+	}
+
+	if config.ChainID == "" {
+		cfg.FusionURL = defaultFusionChainID
+	}
+	return
 }

@@ -74,7 +74,10 @@ func (s *signatureController) startExecutor() {
 				processing = true
 				defer func() { processing = false }()
 				if err := s.executeRequest(item); err != nil {
-					s.log.WithField("error", err.Error()).Error("signRequestErr")
+					s.log.WithFields(logrus.Fields{
+						"retries": item.retries,
+						"error":   err.Error(),
+					}).Error("signRequestErr")
 				}
 			}()
 		}
@@ -141,8 +144,9 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 			if rejectErr := h.TxClient.RejectSignatureRequest(ctx, item.request.Id, err.Error()); rejectErr != nil {
 				return rejectErr
 			}
+			return nil
 		}
-		return nil
+		return err
 	}
 
 	signature, err := mpc.ExtractSerializedSigECDSA(sigResponse)

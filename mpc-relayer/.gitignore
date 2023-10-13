@@ -1,3 +1,5 @@
 db*
 # bin
 bin/*
+mpc-relayer
+main

@@ -1,8 +1,10 @@
 package service
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/database"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/logger"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/mpc"
@@ -30,9 +32,17 @@ func Test_ExecuteSigQuery(t *testing.T) {
 			"simple",
 			signatureRequestQueueItem{
 				maxTries: 5,
-				request:  &types.SignRequest{Id: 1},
+				request:  &types.SignRequest{Id: 1, KeyId: 1, DataForSigning: hexutil.MustDecode("0x" + fmt.Sprintf("%0*v", 64, 1))},
 			},
 			false,
+		},
+		{
+			"bad hash",
+			signatureRequestQueueItem{
+				maxTries: 5,
+				request:  &types.SignRequest{Id: 1, KeyId: 1, DataForSigning: hexutil.MustDecode("0x" + fmt.Sprintf("%0*v", 62, 1))},
+			},
+			true,
 		},
 	}
 
@@ -53,7 +63,7 @@ func Test_ExecuteSigQuery(t *testing.T) {
 }
 
 func testSetupSignatureController(t *testing.T) *signatureController {
-	log, err := logger.NewLogger("info", "plain", false, "test")
+	log, err := logger.NewLogger("fatal", "plain", false, "test")
 	if err != nil {
 		t.Fatal(err)
 	}

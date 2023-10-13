@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/common"
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/logger"
+	"github.com/qredo/fusionchain/mpc-relayer/pkg/mpc"
 )
 
 var testConfig = ServiceConfig{
@@ -21,6 +21,9 @@ var testConfig = ServiceConfig{
 	LogFormat: "plain",
 	LogToFile: false,
 	Mnemonic:  "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge",
+	MPC: mpc.Config{
+		Mock: true,
+	},
 }
 
 var (
@@ -192,8 +195,9 @@ func Test_ServiceAPI(t *testing.T) {
 }
 
 func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*Service, error) {
-	if isEmpty(config) {
-		return nil, fmt.Errorf("no config file supplied")
+	config, err := sanitiseConfig(config)
+	if err != nil {
+		return nil, err
 	}
 	log, err := logger.NewLogger(logger.Level(config.LogLevel), logger.Format(config.LogFormat), config.LogToFile, "test")
 	if err != nil {

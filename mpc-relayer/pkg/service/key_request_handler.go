@@ -68,10 +68,14 @@ func (k *keyController) startExecutor() {
 			return
 		case item := <-k.queue:
 			go func() {
+				i := item
 				processing = true
 				defer func() { processing = false }()
-				if err := k.executeRequest(item); err != nil {
-					k.log.WithField("error", err.Error()).Error("keyRequestErr")
+				if err := k.executeRequest(i); err != nil {
+					k.log.WithFields(logrus.Fields{
+						"retries": i.retries,
+						"error":   err.Error(),
+					}).Error("keyRequestErr")
 				}
 			}()
 		}
@@ -120,13 +124,14 @@ type FusionKeyRequestHandler struct {
 	Logger        *logrus.Entry
 }
 
-// HandleKeyRequests - TODO
+// HandleKeyRequests processes the pending key request supplied by fusiond, requesting a public key
+// via the MPC client and fulfilling the request via the TxClient
 func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *keyRequestQueueItem) error {
-
 	if item == nil || item.request == nil {
 		return fmt.Errorf("malformed keyRequest item")
 	}
 
+	// make 64 character keyID from the ID supplied for the keys request
 	keyIDStr := fmt.Sprintf("%0*x", mpcRequestKeyLength, item.request.Id)
 
 	keyID, err := hex.DecodeString(keyIDStr)
@@ -134,10 +139,15 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 		return err
 	}
 
+	// Request an ECDSA public key from the MPC service
 	pk, _, err := h.keyringClient.PublicKey(keyID, mpc.EcDSA)
 	if err != nil {
 		return err
 	}
+	h.Logger.WithFields(logrus.Fields{
+		"keyID":     keyIDStr,
+		"publicKey": fmt.Sprintf("%x", pk),
+	}).Debug("pubKeyReturned")
 
 	// verify that a signature can be generated for the supplied public key
 	// the response is validated by the mpcclient
