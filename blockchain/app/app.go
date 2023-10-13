@@ -156,7 +156,6 @@ import (
 	"github.com/spf13/cast"
 
 	srvflags "github.com/qredo/fusionchain/server/flags"
-	ethermint "github.com/qredo/fusionchain/types"
 	identitymodule "github.com/qredo/fusionchain/x/identity"
 	identitymodulekeeper "github.com/qredo/fusionchain/x/identity/keeper"
 	identitymoduletypes "github.com/qredo/fusionchain/x/identity/types"
