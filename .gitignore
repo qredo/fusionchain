@@ -8,3 +8,5 @@ contracts/packages/*/target
 build/
 
 mokr/mokr
+
+blockchain/cmd/fusiond/fusiond
