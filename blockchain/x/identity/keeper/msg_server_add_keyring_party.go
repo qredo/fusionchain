@@ -17,7 +17,7 @@ func (k msgServer) AddKeyringParty(goCtx context.Context, msg *types.MsgAddKeyri
 	}
 
 	if !kr.IsActive {
-		return nil, fmt.Errorf("Keyring is inactive")
+		return nil, fmt.Errorf("keyring is inactive")
 	}
 
 	if kr.IsParty(msg.Party) {

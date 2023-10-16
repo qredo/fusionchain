@@ -15,19 +15,26 @@ func (k msgServer) UpdateKeyring(goCtx context.Context, msg *types.MsgUpdateKeyr
 	if !found {
 		return nil, fmt.Errorf("keyring not found")
 	}
-	// No Policy is defined for keyring, we have just to check if the request is realized by one of the admins.
-	isAdmin := false
-	for _, admin := range kr.Admins {
-		if msg.Creator == admin {
-			isAdmin = true
-			break
-		}
+
+	// Check if the requester is an admin
+	if !isAdmin(kr, msg.Creator) {
+		return nil, fmt.Errorf("keyring updates should be requested by admins")
 	}
-	if !isAdmin {
-		return nil, fmt.Errorf("keyring updates should be request by admins")
-	}
+
 	kr.SetStatus(msg.IsActive)
-	kr.SetDescription(msg.Description) //mmmmmmmmmmmmmmm
+	if msg.Description != "" {
+		kr.SetDescription(msg.Description)
+	}
 	k.KeyringsRepo().Set(ctx, kr)
 	return &types.MsgUpdateKeyringResponse{}, nil
+}
+
+// isAdmin checks if the given creator is in the list of keyring admins.
+func isAdmin(kr *types.Keyring, creator string) bool {
+	for _, admin := range kr.Admins {
+		if creator == admin {
+			return true
+		}
+	}
+	return false
 }
