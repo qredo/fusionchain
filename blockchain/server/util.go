@@ -21,7 +21,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/evmos/ethermint/server"
-	ethermintserver "github.com/evmos/ethermint/server"
 	"github.com/spf13/cobra"
 )
 
@@ -58,6 +57,6 @@ func AddCommands(
 		sdkserver.NewRollbackCmd(opts.AppCreator, opts.DefaultNodeHome),
 
 		// custom tx indexer command
-		ethermintserver.NewIndexTxCmd(),
+		server.NewIndexTxCmd(),
 	)
 }

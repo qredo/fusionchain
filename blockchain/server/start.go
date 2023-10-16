@@ -630,11 +630,6 @@ func startInProcess(ctx *server.Context, clientCtx client.Context, opts ethermin
 	return server.WaitForQuitSignals()
 }
 
-func openDB(_ types.AppOptions, rootDir string, backendType dbm.BackendType) (dbm.DB, error) {
-	dataDir := filepath.Join(rootDir, "data")
-	return dbm.NewDB("application", backendType, dataDir)
-}
-
 // OpenIndexerDB opens the custom eth indexer db, using the same db backend as the main app
 func OpenIndexerDB(rootDir string, backendType dbm.BackendType) (dbm.DB, error) {
 	dataDir := filepath.Join(rootDir, "data")
