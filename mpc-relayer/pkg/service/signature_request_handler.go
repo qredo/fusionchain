@@ -47,6 +47,7 @@ func newFusionSignatureController(logger *logrus.Entry, prefixDB database.Databa
 	}
 }
 
+// Start implements Module.Start()
 func (s *signatureController) Start() error {
 	if s.queue == nil || s.stop == nil {
 		return fmt.Errorf("empty work channels")
@@ -71,6 +72,7 @@ func (s *signatureController) startExecutor() {
 			s.wait <- struct{}{}
 			return
 		case item := <-s.queue:
+			// process queue items async
 			go func() {
 				processing = true
 				defer func() { processing = false }()
@@ -85,11 +87,13 @@ func (s *signatureController) startExecutor() {
 	}
 }
 
+// Stop implements Module.Stop()
 func (s *signatureController) Stop() error {
 	s.stop <- struct{}{}
 	<-s.wait
 	return nil
 }
+
 func (s *signatureController) executeRequest(item *signatureRequestQueueItem) error {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultHandlerTimeout)
 	defer cancelFunc()
@@ -120,6 +124,8 @@ type FusionSignatureRequestHandler struct {
 
 var _ SignatureRequestsHandler = &FusionSignatureRequestHandler{}
 
+// HandleSignatureRequest processes the pending sign request supplied by fusiond, requesting a signature from
+// the MPC client for the supplied keyID and requestID and fulfilling the request via the TxClient.
 func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Context, item *signatureRequestQueueItem) error {
 
 	if item == nil || item.request == nil {
@@ -127,6 +133,7 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 	}
 	start := time.Now()
 
+	// extract keyID and requestID from the item. This uniquely determines the requests
 	keyID, err := hex.DecodeString(fmt.Sprintf("%0*x", mpcRequestKeyLength, item.request.KeyId))
 	if err != nil {
 		return err
@@ -136,6 +143,7 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 		return err
 	}
 
+	// reuest a signature via the MPC/Keyring client
 	sigResponse, _, err := h.keyringClient.Signature(&mpc.SigRequestData{
 		KeyID:   keyID,
 		ID:      requestID,
@@ -143,6 +151,8 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 	}, mpc.EcDSA)
 	if err != nil {
 		if item.retries >= item.maxTries {
+			// If the request fails maxTries times, return a rejected notice to the fusion network and
+			// do not retry
 			if rejectErr := h.TxClient.RejectSignatureRequest(ctx, item.request.Id, err.Error()); rejectErr != nil {
 				return rejectErr
 			}
@@ -151,11 +161,14 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 		return err
 	}
 
+	// convert the returned signature parts into a 65-byte [r, s, v] signature
+	// with recoveryID valid on the Ethereum network
 	signature, err := mpc.ExtractSerializedSigECDSA(sigResponse)
 	if err != nil {
 		return err
 	}
 
+	// write the returned signature back to the fusion network
 	if err = h.TxClient.FulfilSignatureRequest(ctx, item.request.Id, signature); err != nil {
 		return err
 	}

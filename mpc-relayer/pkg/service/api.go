@@ -44,7 +44,7 @@ func (s *Service) status(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-// Healthcheck handles the the /api/healthcheck query.
+// Healthcheck handles the the /healthcheck query.
 func (s *Service) healthcheck(w http.ResponseWriter, req *http.Request) {
 	health := &Response{
 		Service: serviceName,
@@ -70,8 +70,10 @@ func (s *Service) healthcheck(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// PubKeys implements the /pubkeys endpoint, returning a list of registered keyID and public keys
+// stored in the local database
 func (s *Service) pubKeys(w http.ResponseWriter, req *http.Request) {
-	pKeyReponse := &Response{
+	pKeyResponse := &Response{
 		Service: serviceName,
 		Version: common.FullVersion,
 		Message: "OK",
@@ -79,8 +81,8 @@ func (s *Service) pubKeys(w http.ResponseWriter, req *http.Request) {
 
 	keyMap, err := s.keyDB.Read("")
 	if err != nil {
-		pKeyReponse.Message = err.Error()
-		if err := rpc.RespondWithJSON(w, http.StatusInternalServerError, pKeyReponse); err != nil {
+		pKeyResponse.Message = err.Error()
+		if err := rpc.RespondWithJSON(w, http.StatusInternalServerError, pKeyResponse); err != nil {
 			s.log.Error(err)
 		}
 		return
@@ -90,9 +92,9 @@ func (s *Service) pubKeys(w http.ResponseWriter, req *http.Request) {
 	for keyID, pK := range keyMap {
 		pubKeyList = append(pubKeyList, &PubKey{KeyID: keyID, PublicKey: fmt.Sprintf("%x", pK)})
 	}
-	pKeyReponse.PubKeys = pubKeyList
+	pKeyResponse.PubKeys = pubKeyList
 
-	if err := rpc.RespondWithJSON(w, http.StatusOK, pKeyReponse); err != nil {
+	if err := rpc.RespondWithJSON(w, http.StatusOK, pKeyResponse); err != nil {
 		s.log.Error(err)
 	}
 }

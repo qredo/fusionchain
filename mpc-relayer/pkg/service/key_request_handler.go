@@ -44,6 +44,7 @@ func newFusionKeyController(logger *logrus.Entry, prefixDB database.Database, q 
 	}
 }
 
+// Start implements Module.Start()
 func (k *keyController) Start() error {
 	if k.queue == nil || k.stop == nil {
 		return fmt.Errorf("empty work channels")
@@ -52,7 +53,6 @@ func (k *keyController) Start() error {
 	return nil
 }
 
-// TODO
 func (k *keyController) startExecutor() {
 	var processing bool
 	for {
@@ -90,7 +90,6 @@ func (k *keyController) Stop() error {
 	return nil
 }
 
-// TODO
 func (k *keyController) executeRequest(item *keyRequestQueueItem) error {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultHandlerTimeout)
 	defer cancelFunc()
@@ -125,6 +124,8 @@ type FusionKeyRequestHandler struct {
 	Logger        *logrus.Entry
 }
 
+var _ KeyRequestsHandler = &FusionKeyRequestHandler{}
+
 // HandleKeyRequests processes the pending key request supplied by fusiond, requesting a public key
 // via the MPC client and fulfilling the request via the TxClient
 func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *keyRequestQueueItem) error {
@@ -151,13 +152,13 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 		"publicKey": fmt.Sprintf("%x", pk),
 	}).Debug("pubKeyReturned")
 
-	// verify that a signature can be generated for the supplied public key
-	// the response is validated by the mpcclient
+	// Verify that a signature can be generated for the supplied public key.
+	// The response is validated inside the keyringClient
 	if _, _, err = h.keyringClient.PubkeySignature(pk, keyID, mpc.EcDSA); err != nil {
 		return err
 	}
 
-	// approve the user item.request, provide the generated public key
+	// approve the user item.request, write the generated public key to fusiond
 	if err = h.TxClient.FulfilKeyRequest(ctx, item.request.Id, pk); err != nil {
 		return err
 	}

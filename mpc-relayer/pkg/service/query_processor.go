@@ -34,6 +34,7 @@ func newKeyQueryProcessor(keyringId uint64, q QueryClient, k chan *keyRequestQue
 	}
 }
 
+// Start implements Module.Start()
 func (q *keyQueryProcessor) Start() error {
 	go q.startTicker()
 	return nil
@@ -56,7 +57,7 @@ func (q *keyQueryProcessor) startTicker() {
 			q.wait <- struct{}{}
 			return
 		case <-ticker.C:
-			// Process Key request queries
+			// Execute queries async
 			go func() {
 				processing = true
 				defer func() { processing = false }()
@@ -88,6 +89,7 @@ func (q *keyQueryProcessor) executeKeyQuery() error {
 	return nil
 }
 
+// Stop implements Module.Stop()
 func (q *keyQueryProcessor) Stop() error {
 	q.stop <- struct{}{}
 	<-q.wait
@@ -123,6 +125,7 @@ func newSigQueryProcessor(keyringId uint64, q QueryClient, s chan *signatureRequ
 	}
 }
 
+// Start implements Module.Start()
 func (q sigQueryProcessor) Start() error {
 	go q.startTicker()
 	return nil
@@ -178,6 +181,7 @@ func (q *sigQueryProcessor) executeSignatureQuery() error {
 	return nil
 }
 
+// Stop implements Module.Stop()
 func (q *sigQueryProcessor) Stop() error {
 	q.stop <- struct{}{}
 	<-q.wait

@@ -170,7 +170,7 @@ func (m *client) PubkeySignature(pubKey, keyID []byte, keyType CryptoSystem) ([]
 	return sig, traceID, nil
 }
 
-// InputSignature Return a signature for the supplied transaction input required to construct a transaction
+// Signature Return a signature for the supplied transaction input required to construct a transaction
 func (m *client) Signature(sigRequestData *SigRequestData, keyType CryptoSystem) (*SigResponse, string, error) {
 	b, err := common.RandomBytes(16)
 	if err != nil {

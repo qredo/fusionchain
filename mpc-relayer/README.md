@@ -17,7 +17,22 @@ make run
 
 ## Configuration
 
-An example config yaml file can be found in `./docker-compose/config-example.yml`. You must supply and RPC endpoint for fusion
+An example config yaml file can be found in `./docker-compose/config-example.yml`. You must supply a gRPC endpoint for fusiond.
+For local setup, raise a `fusiond` client by executing
+
+```
+cd ../blockchain
+./init.sh
+```
+
+Then
+
+```
+cd ~$HOME/go/src/github.com/qredo/fusionchain/mpc-relayer/cmd/mpc-relayer
+go run
+```
+
+to start the MPC relayer service.
 
 ## APIs
 
