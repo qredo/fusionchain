@@ -22,9 +22,9 @@ type keyQueryProcessor struct {
 	maxTries int
 }
 
-func newKeyQueryProcessor(keyringId uint64, q QueryClient, k chan *keyRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *keyQueryProcessor {
+func newKeyQueryProcessor(keyringID uint64, q QueryClient, k chan *keyRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *keyQueryProcessor {
 	return &keyQueryProcessor{
-		keyRingID:      keyringId,
+		keyRingID:      keyringID,
 		queryClient:    q,
 		keyRequestChan: k,
 		stop:           make(chan struct{}, 1),
@@ -118,9 +118,9 @@ type sigQueryProcessor struct {
 	maxTries int
 }
 
-func newSigQueryProcessor(keyringId uint64, q QueryClient, s chan *signatureRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *sigQueryProcessor {
+func newSigQueryProcessor(keyringID uint64, q QueryClient, s chan *signatureRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *sigQueryProcessor {
 	return &sigQueryProcessor{
-		keyRingID:      keyringId,
+		keyRingID:      keyringID,
 		queryClient:    q,
 		sigRequestChan: s,
 		stop:           make(chan struct{}, 1),

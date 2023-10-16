@@ -18,8 +18,8 @@ var (
 	configFilePtr  = flag.String("config", "config.yml", "path to config file")
 )
 
-//go run main.go --config ./config.yml
-//go run main.go --config {path_to_config_file}
+// go run main.go --config ./config.yml
+// go run main.go --config {path_to_config_file}
 
 func init() {
 	// Parse flag containing path to config file

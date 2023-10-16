@@ -36,6 +36,7 @@ RUN go mod download
 COPY . .
 
 RUN GO111MODULES=on \
+    GOPRIVATE=gitlab.qredo.com,github.com/qredo \
     go build \
     -ldflags "-w -linkmode external -extldflags '-static' -X 'github.com/qredo/fusionchain/mpc-relayer/pkg/common.linkedDate=${build_date}' -X 'github.com/qredo/fusionchain/mpc-relayer/pkg/common.linkedCommit=${commit_hash}'"  \
     -tags netgo \

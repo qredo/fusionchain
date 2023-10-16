@@ -50,7 +50,7 @@ type client struct {
 	port                  string
 }
 
-func newClient(node Node, logger *logrus.Entry) (*client, string) {
+func newMPCClient(node Node, logger *logrus.Entry) (*client, string) {
 	c := &client{
 		roundRobinServerIndex: 0,
 		_logger:               logger,
