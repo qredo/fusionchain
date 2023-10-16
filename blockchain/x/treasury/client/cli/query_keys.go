@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -14,9 +15,9 @@ var _ = strconv.Itoa(0)
 
 func CmdKeys() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "keys [workspace-addr]",
-		Short: "Query Keys, optionally by workspace address",
-		Args:  cobra.MaximumNArgs(1),
+		Use:   "keys [wallet-type] [workspace-addr]",
+		Short: "Query Keys, optionally by wallet type and workspace address",
+		Args:  cobra.MaximumNArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -30,19 +31,18 @@ func CmdKeys() *cobra.Command {
 				return err
 			}
 
-			walletTypeArg, err := cmd.Flags().GetString("wallet-type")
-			if err != nil {
-				return err
-			}
 			var walletType types.WalletType
-			if len(walletTypeArg) > 0 {
-				switch walletTypeArg {
+			if len(args) > 0 {
+				switch strings.ToLower(args[0]) {
 				case "ethereum":
 					walletType = types.WalletType_WALLET_TYPE_ETH
 				case "sepolia":
 					walletType = types.WalletType_WALLET_TYPE_ETH_SEPOLIA
+				case "all":
+					walletType = types.WalletType_WALLET_TYPE_UNSPECIFIED
 				default:
-					return fmt.Errorf("invalid wallet type %s", walletTypeArg)
+					fmt.Printf("invalid wallet type '%s', defaulting to 'all'", args[0])
+					walletType = types.WalletType_WALLET_TYPE_UNSPECIFIED
 				}
 			}
 			params := &types.QueryKeysRequest{
@@ -50,8 +50,8 @@ func CmdKeys() *cobra.Command {
 				WorkspaceAddr: "",
 				Type:          walletType,
 			}
-			if len(args) > 0 {
-				params.WorkspaceAddr = args[0]
+			if len(args) > 1 {
+				params.WorkspaceAddr = args[1]
 			}
 
 			res, err := queryClient.Keys(cmd.Context(), params)
@@ -64,7 +64,6 @@ func CmdKeys() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-	cmd.Flags().String("wallet-type", "", "derive an address for type")
 
 	return cmd
 }

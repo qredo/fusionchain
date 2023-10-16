@@ -5,17 +5,17 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/qredo/fusionchain/x/treasury/types"
+	"github.com/qredo/fusionchain/x/identity/types"
 	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdWallets() *cobra.Command {
+func CmdKeyringByID() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "wallets",
-		Short: "Query Wallets",
-		Args:  cobra.ExactArgs(0),
+		Use:   "keyring-by-id [id]",
+		Short: "Query keyring-by-id",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -24,16 +24,16 @@ func CmdWallets() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
 
-			params := &types.QueryWalletsRequest{
-				Pagination: pageReq,
+			params := &types.QueryKeyringByIdRequest{
+				Id: id,
 			}
 
-			res, err := queryClient.Wallets(cmd.Context(), params)
+			res, err := queryClient.KeyringByID(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

@@ -99,6 +99,7 @@ func (m *MsgApproveAction) GetPolicyPayload() *types.Any {
 }
 
 type MsgApproveActionResponse struct {
+	Status string `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
 }
 
 func (m *MsgApproveActionResponse) Reset()         { *m = MsgApproveActionResponse{} }
@@ -133,6 +134,13 @@ func (m *MsgApproveActionResponse) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_MsgApproveActionResponse proto.InternalMessageInfo
+
+func (m *MsgApproveActionResponse) GetStatus() string {
+	if m != nil {
+		return m.Status
+	}
+	return ""
+}
 
 type MsgNewPolicy struct {
 	Creator string     `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -238,41 +246,142 @@ func (m *MsgNewPolicyResponse) GetId() uint64 {
 	return 0
 }
 
+type MsgRevokeAction struct {
+	Creator    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	ActionType string `protobuf:"bytes,2,opt,name=action_type,json=actionType,proto3" json:"action_type,omitempty"`
+	ActionId   uint64 `protobuf:"varint,3,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
+}
+
+func (m *MsgRevokeAction) Reset()         { *m = MsgRevokeAction{} }
+func (m *MsgRevokeAction) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeAction) ProtoMessage()    {}
+func (*MsgRevokeAction) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e86d56aba2b053b1, []int{4}
+}
+func (m *MsgRevokeAction) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRevokeAction) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRevokeAction.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRevokeAction) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeAction.Merge(m, src)
+}
+func (m *MsgRevokeAction) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRevokeAction) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeAction.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRevokeAction proto.InternalMessageInfo
+
+func (m *MsgRevokeAction) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgRevokeAction) GetActionType() string {
+	if m != nil {
+		return m.ActionType
+	}
+	return ""
+}
+
+func (m *MsgRevokeAction) GetActionId() uint64 {
+	if m != nil {
+		return m.ActionId
+	}
+	return 0
+}
+
+type MsgRevokeActionResponse struct {
+}
+
+func (m *MsgRevokeActionResponse) Reset()         { *m = MsgRevokeActionResponse{} }
+func (m *MsgRevokeActionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeActionResponse) ProtoMessage()    {}
+func (*MsgRevokeActionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e86d56aba2b053b1, []int{5}
+}
+func (m *MsgRevokeActionResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRevokeActionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRevokeActionResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRevokeActionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeActionResponse.Merge(m, src)
+}
+func (m *MsgRevokeActionResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRevokeActionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeActionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRevokeActionResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgApproveAction)(nil), "fusionchain.policy.MsgApproveAction")
 	proto.RegisterType((*MsgApproveActionResponse)(nil), "fusionchain.policy.MsgApproveActionResponse")
 	proto.RegisterType((*MsgNewPolicy)(nil), "fusionchain.policy.MsgNewPolicy")
 	proto.RegisterType((*MsgNewPolicyResponse)(nil), "fusionchain.policy.MsgNewPolicyResponse")
+	proto.RegisterType((*MsgRevokeAction)(nil), "fusionchain.policy.MsgRevokeAction")
+	proto.RegisterType((*MsgRevokeActionResponse)(nil), "fusionchain.policy.MsgRevokeActionResponse")
 }
 
 func init() { proto.RegisterFile("fusionchain/policy/tx.proto", fileDescriptor_e86d56aba2b053b1) }
 
 var fileDescriptor_e86d56aba2b053b1 = []byte{
-	// 380 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0x41, 0x6b, 0xe2, 0x40,
-	0x14, 0xc7, 0x1d, 0x0d, 0xee, 0xfa, 0x5c, 0x65, 0x19, 0x3c, 0x64, 0x23, 0x64, 0x43, 0x58, 0x96,
-	0xc0, 0xca, 0x04, 0xdc, 0x63, 0x4f, 0x16, 0x7a, 0xe8, 0xc1, 0x22, 0xa1, 0x50, 0xe8, 0x45, 0x62,
-	0x32, 0xc6, 0x29, 0x9a, 0x99, 0x26, 0xb1, 0x35, 0xdf, 0xa2, 0xdf, 0xa2, 0x1f, 0xa4, 0x97, 0x1e,
-	0x3d, 0xf6, 0x58, 0xf4, 0x8b, 0x14, 0x66, 0x8c, 0xb5, 0x16, 0xdb, 0xde, 0x92, 0x79, 0xbf, 0xc9,
-	0xff, 0xf7, 0x5e, 0x1e, 0xb4, 0xc7, 0xf3, 0x94, 0xf1, 0x38, 0x98, 0xf8, 0x2c, 0x76, 0x05, 0x9f,
-	0xb2, 0x20, 0x77, 0xb3, 0x05, 0x11, 0x09, 0xcf, 0x38, 0xc6, 0x3b, 0x45, 0xa2, 0x8a, 0xc6, 0xaf,
-	0x88, 0xf3, 0x68, 0x4a, 0x5d, 0x49, 0x8c, 0xe6, 0x63, 0xd7, 0x8f, 0x73, 0x85, 0xdb, 0xf7, 0x08,
-	0x7e, 0xf6, 0xd3, 0xa8, 0x27, 0x44, 0xc2, 0x6f, 0x68, 0x2f, 0xc8, 0x18, 0x8f, 0xb1, 0x0e, 0xdf,
-	0x82, 0x84, 0xfa, 0x19, 0x4f, 0x74, 0x64, 0x21, 0xa7, 0xe6, 0x15, 0xaf, 0xf8, 0x37, 0xd4, 0x7d,
-	0xc9, 0x0c, 0xb3, 0x5c, 0x50, 0xbd, 0x2c, 0xab, 0xa0, 0x8e, 0xce, 0x73, 0x41, 0x71, 0x1b, 0x6a,
-	0x1b, 0x80, 0x85, 0x7a, 0xc5, 0x42, 0x8e, 0xe6, 0x7d, 0x57, 0x07, 0xa7, 0x21, 0x3e, 0x82, 0xa6,
-	0x32, 0x1a, 0x0a, 0x3f, 0x9f, 0x72, 0x3f, 0xd4, 0x35, 0x0b, 0x39, 0xf5, 0x6e, 0x8b, 0x28, 0x41,
-	0x52, 0x08, 0x92, 0x5e, 0x9c, 0x7b, 0x0d, 0xc5, 0x0e, 0x14, 0x6a, 0x1b, 0xa0, 0xef, 0x8b, 0x7a,
-	0x34, 0x15, 0x3c, 0x4e, 0xa9, 0x7d, 0x05, 0x3f, 0xfa, 0x69, 0x74, 0x46, 0x6f, 0x07, 0xf2, 0xca,
-	0x07, 0x0d, 0x60, 0xd0, 0x62, 0x7f, 0x56, 0x98, 0xcb, 0x67, 0xdc, 0x81, 0xaa, 0x8a, 0x92, 0xc2,
-	0x87, 0x74, 0x36, 0x8c, 0xfd, 0x17, 0x5a, 0xbb, 0x59, 0x85, 0x03, 0x6e, 0x42, 0x99, 0x85, 0x32,
-	0x4e, 0xf3, 0xca, 0x2c, 0xec, 0x3e, 0x20, 0xa8, 0xf4, 0xd3, 0x08, 0x07, 0xd0, 0x78, 0x3b, 0xdd,
-	0x3f, 0xe4, 0xfd, 0x2f, 0x22, 0xfb, 0xad, 0x19, 0x9d, 0xaf, 0x50, 0xdb, 0xf0, 0x0b, 0xa8, 0xbd,
-	0x76, 0x6f, 0x1d, 0xb8, 0xba, 0x25, 0x0c, 0xe7, 0x33, 0xa2, 0xf8, 0xf0, 0xf1, 0xc9, 0xe3, 0xca,
-	0x44, 0xcb, 0x95, 0x89, 0x9e, 0x57, 0x26, 0xba, 0x5b, 0x9b, 0xa5, 0xe5, 0xda, 0x2c, 0x3d, 0xad,
-	0xcd, 0xd2, 0xe5, 0xbf, 0x88, 0x65, 0x93, 0xf9, 0x88, 0x04, 0x7c, 0xe6, 0x5e, 0x27, 0x34, 0xe4,
-	0xee, 0xee, 0x5a, 0x2e, 0xb6, 0x8b, 0x99, 0x0b, 0x9a, 0x8e, 0xaa, 0x72, 0x94, 0xff, 0x5f, 0x02,
-	0x00, 0x00, 0xff, 0xff, 0xe2, 0x3b, 0xeb, 0xa7, 0xbb, 0x02, 0x00, 0x00,
+	// 431 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x93, 0x4f, 0x6f, 0xd3, 0x30,
+	0x14, 0xc0, 0xeb, 0xae, 0x2a, 0xf4, 0xed, 0x0f, 0xc8, 0x9a, 0x20, 0xcb, 0xa4, 0x10, 0x05, 0x84,
+	0x22, 0x6d, 0x72, 0xa4, 0x72, 0xe4, 0x54, 0x24, 0x0e, 0x1c, 0x82, 0xa6, 0x08, 0x09, 0x89, 0xcb,
+	0x70, 0x13, 0x2f, 0x33, 0x74, 0xb1, 0x89, 0x9d, 0xb1, 0x7c, 0x0b, 0xbe, 0x04, 0xe2, 0xab, 0x70,
+	0xdc, 0x91, 0x23, 0x6a, 0xbf, 0x08, 0x92, 0x9d, 0x84, 0xac, 0xa8, 0xb0, 0x0b, 0x37, 0xdb, 0xef,
+	0x67, 0xbf, 0xdf, 0x7b, 0xb6, 0xe1, 0xf0, 0xac, 0x52, 0x5c, 0x14, 0xe9, 0x39, 0xe5, 0x45, 0x24,
+	0xc5, 0x82, 0xa7, 0x75, 0xa4, 0xaf, 0x88, 0x2c, 0x85, 0x16, 0x18, 0xf7, 0x82, 0xc4, 0x06, 0xdd,
+	0x83, 0x5c, 0x88, 0x7c, 0xc1, 0x22, 0x43, 0xcc, 0xab, 0xb3, 0x88, 0x16, 0xb5, 0xc5, 0x83, 0x6f,
+	0x08, 0xee, 0xc7, 0x2a, 0x9f, 0x49, 0x59, 0x8a, 0x4b, 0x36, 0x4b, 0x35, 0x17, 0x05, 0x76, 0xe0,
+	0x4e, 0x5a, 0x32, 0xaa, 0x45, 0xe9, 0x20, 0x1f, 0x85, 0x93, 0xa4, 0x9d, 0xe2, 0x47, 0xb0, 0x4d,
+	0x0d, 0x73, 0xaa, 0x6b, 0xc9, 0x9c, 0xa1, 0x89, 0x82, 0x5d, 0x7a, 0x53, 0x4b, 0x86, 0x0f, 0x61,
+	0xd2, 0x00, 0x3c, 0x73, 0xb6, 0x7c, 0x14, 0x8e, 0x92, 0xbb, 0x76, 0xe1, 0x55, 0x86, 0x9f, 0xc3,
+	0x9e, 0x35, 0x3a, 0x95, 0xb4, 0x5e, 0x08, 0x9a, 0x39, 0x23, 0x1f, 0x85, 0xdb, 0xd3, 0x7d, 0x62,
+	0x05, 0x49, 0x2b, 0x48, 0x66, 0x45, 0x9d, 0xec, 0x5a, 0xf6, 0xc4, 0xa2, 0xc1, 0x14, 0x9c, 0x75,
+	0xd1, 0x84, 0x29, 0x29, 0x0a, 0xc5, 0xf0, 0x03, 0x18, 0x2b, 0x4d, 0x75, 0xa5, 0x1a, 0xdf, 0x66,
+	0x16, 0x7c, 0x80, 0x9d, 0x58, 0xe5, 0xaf, 0xd9, 0xe7, 0x13, 0x73, 0xd4, 0x5f, 0x0a, 0xc3, 0x30,
+	0x2a, 0xe8, 0x45, 0x5b, 0x91, 0x19, 0xe3, 0x63, 0x18, 0x5b, 0x05, 0x53, 0xc8, 0x26, 0xcd, 0x86,
+	0x09, 0x9e, 0xc2, 0x7e, 0x3f, 0x57, 0xe7, 0xb6, 0x07, 0x43, 0x9e, 0x99, 0x74, 0xa3, 0x64, 0xc8,
+	0xb3, 0x80, 0xc3, 0xbd, 0x58, 0xe5, 0x09, 0xbb, 0x14, 0x1f, 0xff, 0x73, 0xbf, 0x83, 0x03, 0x78,
+	0xb8, 0x96, 0xaa, 0xb5, 0x9a, 0x7e, 0x1d, 0xc2, 0x56, 0xac, 0x72, 0x9c, 0xc2, 0xee, 0xcd, 0xbb,
+	0x7f, 0x42, 0xfe, 0x7c, 0x40, 0x64, 0xbd, 0xf1, 0xee, 0xf1, 0x6d, 0xa8, 0xae, 0x05, 0x6f, 0x61,
+	0xf2, 0xfb, 0x0e, 0xfc, 0x0d, 0x5b, 0x3b, 0xc2, 0x0d, 0xff, 0x45, 0x74, 0x07, 0xbf, 0x87, 0x9d,
+	0x1b, 0x8d, 0x7c, 0xbc, 0x61, 0x67, 0x1f, 0x72, 0x8f, 0x6e, 0x01, 0xb5, 0x19, 0x5e, 0xbc, 0xfc,
+	0xbe, 0xf4, 0xd0, 0xf5, 0xd2, 0x43, 0x3f, 0x97, 0x1e, 0xfa, 0xb2, 0xf2, 0x06, 0xd7, 0x2b, 0x6f,
+	0xf0, 0x63, 0xe5, 0x0d, 0xde, 0x1d, 0xe5, 0x5c, 0x9f, 0x57, 0x73, 0x92, 0x8a, 0x8b, 0xe8, 0x53,
+	0xc9, 0x32, 0x11, 0xf5, 0xbf, 0xe5, 0x55, 0xf7, 0x31, 0x6b, 0xc9, 0xd4, 0x7c, 0x6c, 0x9e, 0xcc,
+	0xb3, 0x5f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x45, 0xba, 0x27, 0x82, 0xbb, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -289,8 +398,10 @@ const _ = grpc.SupportPackageIsVersion4
 type MsgClient interface {
 	// Add an approval to an existing Action.
 	ApproveAction(ctx context.Context, in *MsgApproveAction, opts ...grpc.CallOption) (*MsgApproveActionResponse, error)
-	// TODO: document NewPolicy
+	// Create a new policy.
 	NewPolicy(ctx context.Context, in *MsgNewPolicy, opts ...grpc.CallOption) (*MsgNewPolicyResponse, error)
+	// Revoke an existing Action while in pending state.
+	RevokeAction(ctx context.Context, in *MsgRevokeAction, opts ...grpc.CallOption) (*MsgRevokeActionResponse, error)
 }
 
 type msgClient struct {
@@ -319,12 +430,23 @@ func (c *msgClient) NewPolicy(ctx context.Context, in *MsgNewPolicy, opts ...grp
 	return out, nil
 }
 
+func (c *msgClient) RevokeAction(ctx context.Context, in *MsgRevokeAction, opts ...grpc.CallOption) (*MsgRevokeActionResponse, error) {
+	out := new(MsgRevokeActionResponse)
+	err := c.cc.Invoke(ctx, "/fusionchain.policy.Msg/RevokeAction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// Add an approval to an existing Action.
 	ApproveAction(context.Context, *MsgApproveAction) (*MsgApproveActionResponse, error)
-	// TODO: document NewPolicy
+	// Create a new policy.
 	NewPolicy(context.Context, *MsgNewPolicy) (*MsgNewPolicyResponse, error)
+	// Revoke an existing Action while in pending state.
+	RevokeAction(context.Context, *MsgRevokeAction) (*MsgRevokeActionResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -336,6 +458,9 @@ func (*UnimplementedMsgServer) ApproveAction(ctx context.Context, req *MsgApprov
 }
 func (*UnimplementedMsgServer) NewPolicy(ctx context.Context, req *MsgNewPolicy) (*MsgNewPolicyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewPolicy not implemented")
+}
+func (*UnimplementedMsgServer) RevokeAction(ctx context.Context, req *MsgRevokeAction) (*MsgRevokeActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeAction not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -378,6 +503,24 @@ func _Msg_NewPolicy_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_RevokeAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRevokeAction)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RevokeAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/fusionchain.policy.Msg/RevokeAction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RevokeAction(ctx, req.(*MsgRevokeAction))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "fusionchain.policy.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -389,6 +532,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "NewPolicy",
 			Handler:    _Msg_NewPolicy_Handler,
+		},
+		{
+			MethodName: "RevokeAction",
+			Handler:    _Msg_RevokeAction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -469,6 +616,13 @@ func (m *MsgApproveActionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	_ = i
 	var l int
 	_ = l
+	if len(m.Status) > 0 {
+		i -= len(m.Status)
+		copy(dAtA[i:], m.Status)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Status)))
+		i--
+		dAtA[i] = 0xa
+	}
 	return len(dAtA) - i, nil
 }
 
@@ -549,6 +703,71 @@ func (m *MsgNewPolicyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgRevokeAction) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRevokeAction) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRevokeAction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ActionId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ActionId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.ActionType) > 0 {
+		i -= len(m.ActionType)
+		copy(dAtA[i:], m.ActionType)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ActionType)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRevokeActionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRevokeActionResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRevokeActionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -590,6 +809,10 @@ func (m *MsgApproveActionResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = len(m.Status)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
 	return n
 }
 
@@ -623,6 +846,35 @@ func (m *MsgNewPolicyResponse) Size() (n int) {
 	if m.Id != 0 {
 		n += 1 + sovTx(uint64(m.Id))
 	}
+	return n
+}
+
+func (m *MsgRevokeAction) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ActionType)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ActionId != 0 {
+		n += 1 + sovTx(uint64(m.ActionId))
+	}
+	return n
+}
+
+func (m *MsgRevokeActionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
 	return n
 }
 
@@ -830,6 +1082,38 @@ func (m *MsgApproveActionResponse) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: MsgApproveActionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Status = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -1049,6 +1333,189 @@ func (m *MsgNewPolicyResponse) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRevokeAction) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRevokeAction: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRevokeAction: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ActionType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActionId", wireType)
+			}
+			m.ActionId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ActionId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRevokeActionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRevokeActionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRevokeActionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])

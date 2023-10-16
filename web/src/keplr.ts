@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 export const bech32Prefix = "qredo";
 
 export const chain: Chain = {
-  chainId: 420,
-  cosmosChainId: 'fusion_420-1',
+  chainId: 257,
+  cosmosChainId: 'qredofusiontestnet_257-1',
 }
 
-const FUSION_RPC_URL = import.meta.env.VITE_FUSION_RPC_URL || "http://127.0.0.1:27657";
-const FUSION_REST_URL = import.meta.env.VITE_FUSION_REST_URL || "http://127.0.0.1:1717";
+const FUSION_RPC_URL = import.meta.env.VITE_FUSION_RPC_URL || "http://127.0.0.1:26657";
+const FUSION_REST_URL = import.meta.env.VITE_FUSION_REST_URL || "http://127.0.0.1:1317";
 
 export const chainDescriptor = {
   chainId: chain.cosmosChainId,

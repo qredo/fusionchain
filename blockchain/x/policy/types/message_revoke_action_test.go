@@ -8,22 +8,24 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMsgNewWalletRequest_ValidateBasic(t *testing.T) {
+func TestMsgRevokeAction_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgNewWalletRequest
+		msg  MsgRevokeAction
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgNewWalletRequest{
-				Creator: "invalid_address",
+			msg: MsgRevokeAction{
+				Creator:    "invalid_address",
+				ActionType: "action_type",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg: MsgNewWalletRequest{
-				Creator: sample.AccAddress(),
+			msg: MsgRevokeAction{
+				Creator:    sample.AccAddress(),
+				ActionType: "action_type",
 			},
 		},
 	}
