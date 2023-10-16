@@ -49,7 +49,7 @@ func (m *localMPC) PublicKey(keyID []byte, keyType CryptoSystem) ([]byte, string
 	}
 	traceID := fmt.Sprintf("%16x", b)
 
-	//Fake a public Key from the MPC
+	// Fake a public Key from the MPC
 	response, err := localMPCKeys(req, m.initVersion, keyType)
 	if err != nil {
 		return nil, traceID, err
@@ -74,7 +74,6 @@ func (m *localMPC) PublicKey(keyID []byte, keyType CryptoSystem) ([]byte, string
 }
 
 func (m *localMPC) PubkeySignature(pubKey, keyID []byte, keyType CryptoSystem) ([]byte, string, error) {
-
 	req := &SigRequest{
 		KeyID: hex.EncodeToString(keyID),
 		IsKey: isKey,
@@ -103,7 +102,7 @@ func (m *localMPC) PubkeySignature(pubKey, keyID []byte, keyType CryptoSystem) (
 	}
 	traceID := fmt.Sprintf("%16x", b)
 
-	//do the post to the MPC server
+	// Post to the MPC server
 	response, err := localMPCSign(req, m.initVersion, keyType)
 	if err != nil {
 		return nil, traceID, err
@@ -153,7 +152,7 @@ func (m *localMPC) Signature(sigRequestData *SigRequestData, keyType CryptoSyste
 	}
 	traceID := fmt.Sprintf("%16x", b)
 
-	//do the post to the MPC server
+	// Post to the MPC server
 	response, err := localMPCSign(req, m.initVersion, keyType)
 	if err != nil {
 		return nil, traceID, err
@@ -180,7 +179,7 @@ func (m *localMPC) Signature(sigRequestData *SigRequestData, keyType CryptoSyste
 	return response, traceID, err
 }
 
-func (m *localMPC) Ping() (bool, string) {
+func (*localMPC) Ping() (bool, string) {
 	b, err := common.RandomBytes(16)
 	if err != nil {
 		return false, ""

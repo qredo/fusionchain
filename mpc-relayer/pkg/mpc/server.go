@@ -120,7 +120,7 @@ func (service LocalMPCServer) SignEdDSA(w http.ResponseWriter, req *http.Request
 	_, _ = w.Write(b)
 }
 
-func (service LocalMPCServer) Check(w http.ResponseWriter, _ *http.Request) {
+func (LocalMPCServer) Check(w http.ResponseWriter, _ *http.Request) {
 	response := KeysResponse{
 		Message: "OK",
 	}

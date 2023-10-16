@@ -54,7 +54,6 @@ func (s *signatureController) Start() error {
 	}
 	go s.startExecutor()
 	return nil
-
 }
 
 func (s *signatureController) startExecutor() {
@@ -107,8 +106,7 @@ func (s *signatureController) executeRequest(item *signatureRequestQueueItem) er
 }
 
 func (s signatureController) healthcheck() *Response {
-
-	return &Response{}
+	return s.signatureRequestsHandler.healthcheck()
 }
 
 type SignatureRequestsHandler interface {
@@ -129,7 +127,6 @@ var _ SignatureRequestsHandler = &FusionSignatureRequestHandler{}
 // HandleSignatureRequest processes the pending sign request supplied by fusiond, requesting a signature from
 // the MPC client for the supplied keyID and requestID and fulfilling the request via the TxClient.
 func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Context, item *signatureRequestQueueItem) error {
-
 	if item == nil || item.request == nil {
 		return fmt.Errorf("malformed keyRequest item")
 	}

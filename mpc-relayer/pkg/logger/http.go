@@ -37,7 +37,6 @@ func LogHTTPRequest(entry *logrus.Entry) func(http.Handler) http.Handler {
 			} else {
 				entry.Print()
 			}
-
 		})
 	}
 }
@@ -59,8 +58,8 @@ func (w *responseRecorder) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
-func readBody(r *http.Request) (map[string]interface{}, error) {
-	body := make(map[string]interface{})
+func readBody(r *http.Request) (map[string]any, error) {
+	body := make(map[string]any)
 	b, err := io.ReadAll(r.Body)
 	if err != nil {
 		return nil, err
@@ -69,7 +68,7 @@ func readBody(r *http.Request) (map[string]interface{}, error) {
 		return nil, err
 	}
 	defer func() {
-		r.Body.Close()
+		_ = r.Body.Close()
 		r.Body = io.NopCloser(bytes.NewBuffer(b))
 		r.ContentLength = int64(bytes.NewBuffer(b).Len())
 	}()

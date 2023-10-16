@@ -11,7 +11,7 @@ var (
 	linkedDate   string // overwritten by -ldflag "-X 'github.com/qredo/common.linkedDate=$build_date'"
 )
 
-// https://icinga.com/blog/2022/05/25/embedding-git-commit-information-in-go-binaries/
+// CommitHash https://icinga.com/blog/2022/05/25/embedding-git-commit-information-in-go-binaries/
 var CommitHash = func() string {
 	if len(linkedCommit) > 7 {
 		mustHexDecode(linkedCommit[0:8]) // will panic if build has been generated with a malicious $commit_hash value
@@ -32,6 +32,7 @@ var CommitHash = func() string {
 	return commit
 }()
 
+// Date returns a build date generator
 var Date = func() string {
 	if linkedDate != "" {
 		return linkedDate

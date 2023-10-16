@@ -188,7 +188,7 @@ func TestHTTPService(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			a := &Api{}
+			a := &API{}
 			a.AddEndpoint(NewEndpoint(tt.endpoint, http.MethodGet, tt.handler))
 
 			// Create test HTTP service

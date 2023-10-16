@@ -9,7 +9,7 @@ import (
 )
 
 // ParseYAMLConfig parse configuration file or environment variables, receiver must be a pointer
-func ParseYAMLConfig(configFile string, receiver interface{}, prefix string) error {
+func ParseYAMLConfig(configFile string, receiver any, prefix string) error {
 	b, err := os.ReadFile(filepath.Clean(configFile))
 	if err != nil && !os.IsNotExist(err) {
 		return err

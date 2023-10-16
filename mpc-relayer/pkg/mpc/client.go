@@ -249,7 +249,7 @@ func (m *client) mpcKeysRequest(keyID []byte, traceID string, keyType CryptoSyst
 		return nil, err
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), mpcTimeout)
-	// Cancel if response not recived within timeout
+	// Cancel if response not received within timeout
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, buf)
 	if err != nil {
@@ -268,10 +268,10 @@ func (m *client) mpcKeysRequest(keyID []byte, traceID string, keyType CryptoSyst
 
 // prepareMPCKeysRequest marshals the JSON request into a buffer of bytes
 func (m *client) prepareMPCKeysRequest(keyID []byte, keyType CryptoSystem) (*bytes.Buffer, string, error) {
-
 	postReq := &KeysRequest{
 		KeyID: hex.EncodeToString(keyID),
 	}
+
 	var url string
 	switch keyType {
 	case EdDSA:
@@ -292,13 +292,16 @@ func (m *client) prepareMPCKeysRequest(keyID []byte, keyType CryptoSystem) (*byt
 }
 
 // decodeAndVerifyMPCKeysResponse decodes the http response into an KeysResponse object
-func (m *client) decodeAndVerifyMPCKeysResponse(response *http.Response) (MPCResp *KeysResponse, err error) {
+func (*client) decodeAndVerifyMPCKeysResponse(response *http.Response) (*KeysResponse, error) {
 	if response == nil {
 		return nil, fmt.Errorf("empty http response")
 	}
 	defer response.Body.Close()
 
-	respBuf, _ := io.ReadAll(response.Body)
+	respBuf, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response: %v", err)
+	}
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
 		return nil, fmt.Errorf("mpc client controller public key generation error, status code: %v, msg: %s", response.StatusCode, respBuf)
 	}
@@ -369,12 +372,15 @@ func (m *client) prepareMPCSignRequest(message, keyID, requestID []byte, isKey i
 }
 
 // decodeAndVerifyMPCSignResponse decodes and validates the response buffer from the mpc service
-func (m *client) decodeAndVerifyMPCSignResponse(response *http.Response, expectedMessage string, keyType CryptoSystem) (MPCResp *SigResponse, rsSerializedSig []byte, err error) {
+func (*client) decodeAndVerifyMPCSignResponse(response *http.Response, expectedMessage string, keyType CryptoSystem) (*SigResponse, []byte, error) {
 	if response == nil {
 		return nil, nil, fmt.Errorf("empty http response")
 	}
 	defer response.Body.Close()
-	respBuf, _ := io.ReadAll(response.Body)
+	respBuf, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error reading response: %v", err)
+	}
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
 		return nil, nil, fmt.Errorf("mpc client controller error, status code: %v, msg: %s", response.StatusCode, respBuf)
 	}

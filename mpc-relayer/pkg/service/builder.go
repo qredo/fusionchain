@@ -54,7 +54,6 @@ func BuildService(config ServiceConfig) (*Service, error) {
 		newFusionKeyController(log, keyDB, keyChan, mpcClient, txClient),
 		newFusionSignatureController(log, keyDB, sigchan, mpcClient, txClient),
 	), nil
-
 }
 
 func makeKeyDB(path string, inMemory bool) (database.Database, error) {
@@ -91,5 +90,4 @@ func makeFusionGRPCClient(config *ServiceConfig, identity client.Identity) (Quer
 	queryClient := client.NewQueryClientWithConn(fusionGRPCClient)
 	txClient := client.NewTxClient(identity, config.ChainID, fusionGRPCClient, queryClient)
 	return queryClient, txClient, nil
-
 }

@@ -162,7 +162,7 @@ func extractSerializedSig(rStr string, sStr string) (sig []byte, err error) {
 		s = new(big.Int).Sub(secp256k1.S256().N, s)
 	}
 
-	//Serialise Signature into [R | S] and add recovery ID
+	// Serialize Signature into [R | S] and add recovery ID
 	rByte, sByte := math.PaddedBigBytes(r, 32), math.PaddedBigBytes(s, 32)
 	sig = append(sig, rByte...)
 	sig = append(sig, sByte...)
@@ -295,7 +295,7 @@ func validateResponse(response *SigResponse, keyType CryptoSystem) (signature, p
 	return signature, publicKey, valid, nil
 }
 
-func addRecID(sigBytes []byte, TxHash, pubkey []byte) (result []byte, err error) {
+func addRecID(sigBytes []byte, txHash, pubkey []byte) (result []byte, err error) {
 	if len(sigBytes) != 64 {
 		return nil, fmt.Errorf("signature [R S] is incorrect length. Expected 64 got %v", len(sigBytes))
 	}
@@ -305,7 +305,7 @@ func addRecID(sigBytes []byte, TxHash, pubkey []byte) (result []byte, err error)
 	}
 	for i := 0; i < (btcec.Params().H+1)*2; i++ {
 		result = append(sigBytes, byte(i))
-		pkey, err := crypto.SigToPub(TxHash, result)
+		pkey, err := crypto.SigToPub(txHash, result)
 		if err == nil && pk.X.Cmp(pkey.X) == 0 && pk.Y.Cmp(pkey.Y) == 0 {
 			return result, nil
 		}

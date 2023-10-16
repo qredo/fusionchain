@@ -28,8 +28,8 @@ type PubKey struct {
 	PublicKey string `json:"pubkey"`
 }
 
-func makeAPIHandlers(s *Service) *rpc.Api {
-	r := &rpc.Api{}
+func makeAPIHandlers(s *Service) *rpc.API {
+	r := &rpc.API{}
 	r.AddEndpoint(rpc.NewEndpoint(statusEndPnt, http.MethodGet, s.status))
 	r.AddEndpoint(rpc.NewEndpoint(healthEndPnt, http.MethodGet, s.healthcheck))
 	r.AddEndpoint(rpc.NewEndpoint(pubKeysEndPnt, http.MethodGet, s.pubKeys))
@@ -37,7 +37,7 @@ func makeAPIHandlers(s *Service) *rpc.Api {
 }
 
 // Status handles the /api/status query and will always respond OK
-func (s *Service) status(w http.ResponseWriter, req *http.Request) {
+func (s *Service) status(w http.ResponseWriter, _ *http.Request) {
 	resp := Response{Message: "OK", Version: common.FullVersion, Service: serviceName}
 	if err := rpc.RespondWithJSON(w, http.StatusOK, resp); err != nil {
 		s.log.Error(err)
@@ -45,7 +45,7 @@ func (s *Service) status(w http.ResponseWriter, req *http.Request) {
 }
 
 // Healthcheck handles the the /healthcheck query.
-func (s *Service) healthcheck(w http.ResponseWriter, req *http.Request) {
+func (s *Service) healthcheck(w http.ResponseWriter, _ *http.Request) {
 	health := &Response{
 		Service: serviceName,
 		Version: common.FullVersion,
@@ -72,7 +72,7 @@ func (s *Service) healthcheck(w http.ResponseWriter, req *http.Request) {
 
 // PubKeys implements the /pubkeys endpoint, returning a list of registered keyID and public keys
 // stored in the local database
-func (s *Service) pubKeys(w http.ResponseWriter, req *http.Request) {
+func (s *Service) pubKeys(w http.ResponseWriter, _ *http.Request) {
 	pKeyResponse := &Response{
 		Service: serviceName,
 		Version: common.FullVersion,

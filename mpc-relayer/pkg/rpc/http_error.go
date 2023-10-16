@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func RespondWithError(w http.ResponseWriter, code int, msg interface{}) {
+func RespondWithError(w http.ResponseWriter, code int, msg any) {
 	var message string
 	switch m := msg.(type) {
 	case error:

@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) error {
+func RespondWithJSON(w http.ResponseWriter, code int, payload any) error {
 	response, err := json.Marshal(payload)
 	if err != nil {
 		return err
@@ -17,6 +17,6 @@ func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) error
 	return err
 }
 
-func DecodeJSON(r io.Reader, v interface{}) error {
+func DecodeJSON(r io.Reader, v any) error {
 	return json.NewDecoder(r).Decode(v)
 }

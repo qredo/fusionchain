@@ -103,7 +103,7 @@ func (k *keyController) executeRequest(item *keyRequestQueueItem) error {
 }
 
 func (k *keyController) healthcheck() *Response {
-	return &Response{}
+	return k.keyRequestsHandler.healthcheck()
 }
 
 type keyRequestQueueItem struct {

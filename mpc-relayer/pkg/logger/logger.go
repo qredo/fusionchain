@@ -7,7 +7,6 @@ import (
 
 	"github.com/qredo/fusionchain/mpc-relayer/pkg/common"
 	"github.com/sirupsen/logrus"
-	lo "github.com/sirupsen/logrus"
 )
 
 type Format string
@@ -45,7 +44,7 @@ type errorReMapper struct {
 
 // NewLogger initializes a new (logrus) Logger instance
 // Supported log types are: text, json, none
-func NewLogger(logLevel Level, logFormat Format, Tofile bool, service string) (*logrus.Entry, error) {
+func NewLogger(logLevel Level, logFormat Format, tofile bool, service string) (*logrus.Entry, error) {
 	if err := IsValidLevel(logLevel, service); err != nil {
 		return nil, err
 	}
@@ -57,7 +56,7 @@ func NewLogger(logLevel Level, logFormat Format, Tofile bool, service string) (*
 	l := NewFormattedLogger(logLevel, logFormat, debugWarnMsg)
 
 	// OPTIONAL OUTPUT TO .log file (Default false)
-	if Tofile {
+	if tofile {
 		f, err := os.OpenFile(fmt.Sprintf("%s.log", service), os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 		if err != nil {
 			return nil, fmt.Errorf("error opening file: %v", err)
@@ -68,9 +67,9 @@ func NewLogger(logLevel Level, logFormat Format, Tofile bool, service string) (*
 		l.Infof("Logging to file: %v", fmt.Sprintf("%s.log", service))
 	}
 
-	logger := lo.NewEntry(l)
+	logger := logrus.NewEntry(l)
 	logger.Level = l.Level
-	logger = logger.WithFields(lo.Fields{
+	logger = logger.WithFields(logrus.Fields{
 		"serviceName": service,
 		"version":     common.FullVersion,
 	})
@@ -108,8 +107,8 @@ func NewFormattedLogger(logLevel Level, logFormat Format, debugWarnMsg string) *
 	return l
 }
 
+// Format serializes the entry into a byte slice using the logrus formatter
 func (formatter *actionFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-	//entry.Data["action"] = entry.Message
 	return formatter.original.Format(entry)
 }
 

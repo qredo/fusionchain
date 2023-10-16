@@ -32,7 +32,6 @@ func init() {
 func main() {
 	var config service.ServiceConfig
 
-	fmt.Println(configFilePath)
 	if err := common.ParseYAMLConfig(configFilePath, &config, envPrefix); err != nil {
 		log.Fatal(fmt.Errorf("parse config error: %v", err))
 	}

@@ -162,7 +162,6 @@ func (q sigQueryProcessor) startTicker() {
 					q.log.WithField("error", err.Error()).Error("pendingSigQueryErr")
 				}
 			}()
-
 		}
 	}
 }
