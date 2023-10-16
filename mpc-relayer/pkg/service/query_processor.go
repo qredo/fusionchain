@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/qredo/fusionchain/go-client"
@@ -97,6 +98,11 @@ func (q *keyQueryProcessor) Stop() error {
 }
 
 func (q *keyQueryProcessor) healthcheck() *Response {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
+	defer cancelFunc()
+	if _, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{Limit: 1}, q.keyRingID); err != nil {
+		return &Response{Failures: []string{fmt.Sprintf("query client: %v", err.Error())}}
+	}
 	return &Response{}
 }
 
@@ -189,5 +195,10 @@ func (q *sigQueryProcessor) Stop() error {
 }
 
 func (q *sigQueryProcessor) healthcheck() *Response {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
+	defer cancelFunc()
+	if _, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{Limit: 1}, q.keyRingID); err != nil {
+		return &Response{Failures: []string{fmt.Sprintf("query client: %v", err.Error())}}
+	}
 	return &Response{}
 }

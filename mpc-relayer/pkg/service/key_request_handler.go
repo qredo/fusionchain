@@ -114,6 +114,7 @@ type keyRequestQueueItem struct {
 
 type KeyRequestsHandler interface {
 	HandleKeyRequests(ctx context.Context, item *keyRequestQueueItem) error
+	healthcheck() *Response
 }
 
 // FusionKeyRequestHandler implements KeyRequestsHandler.
@@ -172,4 +173,12 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 		"timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2),
 	}).Info("keyRequestFulfilled")
 	return nil
+}
+
+func (h *FusionKeyRequestHandler) healthcheck() *Response {
+	mpcOk, _ := h.keyringClient.Ping()
+	if !mpcOk {
+		return &Response{Failures: []string{"mpc not ok"}}
+	}
+	return &Response{}
 }
