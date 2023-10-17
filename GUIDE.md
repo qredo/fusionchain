@@ -41,7 +41,7 @@ fchain tx identity new-workspace --yes
 # check for newly created workspace
 fchain q identity workspaces
 
-# creata a new key of type `ecdsa`` for the workspace with a time to life of 1000 blocks
+# creata a new key of type `ecdsa`` for the workspace with a time to live of 1000 blocks
 fchain tx treasury new-key-request qredoworkspace14a2hpadpsy9h5m6us54 0 ecdsa 1000 --yes 
 
 # wait for the MPC (keyring_id = 0) to pick up the request and generate a new key
