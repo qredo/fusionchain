@@ -7,7 +7,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"os"
 
@@ -31,7 +30,6 @@ var (
 
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{}))
-	fmt.Println(keyringAddr)
 
 	/* keyringAddr, err := strconv.ParseUint(keyringAddr, 10, 64)
 	if err != nil {
