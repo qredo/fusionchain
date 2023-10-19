@@ -31,12 +31,6 @@ var (
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{}))
 
-	/* keyringAddr, err := strconv.ParseUint(keyringAddr, 10, 64)
-	if err != nil {
-		panic(err)
-	}
-	*/
-
 	identity, err := client.NewIdentityFromSeed(derivationPath, seedPhrase)
 	if err != nil {
 		panic(err)

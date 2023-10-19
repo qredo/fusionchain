@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -31,8 +30,6 @@ func TestMsgUpdateKeyRequest_NewMsgUpdateKeyRequest(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := &MsgUpdateKeyRequest{tt.msg.Creator, tt.msg.RequestId, tt.msg.Status, tt.msg.Result}
-			fmt.Println(got)
-
 			assert.Equalf(t, tt.msg, got, "want", tt.msg)
 		})
 	}
