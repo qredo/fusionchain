@@ -35,6 +35,7 @@ func (k msgServer) UpdateKeyRequest(goCtx context.Context, msg *types.MsgUpdateK
 		// setup new key
 		key := &types.Key{
 			WorkspaceAddr: req.WorkspaceAddr,
+			KeyringAddr:   req.KeyringAddr,
 			Type:          req.KeyType,
 			PublicKey:     (msg.Result.(*types.MsgUpdateKeyRequest_Key)).Key.PublicKey,
 		}
