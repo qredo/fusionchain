@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/qredo/fusionchain/x/treasury/types"
 )
@@ -25,8 +24,6 @@ func (c *TreasuryTxClient) FulfilKeyRequest(ctx context.Context, requestID uint6
 		status,
 		result,
 	)
-
-	fmt.Println("fulfill message", msg)
 
 	txBytes, err := c.c.BuildTx(ctx, DefaultGasLimit, DefaultFees, msg)
 	if err != nil {
