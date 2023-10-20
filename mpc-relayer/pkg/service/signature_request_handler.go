@@ -14,7 +14,7 @@ import (
 )
 
 type signatureController struct {
-	keyringAddr              string
+	// keyringAddr              string
 	queue                    chan *signatureRequestQueueItem
 	signatureRequestsHandler SignatureRequestsHandler
 	log                      *logrus.Entry
