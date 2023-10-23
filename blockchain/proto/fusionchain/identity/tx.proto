@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "fusionchain/identity/keyring.proto";
+
 package fusionchain.identity;
 
 option go_package = "github.com/qredo/fusionchain/x/identity/types";
@@ -36,6 +38,9 @@ service Msg {
   // Update a workspace, e.g. changing the policies in use.
   rpc UpdateWorkspace(MsgUpdateWorkspace) returns (MsgUpdateWorkspaceResponse);
 
+  // Update a keyring, e.g. update the status or description.
+  rpc UpdateKeyring(MsgUpdateKeyring) returns (MsgUpdateKeyringResponse);
+
   // this line is used by scaffolder # 1
 }
 message MsgNewWorkspace {
@@ -68,13 +73,15 @@ message MsgRemoveWorkspaceOwnerResponse {}
 message MsgNewKeyring {
   string creator = 1;
   string description = 2;
+  uint64 admin_policy_id = 3;
+  KeyringFees fees = 4;
 }
 
-message MsgNewKeyringResponse { uint64 id = 1; }
+message MsgNewKeyringResponse { string address = 1; }
 
 message MsgAddKeyringParty {
   string creator = 1;
-  uint64 keyring_id = 2;
+  string keyring_addr = 2;
   string party = 3;
 }
 
@@ -106,3 +113,12 @@ message MsgUpdateWorkspace {
 }
 
 message MsgUpdateWorkspaceResponse {}
+
+message MsgUpdateKeyring {
+  string creator = 1;
+  string keyring_addr = 2;
+  string description = 3;
+  bool is_active = 4;
+}
+
+message MsgUpdateKeyringResponse {}

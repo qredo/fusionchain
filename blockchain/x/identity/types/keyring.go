@@ -2,7 +2,6 @@ package types
 
 // nolint:stylecheck,st1003
 // revive:disable-next-line var-naming
-func (k *Keyring) SetId(id uint64) { k.Id = id }
 
 func (k *Keyring) IsParty(address string) bool {
 	for _, party := range k.Parties {
@@ -15,4 +14,12 @@ func (k *Keyring) IsParty(address string) bool {
 
 func (k *Keyring) AddParty(address string) {
 	k.Parties = append(k.Parties, address)
+}
+
+func (k *Keyring) SetStatus(status bool) {
+	k.IsActive = status
+}
+
+func (k *Keyring) SetDescription(description string) {
+	k.Description = description
 }

@@ -11,9 +11,13 @@ import (
 func (k msgServer) AddKeyringParty(goCtx context.Context, msg *types.MsgAddKeyringParty) (*types.MsgAddKeyringPartyResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	kr, found := k.KeyringsRepo().Get(ctx, msg.KeyringId)
-	if !found {
+	kr := k.GetKeyring(ctx, msg.KeyringAddr)
+	if kr == nil {
 		return nil, fmt.Errorf("keyring not found")
+	}
+
+	if !kr.IsActive {
+		return nil, fmt.Errorf("keyring is inactive")
 	}
 
 	if kr.IsParty(msg.Party) {
@@ -21,7 +25,7 @@ func (k msgServer) AddKeyringParty(goCtx context.Context, msg *types.MsgAddKeyri
 	}
 
 	kr.AddParty(msg.Party)
-	k.KeyringsRepo().Set(ctx, kr)
+	k.SetKeyring(ctx, kr)
 
 	return &types.MsgAddKeyringPartyResponse{}, nil
 }

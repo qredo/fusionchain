@@ -17,9 +17,9 @@ func (k msgServer) UpdateKeyRequest(goCtx context.Context, msg *types.MsgUpdateK
 		return nil, fmt.Errorf("request not found")
 	}
 
-	kr, found := k.identityKeeper.KeyringsRepo().Get(ctx, req.KeyringId)
-	if !found {
-		return nil, fmt.Errorf("keyring not found")
+	kr := k.identityKeeper.GetKeyring(ctx, req.KeyringAddr)
+	if kr == nil || !kr.IsActive {
+		return nil, fmt.Errorf("keyring is nil or is inactive")
 	}
 
 	if !kr.IsParty(msg.Creator) {
@@ -35,6 +35,7 @@ func (k msgServer) UpdateKeyRequest(goCtx context.Context, msg *types.MsgUpdateK
 		// setup new key
 		key := &types.Key{
 			WorkspaceAddr: req.WorkspaceAddr,
+			KeyringAddr:   req.KeyringAddr,
 			Type:          req.KeyType,
 			PublicKey:     (msg.Result.(*types.MsgUpdateKeyRequest_Key)).Key.PublicKey,
 		}

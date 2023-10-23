@@ -12,21 +12,31 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdAddKeyringParty() *cobra.Command {
+func CmdMsgUpdateKeyring() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-keyring-party [keyring-addr] [party]",
-		Short: "Broadcast message AddKeyringParty",
-		Args:  cobra.ExactArgs(2),
+		Use:   "update-keyring [keyring-addr] [status] [description] ",
+		Short: "Broadcast message update-keyring",
+		Args:  cobra.RangeArgs(2, 3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgAddKeyringParty(
+			status, err := strconv.ParseBool(args[1])
+			if err != nil {
+				return err
+			}
+			var description string
+			if len(args) == 3 {
+				description = args[2]
+			}
+
+			msg := types.NewMsgUpdateKeyring(
 				clientCtx.GetFromAddress().String(),
 				args[0],
-				args[1],
+				description,
+				status,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

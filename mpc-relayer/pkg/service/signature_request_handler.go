@@ -14,11 +14,11 @@ import (
 )
 
 type signatureController struct {
-	KeyringID                uint64
 	queue                    chan *signatureRequestQueueItem
 	signatureRequestsHandler SignatureRequestsHandler
 	log                      *logrus.Entry
 
+	threads    chan struct{}
 	stop       chan struct{}
 	wait       chan struct{}
 	retrySleep time.Duration
@@ -41,6 +41,7 @@ func newFusionSignatureController(logger *logrus.Entry, prefixDB database.Databa
 		queue:                    q,
 		signatureRequestsHandler: s,
 		log:                      logger,
+		threads:                  makeThreads(defaultThreads),
 		stop:                     make(chan struct{}, 1),
 		wait:                     make(chan struct{}, 1),
 		retrySleep:               defaultRetryTimeout,
@@ -52,20 +53,18 @@ func (s *signatureController) Start() error {
 	if s.queue == nil || s.stop == nil {
 		return fmt.Errorf("empty work channels")
 	}
+	s.log.WithField("threads", len(s.threads)).Info("starting sigRequestHandler")
 	go s.startExecutor()
 	return nil
 }
 
 func (s *signatureController) startExecutor() {
-	var processing bool
 	for {
 		select {
 		case <-s.stop:
 			s.log.Info("signatureController received shutdown signal")
-			for {
-				if !processing {
-					break
-				}
+			for i := 0; i < defaultThreads; i++ {
+				<-s.threads // empty thread chan
 			}
 			s.log.Info("terminated signatureController")
 			s.wait <- struct{}{}
@@ -73,8 +72,8 @@ func (s *signatureController) startExecutor() {
 		case item := <-s.queue:
 			// process queue items async
 			go func() {
-				processing = true
-				defer func() { processing = false }()
+				<-s.threads
+				defer func() { s.threads <- struct{}{} }()
 				if err := s.executeRequest(item); err != nil {
 					s.log.WithFields(logrus.Fields{
 						"retries": item.retries,
@@ -105,13 +104,13 @@ func (s *signatureController) executeRequest(item *signatureRequestQueueItem) er
 	return nil
 }
 
-func (s signatureController) healthcheck() *Response {
+func (s signatureController) healthcheck() *HealthResponse {
 	return s.signatureRequestsHandler.healthcheck()
 }
 
 type SignatureRequestsHandler interface {
 	HandleSignatureRequest(ctx context.Context, item *signatureRequestQueueItem) error
-	healthcheck() *Response
+	healthcheck() *HealthResponse
 }
 
 // FusionSignatureRequestHandler implements SignatureRequestsHandler.
@@ -180,10 +179,10 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 	return nil
 }
 
-func (h *FusionSignatureRequestHandler) healthcheck() *Response {
+func (h *FusionSignatureRequestHandler) healthcheck() *HealthResponse {
 	mpcOk, _ := h.keyringClient.Ping()
 	if !mpcOk {
-		return &Response{Failures: []string{"mpc not ok"}}
+		return &HealthResponse{Failures: []string{"mpc not ok"}}
 	}
-	return &Response{}
+	return &HealthResponse{}
 }
