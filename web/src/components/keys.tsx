@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { protoInt64 } from "@bufbuild/protobuf";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Key as KeyProto } from "../proto/fusionchain/treasury/key_pb";
-import { keys, wallets } from "../client/treasury";
+import { keys } from "../client/treasury";
 import { prettyBytes, prettyKeyType } from "../utils/formatting";
 import { Link } from "react-router-dom";
-import { MsgNewWalletRequest } from "../proto/fusionchain/treasury/tx_pb";
+// import { MsgNewWalletRequest } from "../proto/fusionchain/treasury/tx_pb";
 import { WalletType } from "../proto/fusionchain/treasury/wallet_pb";
 import { useKeplrAddress } from "../keplr";
 import { Button } from "./ui/button";
@@ -14,6 +14,7 @@ import { useBroadcaster } from "@/hooks/keplr";
 
 export default function Keys({ workspaceAddr }: { workspaceAddr: string }) {
   const wsQuery = useQuery({ queryKey: ["keys"], queryFn: () => keys(workspaceAddr) });
+  console.log(wsQuery)
 
   return (
     <div className="p-4 space-y-3">
@@ -39,10 +40,6 @@ function Key({ keyData }: { keyData: KeyProto }) {
             <span className="text-sm font-bold">Key material</span>
             <span className="font-mono break-all">{prettyBytes(keyData.publicKey)}</span>
           </div>
-          <div className="flex flex-col space-y-1">
-            <span className="text-sm font-bold">Wallets</span>
-            <Wallets keyId={keyData.id} />
-          </div>
         </div>
       </CardContent>
       <CardFooter>
@@ -56,6 +53,7 @@ function Key({ keyData }: { keyData: KeyProto }) {
   );
 }
 
+/*
 function Wallets({ keyId }: { keyId: bigint }) {
   const addr = useKeplrAddress();
   const { broadcast } = useBroadcaster();
@@ -120,6 +118,7 @@ function Wallets({ keyId }: { keyId: bigint }) {
     </div>
   );
 }
+*/
 
 function KeyringLink({ keyringId }: { keyringId: bigint }) {
   return (

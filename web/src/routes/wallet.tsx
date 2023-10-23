@@ -6,7 +6,7 @@ import { MsgNewSignTransactionRequest } from "../proto/fusionchain/treasury/tx_p
 import { Link, Params, useLoaderData } from "react-router-dom";
 import { useKeplrAddress } from "../keplr";
 import { useQuery } from "@tanstack/react-query";
-import { walletById } from "../client/treasury";
+// import { walletById } from "../client/treasury";
 import SignTransactionRequests from "../components/sign_transactions_requests";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
 import { useBroadcaster } from "@/hooks/keplr";

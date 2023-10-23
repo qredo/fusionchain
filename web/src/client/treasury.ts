@@ -1,5 +1,5 @@
 import { WalletType } from "@/proto/fusionchain/treasury/wallet_pb";
-import { QueryKeyRequestsResponse, QueryKeysResponse, QuerySignTransactionRequestsResponse, QuerySignatureRequestByIdResponse, QuerySignatureRequestsResponse, QueryWalletByIdResponse, QueryWalletsResponse } from "../proto/fusionchain/treasury/query_pb";
+import { QueryKeyRequestsResponse, QueryKeysResponse, QuerySignTransactionRequestsResponse, QuerySignatureRequestByIdResponse, QuerySignatureRequestsResponse } from "../proto/fusionchain/treasury/query_pb";
 import { path, query } from "./common";
 
 export enum KeyRequestStatus {
@@ -56,6 +56,7 @@ export async function signTransactionRequests(walletId: number | bigint | string
   return QuerySignTransactionRequestsResponse.fromJson(data);
 }
 
+/*
 export async function wallets(keyId: number | bigint) {
   const p = path(["fusionchain", "treasury", "wallets"], { key_id: keyId.toString() });
   const data = await query(p);
@@ -67,3 +68,4 @@ export async function walletById(walletId: number | bigint | string) {
   const data = await query(p);
   return QueryWalletByIdResponse.fromJson(data);
 }
+*/
