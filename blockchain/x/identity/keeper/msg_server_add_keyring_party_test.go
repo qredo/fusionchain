@@ -58,7 +58,6 @@ func Test_msgServer_AddKeyringParty(t *testing.T) {
 			keyringRes, err := msgSer.NewKeyring(goCtx, tt.args.msgKeyring)
 			if err != nil {
 				t.Fatalf("NewKeyring() error = %v", err)
-				return
 			}
 			got, err := msgSer.AddKeyringParty(goCtx, tt.args.msg)
 			if (err != nil) != tt.wantErr {
