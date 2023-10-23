@@ -26,24 +26,26 @@ func Test_msgServer_AddKeyringParty(t *testing.T) {
 		{
 			name: "add a party to a keyring",
 			args: args{
-				msgKeyring: types.NewMsgNewKeyring("testCreator", "testDescription"),
-				msg:        types.NewMsgAddKeyringParty("testCreator", 1, "testParty"),
+				msgKeyring: types.NewMsgNewKeyring("testCreator", "testDescription", 0, 0, 0),
+				msg:        types.NewMsgAddKeyringParty("testCreator", "qredokeyring1ph63us46lyw56vrzgaq", "testParty"),
 			},
 			want: &types.MsgAddKeyringPartyResponse{},
 			wantKeyring: &types.Keyring{
-				Id:          1,
+				Address:     "qredokeyring1ph63us46lyw56vrzgaq",
 				Creator:     "testCreator",
 				Description: "testDescription",
 				Admins:      []string{"testCreator"},
 				Parties:     []string{"testParty"},
+				Fees:        &types.KeyringFees{KeyReq: 0, SigReq: 0},
+				IsActive:    true,
 			},
 			wantErr: false,
 		},
 		{
 			name: "keyring not found",
 			args: args{
-				msgKeyring: types.NewMsgNewKeyring("testCreator", "testDescription"),
-				msg:        types.NewMsgAddKeyringParty("testCreator", 2, "testParty"),
+				msgKeyring: types.NewMsgNewKeyring("testCreator", "testDescription", 0, 0, 0),
+				msg:        types.NewMsgAddKeyringParty("testCreator", "qredokeyring1xtsava0c3nwl7ptz33c", "testParty"),
 			},
 			want:        &types.MsgAddKeyringPartyResponse{},
 			wantKeyring: nil,
@@ -69,11 +71,8 @@ func Test_msgServer_AddKeyringParty(t *testing.T) {
 				if !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("AddKeyringParty() got = %v, want %v", got, tt.want)
 				}
-				gotKeyring, f := ik.KeyringsRepo().Get(ctx, keyringRes.Id)
-				if !f {
-					t.Errorf("NewKeyring() keyring not found")
-					return
-				}
+				gotKeyring := ik.GetKeyring(ctx, keyringRes.Address)
+
 				if !reflect.DeepEqual(gotKeyring, tt.wantKeyring) {
 					t.Errorf("NewKeyring() got = %v, want %v", gotKeyring, tt.wantKeyring)
 					return

@@ -39,6 +39,9 @@ func Test_msgServer_AddWorkspaceOwner(t *testing.T) {
 			goCtx := sdk.WrapSDKContext(ctx)
 			msgSer := keeper.NewMsgServerImpl(*ik)
 			workspaceResp, err := msgSer.NewWorkspace(goCtx, tt.args.msgNewWorkspace)
+			if err != nil {
+				t.Errorf("Failed to create new workspace. Reason: %v", err)
+			}
 			got, err := msgSer.AddWorkspaceOwner(goCtx, tt.args.msg)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AddWorkspaceOwner() error = %v, wantErr %v", err, tt.wantErr)

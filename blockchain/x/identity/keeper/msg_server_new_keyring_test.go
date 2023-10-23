@@ -24,15 +24,17 @@ func Test_msgServer_NewKeyring(t *testing.T) {
 		{
 			name: "create a keyring",
 			args: args{
-				msg: types.NewMsgNewKeyring("testCreator", "testDescription"),
+				msg: types.NewMsgNewKeyring("testCreator", "testDescription", 0, 0, 0),
 			},
-			want: &types.MsgNewKeyringResponse{Id: 1},
+			want: &types.MsgNewKeyringResponse{Address: "qredokeyring1ph63us46lyw56vrzgaq"},
 			wantCreated: &types.Keyring{
-				Id:          1,
+				Address:     "qredokeyring1ph63us46lyw56vrzgaq",
 				Creator:     "testCreator",
 				Description: "testDescription",
 				Admins:      []string{"testCreator"},
 				Parties:     nil,
+				Fees:        &types.KeyringFees{KeyReq: 0, SigReq: 0},
+				IsActive:    true,
 			},
 			wantErr: false,
 		},
@@ -50,11 +52,7 @@ func Test_msgServer_NewKeyring(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewKeyring() got = %v, want %v", got, tt.want)
 			}
-			gotKeyring, f := ik.KeyringsRepo().Get(ctx, got.Id)
-			if !f {
-				t.Errorf("NewKeyring() keyring not found")
-				return
-			}
+			gotKeyring := ik.GetKeyring(ctx, got.Address)
 
 			if !reflect.DeepEqual(gotKeyring, tt.wantCreated) {
 				t.Errorf("NewKeyring() got = %v, want %v", gotKeyring, tt.wantCreated)

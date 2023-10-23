@@ -8,7 +8,7 @@ import (
 
 func TestKeyring_IsParty(t *testing.T) {
 	type fields struct {
-		Id          uint64
+		KeyringAddr string
 		Creator     string
 		Description string
 		Admins      []string
@@ -26,20 +26,20 @@ func TestKeyring_IsParty(t *testing.T) {
 		{
 			name: "Address exists in Parties",
 			fields: fields{
-				Parties: []string{"party1", "party2", "party3"},
+				Parties: []string{"qredokeyring1ph63us46lyw56vrzgaq", "qredokeyring1xtsava0c3nwl7ptz33c", "qredokeyring10kjg0u5s22lezv8dahk"},
 			},
 			args: args{
-				address: "party2",
+				address: "qredokeyring1xtsava0c3nwl7ptz33c",
 			},
 			want: true,
 		},
 		{
 			name: "Address does not exist in Parties",
 			fields: fields{
-				Parties: []string{"party1", "party3"},
+				Parties: []string{"qredokeyring1ph63us46lyw56vrzgaq", "qredokeyring10kjg0u5s22lezv8dahk"},
 			},
 			args: args{
-				address: "party2",
+				address: "qredokeyring1xtsava0c3nwl7ptz33c",
 			},
 			want: false,
 		},
@@ -49,7 +49,7 @@ func TestKeyring_IsParty(t *testing.T) {
 				Parties: []string{},
 			},
 			args: args{
-				address: "party2",
+				address: "qredokeyring1xtsava0c3nwl7ptz33c",
 			},
 			want: false,
 		},
@@ -57,7 +57,7 @@ func TestKeyring_IsParty(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			k := &Keyring{
-				Id:          tt.fields.Id,
+				Address:     tt.fields.KeyringAddr,
 				Creator:     tt.fields.Creator,
 				Description: tt.fields.Description,
 				Admins:      tt.fields.Admins,
@@ -70,7 +70,7 @@ func TestKeyring_IsParty(t *testing.T) {
 
 func TestKeyring_AddParty(t *testing.T) {
 	type fields struct {
-		Id          uint64
+		KeyringAddr string
 		Creator     string
 		Description string
 		Admins      []string
@@ -91,25 +91,25 @@ func TestKeyring_AddParty(t *testing.T) {
 				Parties: []string{},
 			},
 			args: args{
-				address: "party1",
+				address: "qredokeyring1ph63us46lyw56vrzgaq",
 			},
-			want: []string{"party1"},
+			want: []string{"qredokeyring1ph63us46lyw56vrzgaq"},
 		},
 		{
 			name: "Add a party to a non-empty Parties list",
 			fields: fields{
-				Parties: []string{"party1", "party2"},
+				Parties: []string{"qredokeyring1ph63us46lyw56vrzgaq", "qredokeyring1xtsava0c3nwl7ptz33c"},
 			},
 			args: args{
-				address: "party3",
+				address: "qredokeyring10kjg0u5s22lezv8dahk",
 			},
-			want: []string{"party1", "party2", "party3"},
+			want: []string{"qredokeyring1ph63us46lyw56vrzgaq", "qredokeyring1xtsava0c3nwl7ptz33c", "qredokeyring10kjg0u5s22lezv8dahk"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			k := &Keyring{
-				Id:          tt.fields.Id,
+				Address:     tt.fields.KeyringAddr,
 				Creator:     tt.fields.Creator,
 				Description: tt.fields.Description,
 				Admins:      tt.fields.Admins,

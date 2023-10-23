@@ -14,37 +14,39 @@ func TestKeeper_KeyringByID(t *testing.T) {
 
 	type args struct {
 		msg *types.MsgNewKeyring
-		req *types.QueryKeyringByIdRequest
+		req *types.QueryKeyringByAddressRequest
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    *types.QueryKeyringByIdResponse
+		want    *types.QueryKeyringByAddressResponse
 		wantErr bool
 	}{
 		{
-			name: "get a keyring by id",
+			name: "get a keyring by address",
 			args: args{
-				msg: types.NewMsgNewKeyring("testCreator", "testDescription"),
-				req: &types.QueryKeyringByIdRequest{
-					Id: 1,
+				msg: types.NewMsgNewKeyring("testCreator", "testDescription", 0, 0, 0),
+				req: &types.QueryKeyringByAddressRequest{
+					Address: "qredokeyring1ph63us46lyw56vrzgaq",
 				},
 			},
-			want: &types.QueryKeyringByIdResponse{Keyring: &types.Keyring{
-				Id:          1,
+			want: &types.QueryKeyringByAddressResponse{Keyring: &types.Keyring{
+				Address:     "qredokeyring1ph63us46lyw56vrzgaq",
 				Creator:     "testCreator",
 				Description: "testDescription",
 				Admins:      []string{"testCreator"},
 				Parties:     nil,
+				Fees:        &types.KeyringFees{KeyReq: 0, SigReq: 0},
+				IsActive:    true,
 			}},
 			wantErr: false,
 		},
 		{
-			name: "keyring by id not found",
+			name: "keyring by address not found",
 			args: args{
-				msg: types.NewMsgNewKeyring("testCreator", "testDescription"),
-				req: &types.QueryKeyringByIdRequest{
-					Id: 5,
+				msg: types.NewMsgNewKeyring("testCreator", "testDescription", 0, 0, 0),
+				req: &types.QueryKeyringByAddressRequest{
+					Address: "qredokeyring10kjg2u5s22lezv8dahk",
 				},
 			},
 			want:    nil,
@@ -57,13 +59,16 @@ func TestKeeper_KeyringByID(t *testing.T) {
 			goCtx := sdk.WrapSDKContext(ctx)
 			msgSer := keeper.NewMsgServerImpl(*ik)
 			_, err := msgSer.NewKeyring(goCtx, tt.args.msg)
-			got, err := ik.KeyringByID(goCtx, tt.args.req)
+			if err != nil {
+				t.Errorf("Failed to create new keyring. Reason: %v", err)
+			}
+			got, err := ik.KeyringByAddress(goCtx, tt.args.req)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("KeyringByID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("KeyringByAddress() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !tt.wantErr && !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("KeyringByID() got = %v, want %v", got, tt.want)
+				t.Errorf("KeyringByAddress() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
