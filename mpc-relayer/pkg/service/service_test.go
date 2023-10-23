@@ -15,12 +15,12 @@ import (
 )
 
 var testConfig = ServiceConfig{
-	Port:      8080,
-	KeyRingID: "1",
-	LogLevel:  "fatal",
-	LogFormat: "plain",
-	LogToFile: false,
-	Mnemonic:  "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge",
+	Port:        8080,
+	KeyringAddr: "qredokeyring1ph63us46lyw56vrzgaq",
+	LogLevel:    "fatal",
+	LogFormat:   "plain",
+	LogToFile:   false,
+	Mnemonic:    "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge",
 	MPC: mpc.Config{
 		Mock: true,
 	},
@@ -44,11 +44,11 @@ var (
 		{
 			"no mnemonic",
 			ServiceConfig{
-				Port:      8080,
-				KeyRingID: "1",
-				LogLevel:  "fatal",
-				LogFormat: "plain",
-				LogToFile: false,
+				Port:        8080,
+				KeyringAddr: "qredokeyring1ph63us46lyw56vrzgaq",
+				LogLevel:    "fatal",
+				LogFormat:   "plain",
+				LogToFile:   false,
 			},
 			nil,
 			true,
@@ -100,8 +100,8 @@ func (m mockModule) Stop() error {
 	return nil
 }
 
-func (m mockModule) healthcheck() *Response {
-	return &Response{}
+func (m mockModule) healthcheck() *HealthResponse {
+	return &HealthResponse{}
 }
 
 type mockModuleErr struct{}
@@ -114,8 +114,8 @@ func (m mockModuleErr) Stop() error {
 	return errors.New("error")
 }
 
-func (m mockModuleErr) healthcheck() *Response {
-	return &Response{Failures: []string{"some failure"}}
+func (m mockModuleErr) healthcheck() *HealthResponse {
+	return &HealthResponse{Failures: []string{"some failure"}}
 }
 
 func Test_ServiceStartStop(t *testing.T) {
@@ -150,7 +150,7 @@ func Test_ServiceAPI(t *testing.T) {
 		name             string
 		endpoint         string
 		method           func(w http.ResponseWriter, req *http.Request)
-		expectedResponse *Response
+		expectedResponse any
 		expectedCode     int
 	}{
 		{
@@ -164,7 +164,7 @@ func Test_ServiceAPI(t *testing.T) {
 			"healthcheck",
 			healthEndPnt,
 			s.healthcheck,
-			&Response{Version: common.FullVersion, Service: serviceName, Failures: []string{}},
+			&HealthResponse{Version: common.FullVersion, Service: serviceName, Failures: []string{}},
 			http.StatusOK,
 		},
 		{
@@ -203,7 +203,7 @@ func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*S
 	if err != nil {
 		return nil, err
 	}
-	keyringID, _, _, err := makeKeyringClient(&config, log)
+	keyringAddr, _, _, err := makeKeyringClient(&config, log)
 	if err != nil {
 		return nil, err
 	}
@@ -211,5 +211,5 @@ func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*S
 	if err != nil {
 		t.Fatal(err)
 	}
-	return New(keyringID, config.Port, log, memoryKeyDB, modules...), nil
+	return New(keyringAddr, config.Port, log, memoryKeyDB, modules...), nil
 }
