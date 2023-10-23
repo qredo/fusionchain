@@ -24,7 +24,7 @@ func TestKeeper_WorkspaceByAddress(t *testing.T) {
 		wantErr       bool
 	}{
 		{
-			name: "",
+			name: "happy path",
 			args: args{
 				req: &types.QueryWorkspaceByAddressRequest{
 					Address: "qredoworkspace14a2hpadpsy9h5m6us54",
@@ -80,7 +80,7 @@ func TestKeeper_WorkspaceByAddress(t *testing.T) {
 			msgSer := keeper.NewMsgServerImpl(*ik)
 			_, err := msgSer.NewWorkspace(goCtx, tt.args.msgWorkspace)
 			if err != nil {
-				t.FailNow()
+				t.Fatal(err)
 			}
 			got, err := ik.WorkspaceByAddress(goCtx, tt.args.req)
 			if (err != nil) != tt.wantErr {

@@ -57,11 +57,7 @@ func TestKeyring_IsParty(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			k := &Keyring{
-				Address:     tt.fields.KeyringAddr,
-				Creator:     tt.fields.Creator,
-				Description: tt.fields.Description,
-				Admins:      tt.fields.Admins,
-				Parties:     tt.fields.Parties,
+				Parties: tt.fields.Parties,
 			}
 			assert.Equalf(t, tt.want, k.IsParty(tt.args.address), "IsParty(%v)", tt.args.address)
 		})
@@ -109,11 +105,7 @@ func TestKeyring_AddParty(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			k := &Keyring{
-				Address:     tt.fields.KeyringAddr,
-				Creator:     tt.fields.Creator,
-				Description: tt.fields.Description,
-				Admins:      tt.fields.Admins,
-				Parties:     tt.fields.Parties,
+				Parties: tt.fields.Parties,
 			}
 			k.AddParty(tt.args.address)
 		})

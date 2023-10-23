@@ -39,7 +39,6 @@ func Test_msgServer_AddKeyringParty(t *testing.T) {
 				Fees:        &types.KeyringFees{KeyReq: 0, SigReq: 0},
 				IsActive:    true,
 			},
-			wantErr: false,
 		},
 		{
 			name: "keyring not found",
@@ -47,9 +46,8 @@ func Test_msgServer_AddKeyringParty(t *testing.T) {
 				msgKeyring: types.NewMsgNewKeyring("testCreator", "testDescription", 0, 0, 0),
 				msg:        types.NewMsgAddKeyringParty("testCreator", "qredokeyring1xtsava0c3nwl7ptz33c", "testParty"),
 			},
-			want:        &types.MsgAddKeyringPartyResponse{},
-			wantKeyring: nil,
-			wantErr:     true,
+			want:    &types.MsgAddKeyringPartyResponse{},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -59,7 +57,7 @@ func Test_msgServer_AddKeyringParty(t *testing.T) {
 			msgSer := keeper.NewMsgServerImpl(*ik)
 			keyringRes, err := msgSer.NewKeyring(goCtx, tt.args.msgKeyring)
 			if err != nil {
-				t.Errorf("NewKeyring() error = %v", err)
+				t.Fatalf("NewKeyring() error = %v", err)
 				return
 			}
 			got, err := msgSer.AddKeyringParty(goCtx, tt.args.msg)
