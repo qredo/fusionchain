@@ -8,3 +8,11 @@ contracts/packages/*/target
 build/
 
 mokr/mokr
+
+blockchain/cmd/fusiond/fusiond
+
+blockchain/cmd/faucet/faucet
+
+relayer-eth/cmd/buildtx/buildtx
+
+relayer-eth/cmd/relayer/relayer
