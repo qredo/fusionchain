@@ -30,10 +30,11 @@ export async function keyRequests(
   return QueryKeyRequestsResponse.fromJson(data);
 }
 
-export async function keys(workspaceAddr: string, walletType?: WalletType): Promise<QueryKeysResponse> {
+export async function keys(workspaceAddr: string, walletType?: WalletType, keyId?: number ): Promise<QueryKeysResponse> {
   const data = await query(path(["fusionchain", "treasury", "keys"], {
     workspace_addr: workspaceAddr,
     type: walletType,
+    keyId: keyId,
   }));
   return QueryKeysResponse.fromJson(data);
 }
@@ -56,8 +57,8 @@ export async function signTransactionRequests(walletId: number | bigint | string
   return QuerySignTransactionRequestsResponse.fromJson(data);
 }
 
-export async function wallets(keyId: number | bigint): Promise<WalletKeyResponse> {
-  const p = path(["fusionchain","treasury","keys"], {key_id: keyId.toString() });
+export async function wallets( walletType: number, workspaceAddr: string, keyId: string): Promise<QueryKeysResponse> {
+  const p = path(["fusionchain","treasury","keys"], {walletType, workspaceAddr, key_id: keyId });
   const data = await query(p);
-  return WalletKeyResponse.fromJson(data)
+  return QueryKeysResponse.fromJson(data)
 }

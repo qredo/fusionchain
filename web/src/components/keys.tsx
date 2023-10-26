@@ -2,14 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Params } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Key as KeyProto } from "../proto/fusionchain/treasury/key_pb";
-import { keys } from "../client/treasury";
+import { keys, wallets } from "../client/treasury";
 import { prettyBytes, prettyKeyType } from "../utils/formatting";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 
 export default function Keys({ workspaceAddr }: { workspaceAddr: string }) {
   const wsQuery = useQuery({ queryKey: ["keys"], queryFn: () => keys(workspaceAddr) });
-  //console.log(wsQuery)
 
   return (
     <div className="p-4 space-y-3">
@@ -17,6 +16,18 @@ export default function Keys({ workspaceAddr }: { workspaceAddr: string }) {
     </div>
   );
 }
+
+function Wallets({ walletType, workspaceAddr, keyId }: { walletType: number, workspaceAddr: string, keyId: string} ) {
+  const walletQuery = useQuery({ queryKey: ["keys", walletType, workspaceAddr, keyId], queryFn: () => wallets(walletType, workspaceAddr, keyId) });
+
+  return (
+    <ul className="p-4 space-y-3">
+      {walletQuery.data?.keys[0].wallets[walletType].address}
+    </ul>
+    
+  );
+}
+
 
 function Key({ keyData }: { keyData: KeyProto }) {
   return (
@@ -34,6 +45,10 @@ function Key({ keyData }: { keyData: KeyProto }) {
           <div className="flex flex-col space-y-1">
             <span className="text-sm font-bold">Key material</span>
             <span className="font-mono break-all">{prettyBytes(keyData.publicKey)}</span>
+          </div>
+          <div className="flex flex-col space-y-1">
+            <span className="text-sm font-bold">Ethereum Address</span>
+            <span className="font-mono break-all"> <Wallets walletType={2} workspaceAddr={keyData.workspaceAddr} keyId={keyData.id.toString()}/> </span>
           </div>
         </div>
       </CardContent>
