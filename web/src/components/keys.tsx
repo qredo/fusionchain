@@ -28,7 +28,7 @@ function Wallets({ walletType, workspaceAddr, keyId }: { walletType: number, wor
           <span key={walletQuery.data?.keys[0].wallets[walletType].type} className="font-mono">
             {walletQuery.data?.keys[0].wallets[walletType].address}
           </span>
-          <Link to={`/wallet/${walletQuery.data?.keys[0].wallets[walletType].address}`}>
+          <Link to={`/wallet/${workspaceAddr}/${keyId}`}>
             <Button variant="default" size="sm" className="ml-3">
               Sign transactions
             </Button>
@@ -57,7 +57,7 @@ function Key({ keyData }: { keyData: KeyProto }) {
             <span className="font-mono break-all">{prettyBytes(keyData.publicKey)}</span>
           </div>
           <div className="flex flex-col space-y-1">
-            <span className="text-sm font-bold">Sign Web3 Transactions (WIP)</span>
+            <span className="text-sm font-bold">Sign Web3 Transactions</span>
             <span className="font-mono break-all"> <Wallets walletType={2} workspaceAddr={keyData.workspaceAddr} keyId={keyData.id.toString()}/> </span>
           </div>
         </div>

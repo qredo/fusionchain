@@ -70,7 +70,7 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "/wallet/:walletid",
+        path: "/wallet/:workspaceAddr/:keyId",
         element: <Wallet />,
         loader: walletLoader,
       },
