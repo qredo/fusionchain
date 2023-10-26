@@ -34,6 +34,7 @@ function Wallet() {
   const addr = useKeplrAddress();
   const { broadcast } = useBroadcaster();
   const { walletId } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  // need to change the query because there is no wallet object on fusion anymore. 
   const walletQ = useQuery(["wallet", walletId], () => walletById(walletId), {
     refetchInterval: 10000,
   });

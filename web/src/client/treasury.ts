@@ -1,5 +1,5 @@
 import { WalletType } from "@/proto/fusionchain/treasury/wallet_pb";
-import { QueryKeyRequestsResponse, QueryKeysResponse, QuerySignTransactionRequestsResponse, QuerySignatureRequestByIdResponse, QuerySignatureRequestsResponse, WalletKeyResponse } from "../proto/fusionchain/treasury/query_pb";
+import { QueryKeyRequestsResponse, QueryKeysResponse, QuerySignTransactionRequestsResponse, QuerySignatureRequestByIdResponse, QuerySignatureRequestsResponse } from "../proto/fusionchain/treasury/query_pb";
 import { path, query } from "./common";
 
 export enum KeyRequestStatus {

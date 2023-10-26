@@ -21,10 +21,20 @@ function Wallets({ walletType, workspaceAddr, keyId }: { walletType: number, wor
   const walletQuery = useQuery({ queryKey: ["keys", walletType, workspaceAddr, keyId], queryFn: () => wallets(walletType, workspaceAddr, keyId) });
 
   return (
-    <ul className="p-4 space-y-3">
-      {walletQuery.data?.keys[0].wallets[walletType].address}
-    </ul>
-    
+
+    <div key={walletQuery.data?.keys[0].wallets[walletType].address}>
+       <span>
+          <span className="font-semibold">Ethereum Sepolia: </span>
+          <span key={walletQuery.data?.keys[0].wallets[walletType].type} className="font-mono">
+            {walletQuery.data?.keys[0].wallets[walletType].address}
+          </span>
+          <Link to={`/wallet/${walletQuery.data?.keys[0].wallets[walletType].address}`}>
+            <Button variant="default" size="sm" className="ml-3">
+              Sign transactions
+            </Button>
+          </Link>
+      </span>
+    </div>  
   );
 }
 
@@ -47,7 +57,7 @@ function Key({ keyData }: { keyData: KeyProto }) {
             <span className="font-mono break-all">{prettyBytes(keyData.publicKey)}</span>
           </div>
           <div className="flex flex-col space-y-1">
-            <span className="text-sm font-bold">Ethereum Address</span>
+            <span className="text-sm font-bold">Sign Web3 Transactions (WIP)</span>
             <span className="font-mono break-all"> <Wallets walletType={2} workspaceAddr={keyData.workspaceAddr} keyId={keyData.id.toString()}/> </span>
           </div>
         </div>
