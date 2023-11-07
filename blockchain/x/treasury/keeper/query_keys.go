@@ -27,9 +27,7 @@ func (k Keeper) Keys(goCtx context.Context, req *types.QueryKeysRequest) (*types
 			return nil, nil
 		}
 
-		_, found := k.GetKey(ctx, req.KeyId)
-
-		if found && value.Id != req.KeyId {
+		if req.KeyId > 0 && value.Id != req.KeyId {
 			return nil, nil
 		}
 
