@@ -71,10 +71,9 @@ func ShuntingYard(s Stack) Stack {
 					}
 
 					continue
-				} else {
-					operators.Pop()
-					break
 				}
+				operators.Pop()
+				break
 			}
 		default:
 			postfix.Push(v)

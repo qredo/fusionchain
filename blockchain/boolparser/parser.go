@@ -33,12 +33,14 @@ import (
 	"io"
 )
 
+type buf struct {
+	tok Token
+	n   int
+}
+
 type Parser struct {
 	s   *Scanner
-	buf struct {
-		tok Token
-		n   int
-	}
+	buf buf
 }
 
 func NewParser(r io.Reader) *Parser {

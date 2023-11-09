@@ -1,7 +1,7 @@
 package types
 
 import (
-	fmt "fmt"
+	"fmt"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -33,7 +33,7 @@ func UnpackPolicy(cdc codec.BinaryCodec, policyPb *Policy) (policy.Policy, error
 
 var _ (policy.Policy) = (*BoolparserPolicy)(nil)
 
-func (p *BoolparserPolicy) Validate() error {
+func (*BoolparserPolicy) Validate() error {
 	// TODO validate definition syntax, and that all participants are in the policy
 	return nil
 }
@@ -47,7 +47,7 @@ func (p *BoolparserPolicy) AddressToParticipant(addr string) (string, error) {
 	return "", fmt.Errorf("address not a participant of this policy")
 }
 
-func (p *BoolparserPolicy) Verify(approvers policy.ApproverSet, policyPayload policy.PolicyPayload) error {
+func (p *BoolparserPolicy) Verify(approvers policy.ApproverSet, _ policy.PolicyPayload) error {
 	expression := p.Definition
 	for abbr := range approvers {
 		expression = strings.ReplaceAll(expression, abbr, "1")

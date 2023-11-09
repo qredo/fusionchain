@@ -38,7 +38,7 @@ var oprData = map[string]struct {
 	rAsoc bool // true = right // false = left
 	fx    func(x, y float64) float64
 }{
-	//"^": {4, true, func(x, y float64) float64 { return math.Pow(x, y) }},
+	// "^": {4, true, func(x, y float64) float64 { return math.Pow(x, y) }},
 	"*": {3, false, func(x, y float64) float64 { return x * y }},
 	//	"/": {3, false, func(x, y float64) float64 { return x / y }},
 	"+": {2, false, func(x, y float64) float64 { return x + y }},
@@ -47,7 +47,7 @@ var oprData = map[string]struct {
 	"<": {2, false, func(x, y float64) float64 { return b2f(x < y) }},
 	"&": {2, false, func(x, y float64) float64 { return b2f(f2b(x) && f2b(y)) }},
 	"|": {2, false, func(x, y float64) float64 { return b2f(f2b(x) || f2b(y)) }},
-	//"!": {2, false, func(x, y float64) float64 { return b2f(!f2b(x)) }},
+	// "!": {2, false, func(x, y float64) float64 { return b2f(!f2b(x)) }},
 }
 
 var unaryData = map[string]struct {
@@ -74,7 +74,7 @@ func SolvePostfix(tokens Stack) float64 {
 		case NUMBER:
 			stack.Push(v)
 		case UNARY:
-			//unary invert
+			// unary invert
 			f := unaryData[v.Value].fx
 			var x float64
 			x, _ = strconv.ParseFloat(stack.Pop().Value, 64)

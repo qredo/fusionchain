@@ -12,8 +12,6 @@ import (
 
 var _ = strconv.Itoa(0)
 
-var witnessFlag = "witness"
-
 func CmdApproveAction() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "approve-action [action_type] [action_id]",

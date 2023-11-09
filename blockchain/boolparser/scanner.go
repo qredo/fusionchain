@@ -88,7 +88,7 @@ func (s *Scanner) Scan() Token {
 
 func (s *Scanner) ScanWord() Token {
 	var buf bytes.Buffer
-	buf.WriteRune(s.Read())
+	_, _ = buf.WriteRune(s.Read())
 
 	for {
 		if ch := s.Read(); ch == eof {
@@ -111,10 +111,10 @@ func (s *Scanner) openBracket(buf bytes.Buffer, ch rune) {
 	for parentCount > 0 {
 		fch := s.Read()
 		if fch == '(' {
-			parentCount += 1
+			parentCount++
 			_, _ = buf.WriteRune(fch)
 		} else if fch == ')' {
-			parentCount -= 1
+			parentCount--
 			_, _ = buf.WriteRune(fch)
 		} else {
 			_, _ = buf.WriteRune(fch)
@@ -122,18 +122,17 @@ func (s *Scanner) openBracket(buf bytes.Buffer, ch rune) {
 	}
 }
 
-func (s *Scanner) TokenType(buf bytes.Buffer) Token {
+func (*Scanner) TokenType(buf bytes.Buffer) Token {
 	value := strings.ToUpper(buf.String())
 	if strings.ContainsAny(value, "()") {
 		return Token{FUNCTION, value}
-	} else {
-		return Token{CONSTANT, value}
 	}
+	return Token{CONSTANT, value}
 }
 
 func (s *Scanner) ScanNumber() Token {
 	var buf bytes.Buffer
-	buf.WriteRune(s.Read())
+	_, _ = buf.WriteRune(s.Read())
 
 	for {
 		if ch := s.Read(); ch == eof {
@@ -151,7 +150,7 @@ func (s *Scanner) ScanNumber() Token {
 
 func (s *Scanner) ScanWhitespace() Token {
 	var buf bytes.Buffer
-	buf.WriteRune(s.Read())
+	_, _ = buf.WriteRune(s.Read())
 
 	for {
 		if ch := s.Read(); ch == eof {
@@ -160,7 +159,7 @@ func (s *Scanner) ScanWhitespace() Token {
 			s.Unread()
 			break
 		} else {
-			buf.WriteRune(ch)
+			_, _ = buf.WriteRune(ch)
 		}
 	}
 
