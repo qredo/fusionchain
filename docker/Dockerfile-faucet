@@ -83,5 +83,5 @@ USER svcuser
 EXPOSE 8000
 
 # Run the binary
-CMD ["faucet"]
+ENTRYPOINT ["/faucet"]
 

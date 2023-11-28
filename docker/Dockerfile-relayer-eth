@@ -47,7 +47,7 @@ RUN GO111MODULES=on \
     go build \
     -ldflags "-w -linkmode external -extldflags '-static'"  \
     -tags netgo \
-    -o /out/relayer-eth ./cmd/relayer-eth/
+    -o /out/relayer ./cmd/relayer/
 
 # Create linux svcuser
 RUN mkdir /out/etc && \
@@ -82,5 +82,5 @@ USER svcuser
 EXPOSE 8000
 
 # Run the binary
-CMD ["relayer-eth"]
+ENTRYPOINT ["/relayer"]
 

@@ -85,5 +85,5 @@ EXPOSE 26657
 EXPOSE 9090
 
 # Run the binary
-CMD ["fusiond", "start"]
+ENTRYPOINT [ "/fusiond" ]
 
