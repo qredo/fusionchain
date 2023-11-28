@@ -43,9 +43,12 @@ ENV BUILD_TAGS=muslc LINK_STATICALLY=true
 RUN go mod download
 
 
-RUN --mount=type=cache,target=/root/.cache/go-build \
-    --mount=type=cache,target=/go/pkg/mod \
-    make build
+RUN GO111MODULES=on \
+    GOPRIVATE=gitlab.qredo.com,github.com/qredo \
+    go build \
+    -ldflags "-w -linkmode external -extldflags '-static' -X 'github.com/qredo/fusionchain/blockchain/version.linkedDate=${build_date}' -X 'github.com/qredo/fusionchain/blockchain/version.linkedCommit=${commit_hash}'"  \
+    -tags netgo \
+    -o /out/fusiond ./cmd/fusiond/
 
 # Create linux svcuser
 RUN mkdir /out/etc && \
@@ -82,5 +85,5 @@ EXPOSE 26657
 EXPOSE 9090
 
 # Run the binary
-ENTRYPOINT ["fusiond", "start"]
+CMD ["fusiond", "start"]
 
