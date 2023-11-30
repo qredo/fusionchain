@@ -5,7 +5,6 @@ import FaucetButton from "./faucet_button";
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { Button } from "./ui/button";
 
 function AccountInfo() {
 
@@ -16,15 +15,6 @@ function AccountInfo() {
   const nqrdo = bq.data?.balances.find((b) => b.denom === "nQRDO")?.amount || "0";
   const qrdo = parseInt(nqrdo) / 10 ** 9;
 
-  // return (
-  //   <div className="flex flex-row items-center gap-6">
-  //     <div className="flex flex-col items-end">
-  //       <span className="text-sm font-monospace">{addr}</span>
-  //       <span className="text-xs">{qrdo.toFixed(2)} QRDO</span>
-  //     </div>
-  //     <FaucetButton />
-  //   </div>
-  // );
   return (
     <>
       <button
