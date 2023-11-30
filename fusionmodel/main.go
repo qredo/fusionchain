@@ -42,13 +42,14 @@ func main() {
 	if err := common.ParseYAMLConfig(configFilePath, &cfg, envPrefix); err != nil {
 		panic(fmt.Errorf("parse config error: %v", err))
 	}
+	config := sanitizeConfig(&cfg)
 
-	log, err := logger.NewLogger(logger.Level(cfg.Loglevel), logger.Format(cfg.Logformat), false, "fusionmodel")
+	log, err := logger.NewLogger(logger.Level(config.Loglevel), logger.Format(config.Logformat), false, "fusionmodel")
 	if err != nil {
 		panic(err)
 	}
 
-	fusionModel := newService(&cfg, log)
+	fusionModel := newService(config, log)
 
 	if err := fusionModel.start(); err != nil {
 		log.Fatal(fmt.Errorf("start service error: %v", err))
@@ -79,7 +80,7 @@ type Config struct {
 
 var (
 	emptyConfig           = Config{}
-	defaultPort           = 9090
+	defaultPort           = 8000
 	defaultLogLevel       = "info"
 	defaultLogFormat      = "plain"
 	defaultCreator        = "qredo1d652c9nngq5cneak2whyaqa4g9ehr8psyl0t7j"
@@ -95,17 +96,17 @@ var (
 	}
 )
 
-func isEmpty(c Config) bool {
+func isEmpty(c *Config) bool {
 	b, _ := yaml.Marshal(c)
 	e, _ := yaml.Marshal(emptyConfig)
 	return bytes.Equal(b, e)
 }
 
 // sanitizeConfig Partially empty configs will be sanitized with default values.
-func sanitizeConfig(config Config) (cfg Config, err error) {
+func sanitizeConfig(config *Config) (cfg *Config) {
 	if isEmpty(config) {
 		println("no config file supplied, using default")
-		cfg = defaultConfig
+		cfg = &defaultConfig
 		return
 	}
 	cfg = config
