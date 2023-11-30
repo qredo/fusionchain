@@ -1,34 +1,3 @@
-// import { Outlet } from "react-router-dom";
-// import Menu from "./menu";
-// import { useEffect } from "react";
-// import { enableKeplr } from "../keplr";
-// import AccountInfo from "@/components/account_info";
-// import { Toaster } from "@/components/ui/toaster";
-
-// function Root() {
-//   useEffect(() => {
-//     window.onload = async () => {
-//       await enableKeplr();
-//     }
-//   }, []);
-
-//   return (
-//     <div>
-//       <header className="flex flex-row justify-between px-4 py-2 border-b border-slate-200">
-//         <Menu />
-//         <AccountInfo />
-//       </header>
-//       <Outlet />
-//       <Toaster />
-//     </div>
-//   );
-// }
-
-// export default Root;
-
-
-
-
 import { Outlet, useLocation } from "react-router-dom";
 import { Fragment, useState, useEffect } from 'react'
 import { enableKeplr } from "../keplr";
@@ -39,6 +8,7 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
+import { cn } from "@/lib/utils"
 
 const navigation = [
   { name: 'Workspaces', href: '/', current: true },
@@ -47,10 +17,6 @@ const navigation = [
   { name: 'Explorer', href: '/explorer', current: false },
   { name: 'WalletConnect', href: '/walletconnect', current: false },
 ]
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
 
 export default function Root() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -123,7 +89,7 @@ export default function Root() {
                               <li key={item.name}>
                                 <a
                                   href={item.href}
-                                  className={classNames(
+                                  className={cn(
                                     location.pathname === item.href
                                       ? 'bg-gray-50 text-primary'
                                       : 'text-gray-700 hover:text-primary hover:bg-gray-50',
@@ -164,7 +130,7 @@ export default function Root() {
                       <li key={item.name}>
                         <a
                           href={item.href}
-                          className={classNames(
+                          className={cn(
                             location.pathname === item.href
                               ? 'bg-gray-50 text-primary'
                               : 'text-gray-700 hover:text-primary hover:bg-gray-50',
