@@ -3,7 +3,7 @@
 This is a mini server that mocks the `signature_request_by_id` response from `fusiond`. If the request ID is odd the response will have status `SIGN_REQUEST_STATUS_PENDING`.
 
 ```
-curl 'localhost:1717/fusionchain/treasury/signature_request_by_id?id=311' (GET)
+curl 'localhost:8000/fusionchain/treasury/signature_request_by_id?id=311' (GET)
 ```
 ```
 {
@@ -20,7 +20,7 @@ curl 'localhost:1717/fusionchain/treasury/signature_request_by_id?id=311' (GET)
 If the request ID is even the response will have status `SIGN_REQUEST_STATUS_FULFILLED`.
 
 ```
-curl 'localhost:1717/fusionchain/treasury/signature_request_by_id?id=312' (GET)
+curl 'localhost:8000/fusionchain/treasury/signature_request_by_id?id=312' (GET)
 ```
 
 ```
@@ -35,6 +35,8 @@ curl 'localhost:1717/fusionchain/treasury/signature_request_by_id?id=312' (GET)
    }
 }
 ```
+
+The "creator", "key_id" and "data_for_signing" are all configuration variables and are fixed for each instance of the service.
 
 ## Example usage
 
@@ -53,5 +55,21 @@ $ curl 'localhost:8000/fusionchain/treasury/signature_request_by_id?id=3156'
 
 ## Run with docker
 
-TODO
+Build the docker image
+
+```
+$ cd ../docker
+$ ./
+```
+Execute the build script
+
+```
+./docker-build-fusionmodel.sh
+```
+
+Run the container
+
+```
+docker run -it -p 8000:8000 fusionmodel
+```
 
