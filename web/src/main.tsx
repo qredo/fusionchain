@@ -18,6 +18,7 @@ import BlockByHeightPage, { loader as blockByHeightLoader } from "./routes/block
 import TxByHashPage, { loader as txByHashLoader } from "./routes/tx_by_hash.tsx";
 import ActionsPage from "./routes/actions.tsx";
 import WalletConnectPage from "./routes/wallet_connect.tsx";
+import KeyringsPage from "./routes/keyrings.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -77,7 +78,11 @@ const router = createBrowserRouter([
       {
         path: "/walletconnect",
         element: <WalletConnectPage />,
-      }
+      },
+      {
+        path: "/keyrings",
+        element: <KeyringsPage />,
+      },
     ],
   },
 ]);
