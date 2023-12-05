@@ -19,6 +19,7 @@ import TxByHashPage, { loader as txByHashLoader } from "./routes/tx_by_hash.tsx"
 import ActionsPage from "./routes/actions.tsx";
 import WalletConnectPage from "./routes/wallet_connect.tsx";
 import KeyringsPage from "./routes/keyrings.tsx";
+import Keyring, { loader as keyringLoader } from "./routes/keyring.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -82,6 +83,11 @@ const router = createBrowserRouter([
       {
         path: "/keyrings",
         element: <KeyringsPage />,
+      },
+      {
+        path: "/keyrings/:keyringAddr",
+        element: <Keyring />,
+        loader: keyringLoader,
       },
     ],
   },
