@@ -204,7 +204,7 @@ func ExtractSigWithRecoveryID(mpcResponse *SigResponse) (*EdDSASignedMessage, er
 	}, nil
 }
 
-// generateSignatureForCurrency generates a transaction signature for specific currency (threads based on EDDSA and ECDSA currency types)
+// generateSignatureFor generates a transaction signature for specific currency (threads based on EDDSA and ECDSA currency types)
 func generateSignature(seed, message []byte, keyType CryptoSystem) (sigBytes, pubKeyBytes []byte, err error) {
 	switch keyType {
 	case EcDSA:
