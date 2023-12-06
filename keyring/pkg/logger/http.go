@@ -14,6 +14,9 @@ func LogHTTPRequest(entry *logrus.Entry) func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		entry := entry
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			if entry == nil {
+				return
+			}
 			start := time.Now()
 			body, err := readBody(req)
 			if err != nil {
@@ -22,16 +25,19 @@ func LogHTTPRequest(entry *logrus.Entry) func(http.Handler) http.Handler {
 			statusRecorder := &responseRecorder{ResponseWriter: w}
 			h.ServeHTTP(statusRecorder, req)
 			elapsed := time.Since(start)
-			entry = entry.WithField("body", body)
-			entry = entry.WithField("trace_id", getTraceID(req.Header))
 			httpCode := statusRecorder.statusCode
-			entry = entry.WithField("response", string(statusRecorder.response))
 			entry = entry.WithFields(logrus.Fields{
+				"trace_id":             getTraceID(req.Header),
 				"http_route":           req.URL.Path,
 				"http_method":          req.Method,
 				"http_code":            httpCode,
 				"elapsed_microseconds": elapsed.Microseconds(),
 			})
+			// only log full request/reposne data if running in debug mode
+			if entry.Logger.Level >= logrus.DebugLevel {
+				entry = entry.WithField("body", body)
+				entry = entry.WithField("response", string(statusRecorder.response))
+			}
 			if httpCode > 399 {
 				entry.Error()
 			} else {

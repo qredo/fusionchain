@@ -14,12 +14,12 @@ import (
 )
 
 var testConfig = ServiceConfig{
-	Port:        8080,
-	KeyringAddr: "qredokeyring1ph63us46lyw56vrzgaq",
-	LogLevel:    "fatal",
-	LogFormat:   "plain",
-	LogToFile:   false,
-	Mnemonic:    "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge",
+	Port:      8080,
+	Keyring:   "qredokeyring1ph63us46lyw56vrzgaq",
+	LogLevel:  "fatal",
+	LogFormat: "plain",
+	LogToFile: false,
+	Mnemonic:  "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge",
 }
 
 var (
@@ -40,11 +40,11 @@ var (
 		{
 			"no mnemonic",
 			ServiceConfig{
-				Port:        8080,
-				KeyringAddr: "qredokeyring1ph63us46lyw56vrzgaq",
-				LogLevel:    "fatal",
-				LogFormat:   "plain",
-				LogToFile:   false,
+				Port:      8080,
+				Keyring:   "qredokeyring1ph63us46lyw56vrzgaq",
+				LogLevel:  "fatal",
+				LogFormat: "plain",
+				LogToFile: false,
 			},
 			nil,
 			true,
@@ -54,12 +54,12 @@ var (
 		{
 			"with mnemonic",
 			ServiceConfig{
-				Port:        8080,
-				KeyringAddr: "qredokeyring1ph63us46lyw56vrzgaq",
-				LogLevel:    "fatal",
-				LogFormat:   "plain",
-				LogToFile:   false,
-				Mnemonic:    testMnemonic,
+				Port:      8080,
+				Keyring:   "qredokeyring1ph63us46lyw56vrzgaq",
+				LogLevel:  "fatal",
+				LogFormat: "plain",
+				LogToFile: false,
+				Mnemonic:  testMnemonic,
 			},
 			nil,
 			false,
@@ -182,7 +182,7 @@ func Test_ServiceAPI(t *testing.T) {
 			"keyring",
 			keyringEndPnt,
 			s.keyring,
-			&Response{Message: "OK", Version: common.FullVersion, Service: serviceName, KeyRing: defaultConfig.KeyringAddr, KeyringSigner: "qredo1r7dhrn6ljwj72akjhpgslvqwx6kq2xzypz8sm6"},
+			&Response{Message: "OK", Version: common.FullVersion, Service: serviceName, KeyRing: defaultConfig.Keyring, KeyringSigner: "qredo1r7dhrn6ljwj72akjhpgslvqwx6kq2xzypz8sm6"},
 			http.StatusOK,
 		},
 		{
@@ -227,7 +227,7 @@ func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*S
 	if err != nil {
 		return nil, err
 	}
-	memoryKeyDB, err := makeKeyDB("", true)
+	memoryKeyDB, err := makeDB("", true)
 	if err != nil {
 		t.Fatal(err)
 	}

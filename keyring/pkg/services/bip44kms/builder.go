@@ -33,7 +33,7 @@ func BuildService(config ServiceConfig) (*Service, error) {
 		log.Info("no config file supplied, using default values")
 	}
 
-	dB, err := makeKeyDB(config.Path, false)
+	dB, err := makeDB(config.Path, false)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func BuildService(config ServiceConfig) (*Service, error) {
 	), nil
 }
 
-func makeKeyDB(path string, inMemory bool) (database.Database, error) {
+func makeDB(path string, inMemory bool) (database.Database, error) {
 	kv, err := database.NewBadger(path, inMemory)
 	if err != nil {
 		return nil, err
