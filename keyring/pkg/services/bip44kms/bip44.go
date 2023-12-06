@@ -15,13 +15,6 @@ import (
 	"github.com/qredo/fusionchain/keyring/pkg/mpc"
 )
 
-const (
-	fusionIdentityDerivationPath = "m/44'/60'/0'/0/0"
-
-	keyRingBaseDerivationPath = "m/44'/60'/0'/0/0'" //  BIP44 Hardened keys  - https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#extended-keys
-
-)
-
 type Keyring interface {
 	PublicKey(keyID []byte) ([]byte, error)
 	PubkeySignature(keyID []byte) ([]byte, error)
@@ -34,7 +27,7 @@ type Bip44KeyRing struct {
 	cryptoSys  mpc.CryptoSystem
 }
 
-func NewBip44KeyRing(seedPhrase, password string, crypto mpc.CryptoSystem) (*Bip44KeyRing, error) {
+func NewBip44KeyRing(seedPhrase, password string, cryptoType mpc.CryptoSystem) (*Bip44KeyRing, error) {
 	// Convert the seed phrase to a master seed using BIP39 derivation
 	seedBytes, err := bip39.NewSeedWithErrorChecking(seedPhrase, password)
 	if err != nil {
@@ -46,7 +39,7 @@ func NewBip44KeyRing(seedPhrase, password string, crypto mpc.CryptoSystem) (*Bip
 	return &Bip44KeyRing{
 		masterSeed: masterKey,
 		chainCode:  chainCode,
-		cryptoSys:  crypto, // TODO - In future we may want to have a single key ring manage both ECDSA and EdDSA keys... This may need refactoring..
+		cryptoSys:  cryptoType, // TODO - In future we may want to have a single key ring manage both ECDSA and EdDSA keys... This may need refactoring..
 	}, nil
 }
 
@@ -81,7 +74,6 @@ func (k *Bip44KeyRing) PublicKey(keyID []byte) (pubKey []byte, err error) {
 	}
 
 	return pubKey, nil
-
 }
 
 // PubkeySignature creates a signature over a fixed message.
@@ -191,7 +183,8 @@ func derivationPathFromKeyID(keyID []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return hd.BIP44Params{Purpose: 44, CoinType: 60, Account: 0, Change: false, AddressIndex: idx}.String() + "'", nil
+	hardenedPath := hd.BIP44Params{Purpose: 44, CoinType: 60, Account: 0, Change: false, AddressIndex: idx}.String() + "'" // BIP44 Hardened keys  - https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#extended-keys
+	return hardenedPath, nil
 }
 
 // keyIDToIndex converts the supplied keyID to a uint32. Only the last 4 bytes of the key ID.
@@ -205,8 +198,11 @@ func keyIDToIndex(keyID []byte) (uint32, error) {
 	return index, nil
 }
 
-////// CRYPTO /////
+//
+// CRYPTO
+//
 
+// generateECDSAPubKey generates and ECDSA public key from the seed supplied
 func generateECDSAPubKey(seed []byte) (pubKeyBytes []byte, err error) {
 	privateKey, _ := btcec.PrivKeyFromBytes(seed[:])
 	ecdsaPriv := privateKey.ToECDSA()
@@ -223,8 +219,8 @@ func generateECDSAPubKey(seed []byte) (pubKeyBytes []byte, err error) {
 	return pubKeyBytes, nil
 }
 
+// generateEdDSAPubKey generates and EdDSA public key from the seed supplied
 func generateEdDSAPubKey(seed []byte) (pubKeyBytes []byte, err error) {
-
 	privateKey, err := mpc.EDDSAPrivFromSeed(seed[:])
 	if err != nil {
 		return nil, fmt.Errorf("error generating eddsa signature %v", err)
@@ -235,8 +231,9 @@ func generateEdDSAPubKey(seed []byte) (pubKeyBytes []byte, err error) {
 	return pubKeyBytes, nil
 }
 
+// generateECDSASignature generates a valid ECDSA signature over the supplied message with a private key derived from the supplied seed.
+// If key derivation fails or the inputs are malformed an error will be returned.
 func generateECDSASignature(seed, message []byte, recoveryID bool) (sigBytes, pubKeyBytes []byte, err error) {
-
 	pkey := ecdsa.PublicKey{}
 	privateKey, _ := btcec.PrivKeyFromBytes(seed[:])
 	ecdsaPriv := privateKey.ToECDSA()
@@ -271,6 +268,8 @@ func generateECDSASignature(seed, message []byte, recoveryID bool) (sigBytes, pu
 	return sigBytes, pubKeyBytes, nil
 }
 
+// generateEdDSASignature generates a valid EdDSA signature over the supplied message with a private key derived from the supplied seed.
+// If key derivation fails or the inputs are malformed an error will be returned.
 func generateEdDSASignature(seed, message []byte) (sigBytes, pubKeyBytes []byte, err error) {
 	// Sign the encoded transaction
 	privateKey, err := mpc.EDDSAPrivFromSeed(seed[:])

@@ -227,13 +227,14 @@ func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*S
 	if err != nil {
 		return nil, err
 	}
-	keyringAddr, mn, p, i, _, err := makeKeyringClient(&config, log)
-	if err != nil {
-		return nil, err
-	}
 	memoryKeyDB, err := makeKeyDB("", true)
 	if err != nil {
 		t.Fatal(err)
 	}
+	keyringAddr, mn, p, i, _, err := makeKeyringClient(&config, log, memoryKeyDB)
+	if err != nil {
+		return nil, err
+	}
+
 	return New(keyringAddr, i.Address.String(), mn, p, config.Port, log, memoryKeyDB, modules...), nil
 }

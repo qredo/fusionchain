@@ -63,11 +63,11 @@ func (s *signatureController) startExecutor() {
 	for {
 		select {
 		case <-s.stop:
-			s.log.Info("signatureController received shutdown signal")
+			s.log.Debug("signatureController received shutdown signal")
 			for i := 0; i < defaultThreads; i++ {
 				<-s.threads // empty thread chan
 			}
-			s.log.Info("terminated signatureController")
+			s.log.Debug("terminated signatureController")
 			s.wait <- struct{}{}
 			return
 		case item := <-s.queue:
@@ -175,6 +175,6 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 	return nil
 }
 
-func (h *FusionSignatureRequestHandler) healthcheck() *HealthResponse {
+func (*FusionSignatureRequestHandler) healthcheck() *HealthResponse {
 	return &HealthResponse{}
 }

@@ -59,11 +59,11 @@ func (k *keyController) startExecutor() {
 	for {
 		select {
 		case <-k.stop:
-			k.log.Info("keyController received shutdown signal")
+			k.log.Debug("keyController received shutdown signal")
 			for i := 0; i < defaultThreads; i++ {
 				<-k.threads // empty thread chan
 			}
-			k.log.Info("terminated keyController")
+			k.log.Debug("terminated keyController")
 			k.wait <- struct{}{}
 			return
 		case item := <-k.queue:
@@ -164,7 +164,7 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	}
 
 	// Store the generated secret key in our database, will be used when user requests signatures.
-	if err = h.KeyDB.Persist(keyIDStr, pk); err != nil {
+	if err = h.KeyDB.Persist(makeDBKey(keyIDStr), pk); err != nil {
 		return err
 	}
 	h.Logger.WithFields(logrus.Fields{
@@ -173,6 +173,10 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	return nil
 }
 
-func (h *FusionKeyRequestHandler) healthcheck() *HealthResponse {
+func (*FusionKeyRequestHandler) healthcheck() *HealthResponse {
 	return &HealthResponse{}
+}
+
+func makeDBKey(keyID string) string {
+	return fmt.Sprintf("%s.%s", pkPrefix, keyID)
 }

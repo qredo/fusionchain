@@ -11,15 +11,15 @@ import (
 type ServiceConfig struct {
 	Port          int    `yaml:"port"`
 	Path          string `yaml:"path"`
-	KeyringAddr   string `yaml:"keyring_addr"`
-	ChainID       string `yaml:"chain_id"`
-	FusionURL     string `yaml:"fusion_url"`
+	Keyring       string `yaml:"keyring"`
+	ChainID       string `yaml:"chainid"`
+	FusionURL     string `yaml:"fusionurl"`
 	Password      string `yaml:"password"` // User supplied passphrase. Must be supplied in the http header
 	Mnemonic      string `yaml:"mnemonic"` // (Optional) The user can supply a mnemonic
 	LogLevel      string `yaml:"loglevel"`
 	LogFormat     string `yaml:"logformat"`
 	LogToFile     bool   `yaml:"logtofile"`
-	QueryInterval int64  `yaml:"query_interval"`
+	QueryInterval int64  `yaml:"queryinterval"`
 	RetrySleep    int64  `yaml:"retrySleep"`
 	MaxTries      int64  `yaml:"maxTries"`
 }
@@ -27,9 +27,12 @@ type ServiceConfig struct {
 var emptyConfig = ServiceConfig{}
 
 var defaultConfig = ServiceConfig{
-	Port:        9000,
-	Path:        "db",
-	KeyringAddr: "qredokeyring1ph63us46lyw56vrzgaq",
+	Port:      9000,
+	Path:      "db",
+	LogLevel:  "info",
+	LogFormat: "plain",
+	LogToFile: false,
+	Keyring:   "qredokeyring1ph63us46lyw56vrzgaq",
 }
 
 func isEmpty(c ServiceConfig) bool {

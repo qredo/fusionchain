@@ -19,7 +19,7 @@ type Service struct {
 	modules       []Module
 	server        rpc.HTTPService
 	log           *logrus.Entry
-	keyDB         database.Database
+	dB            database.Database
 
 	stop    chan struct{}
 	stopped atomic.Bool
@@ -30,13 +30,13 @@ type secrets struct {
 	password string
 }
 
-func New(keyringAddr, keyRingSigner, mnemonic, password string, port int, logger *logrus.Entry, keyDB database.Database, modules ...Module) *Service {
+func New(keyringAddr, keyRingSigner, mnemonic, password string, port int, logger *logrus.Entry, db database.Database, modules ...Module) *Service {
 	s := &Service{
 		keyringAddr:   keyringAddr,
 		keyringSigner: keyRingSigner,
 		secrets:       secrets{mnemonic: mnemonic, password: password},
 		log:           logger,
-		keyDB:         keyDB,
+		dB:            db,
 		modules:       modules,
 		stop:          make(chan struct{}, 1),
 		stopped:       atomic.Bool{},

@@ -51,11 +51,11 @@ func (q *keyQueryProcessor) startTicker() {
 	for {
 		select {
 		case <-q.stop:
-			q.log.Info("keyQueryProcessor received shutdown signal")
+			q.log.Debug("keyQueryProcessor received shutdown signal")
 			for i := 0; i < defaultThreads; i++ {
 				<-q.threads // empty thread chan
 			}
-			q.log.Info("terminated keyQueryProcessor")
+			q.log.Debug("terminated keyQueryProcessor")
 			q.wait <- struct{}{}
 			return
 		case <-ticker.C:
@@ -147,11 +147,11 @@ func (q sigQueryProcessor) startTicker() {
 	for {
 		select {
 		case <-q.stop:
-			q.log.Info("sigQueryProcessor received shutdown signal")
+			q.log.Debug("sigQueryProcessor received shutdown signal")
 			for i := 0; i < defaultThreads; i++ {
 				<-q.threads // empty thread chan
 			}
-			q.log.Info("terminated sigQueryProcessor")
+			q.log.Debug("terminated sigQueryProcessor")
 			q.wait <- struct{}{}
 			return
 		case <-ticker.C:

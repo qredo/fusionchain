@@ -126,7 +126,7 @@ func (s *Service) pubKeys(w http.ResponseWriter, h *http.Request) {
 		Message: "OK",
 	}
 
-	keyMap, err := s.keyDB.Read("")
+	keyMap, err := s.dB.Read(pkPrefix)
 	if err != nil {
 		pKeyResponse.Message = err.Error()
 		if err := rpc.RespondWithJSON(w, http.StatusInternalServerError, pKeyResponse); err != nil {
