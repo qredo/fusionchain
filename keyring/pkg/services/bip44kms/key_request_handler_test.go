@@ -39,6 +39,7 @@ func Test_KeyControllerStartStop(t *testing.T) {
 	if err := k.Start(); err != nil {
 		t.Fatal(err)
 	}
+	_ = k.healthcheck()
 	if err := k.Stop(); err != nil {
 		t.Fatal(err)
 	}

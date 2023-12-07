@@ -99,6 +99,30 @@ var (
 			true,
 		},
 	}
+
+	configTests = []struct {
+		name     string
+		config   ServiceConfig
+		buildErr bool
+	}{
+		{
+			"empty config",
+			emptyConfig,
+			false,
+		},
+		{
+			"default config",
+			defaultConfig,
+			false,
+		},
+		{
+			"invalid log parameters",
+			ServiceConfig{
+				LogLevel: "fatall",
+			},
+			true,
+		},
+	}
 )
 
 type mockModule struct{}
@@ -145,6 +169,19 @@ func Test_ServiceStartStop(t *testing.T) {
 			}
 			if err := s.Stop(os.Interrupt); (err != nil) != tt.stopErr {
 				t.Fatalf("unexpected stop error %v", err)
+			}
+		})
+	}
+
+}
+
+func Test_ConfigTypes(t *testing.T) {
+	// build service with different config types
+	for _, tt := range configTests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := BuildService(tt.config)
+			if (err != nil) != tt.buildErr {
+				t.Fatalf("unexpected build error %v", err)
 			}
 		})
 	}

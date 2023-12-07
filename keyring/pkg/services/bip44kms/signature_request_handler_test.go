@@ -49,6 +49,7 @@ func Test_ExecuteSigQuery(t *testing.T) {
 	for _, tt := range tests {
 
 		k := testSetupSignatureController(t)
+		_ = k.healthcheck()
 		t.Run(tt.name, func(t *testing.T) {
 			err := k.executeRequest(&tt.item)
 			if (err != nil) != tt.expectErr {
