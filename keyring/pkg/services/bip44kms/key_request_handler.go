@@ -178,5 +178,5 @@ func (*FusionKeyRequestHandler) healthcheck() *HealthResponse {
 }
 
 func makeDBKey(keyID string) string {
-	return fmt.Sprintf("%s.%s", pkPrefix, keyID)
+	return fmt.Sprintf("%s%s", pkPrefix, keyID)
 }

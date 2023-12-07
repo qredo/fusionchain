@@ -14,18 +14,11 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const (
-	defaultFusionURL     = "localhost:9090"
-	defaultFusionChainID = "qredofusiontestnet_257-1"
-
-	pkPrefix = "pk"
-)
-
 // BuildService constructs the main application based on supplied config parameters
 func BuildService(config ServiceConfig) (*Service, error) {
 	cfg, useDefault := sanitizeConfig(config) // set default values is none supplied
 
-	log, err := logger.NewLogger(logger.Level(config.LogLevel), logger.Format(config.LogFormat), config.LogToFile, serviceName)
+	log, err := logger.NewLogger(logger.Level(cfg.LogLevel), logger.Format(cfg.LogFormat), cfg.LogToFile, serviceName)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +26,12 @@ func BuildService(config ServiceConfig) (*Service, error) {
 		log.Info("no config file supplied, using default values")
 	}
 
-	dB, err := makeDB(config.Path, false)
+	// Use in-memory database if no path provided
+	inMem := cfg.Path == ""
+	if inMem {
+		log.Info("creating in-memory key-value store. Your keyring data will not be persisted.")
+	}
+	dB, err := makeDB(cfg.Path, inMem)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +102,7 @@ func makeKeyringClient(config *ServiceConfig, log *logrus.Entry, dB database.Dat
 		return
 	}
 
-	identity, err = client.NewIdentityFromSeed(hd.BIP44Params{Purpose: 44, CoinType: 60, Account: 0, Change: false, AddressIndex: 0}.String(), config.Mnemonic)
+	identity, err = client.NewIdentityFromSeed(hd.BIP44Params{Purpose: 44, CoinType: 60, Account: 0, Change: false, AddressIndex: 0}.String(), mnemonic)
 	if err != nil {
 		return
 	}
