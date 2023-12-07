@@ -105,7 +105,7 @@ func sanitizeConfig(config ServiceConfig) (cfg ServiceConfig, defaultUsed bool) 
 	}
 
 	if config.ChainID == "" {
-		cfg.FusionURL = defaultFusionChainID
+		cfg.ChainID = defaultFusionChainID
 	}
 
 	if config.QueryInterval == 0 {
