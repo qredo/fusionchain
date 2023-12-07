@@ -39,7 +39,7 @@ func LogHTTPRequest(entry *logrus.Entry) func(http.Handler) http.Handler {
 				entry = entry.WithField("response", string(statusRecorder.response))
 			}
 			if httpCode > 399 {
-				entry.Error()
+				entry.Warn()
 			} else {
 				entry.Print()
 			}

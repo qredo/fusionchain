@@ -12,7 +12,7 @@ import (
 const (
 	pwdHeaderKey = "password"
 
-	// API
+	// API - TODO create single package for multiple services
 	statusEndPnt   = "/status"
 	healthEndPnt   = "/healthcheck"
 	keyringEndPnt  = "/keyring"  // Password protected

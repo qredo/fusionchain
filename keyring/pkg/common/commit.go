@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	linkedCommit string // overwritten by -ldflag "-X 'github.com/qredo/common.linkedCommit=$commit_hash'"
-	linkedDate   string // overwritten by -ldflag "-X 'github.com/qredo/common.linkedDate=$build_date'"
+	linkedCommit string // overwritten by -ldflag "-X 'github.com/qredo/fusionchain/keyring/pkg/common.linkedCommit=$commit_hash'"
+	linkedDate   string // overwritten by -ldflag "-X 'github.com/qredo/fusionchain/keyring/pkg/common.linkedDate=$build_date'"
 )
 
 // CommitHash https://icinga.com/blog/2022/05/25/embedding-git-commit-information-in-go-binaries/
