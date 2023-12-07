@@ -9,6 +9,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/common"
 	"github.com/qredo/fusionchain/keyring/pkg/logger"
 )
@@ -135,8 +136,8 @@ func (m mockModule) Stop() error {
 	return nil
 }
 
-func (m mockModule) healthcheck() *HealthResponse {
-	return &HealthResponse{}
+func (m mockModule) healthcheck() *api.HealthResponse {
+	return &api.HealthResponse{}
 }
 
 type mockModuleErr struct{}
@@ -149,8 +150,8 @@ func (m mockModuleErr) Stop() error {
 	return errors.New("error")
 }
 
-func (m mockModuleErr) healthcheck() *HealthResponse {
-	return &HealthResponse{Failures: []string{"some failure"}}
+func (m mockModuleErr) healthcheck() *api.HealthResponse {
+	return &api.HealthResponse{Failures: []string{"some failure"}}
 }
 
 func Test_ServiceStartStop(t *testing.T) {
@@ -203,37 +204,37 @@ func Test_ServiceAPI(t *testing.T) {
 	}{
 		{
 			"status",
-			statusEndPnt,
-			s.status,
-			&Response{Message: "OK", Version: common.FullVersion, Service: serviceName},
+			api.StatusEndPnt,
+			s.Status,
+			&api.Response{Message: "OK", Version: common.FullVersion, Service: serviceName},
 			http.StatusOK,
 		},
 		{
 			"healthcheck",
-			healthEndPnt,
-			s.healthcheck,
-			&HealthResponse{Version: common.FullVersion, Service: serviceName, Failures: []string{}},
+			api.HealthEndPnt,
+			s.HealthCheck,
+			&api.HealthResponse{Version: common.FullVersion, Service: serviceName, Failures: []string{}},
 			http.StatusOK,
 		},
 		{
 			"keyring",
-			keyringEndPnt,
-			s.keyring,
-			&Response{Message: "OK", Version: common.FullVersion, Service: serviceName, KeyRing: defaultConfig.Keyring, KeyringSigner: "qredo1r7dhrn6ljwj72akjhpgslvqwx6kq2xzypz8sm6"},
+			api.KeyringEndPnt,
+			s.Keyring,
+			&api.Response{Message: "OK", Version: common.FullVersion, Service: serviceName, KeyRing: defaultConfig.Keyring, KeyringSigner: "qredo1r7dhrn6ljwj72akjhpgslvqwx6kq2xzypz8sm6"},
 			http.StatusOK,
 		},
 		{
 			"pubkeys",
-			pubKeysEndPnt,
-			s.pubKeys,
-			&Response{Message: "OK", Version: common.FullVersion, Service: serviceName},
+			api.PubKeysEndPnt,
+			s.PubKeys,
+			&api.Response{Message: "OK", Version: common.FullVersion, Service: serviceName},
 			http.StatusOK,
 		},
 		{
 			"mnemonic",
-			mnemonicEndPnt,
-			s.mnemonic,
-			&Response{Message: "OK", Version: common.FullVersion, Service: serviceName, Mnemonic: testMnemonic},
+			api.MnemonicEndPnt,
+			s.Mnemonic,
+			&api.Response{Message: "OK", Version: common.FullVersion, Service: serviceName, Mnemonic: testMnemonic},
 			http.StatusOK,
 		},
 	}

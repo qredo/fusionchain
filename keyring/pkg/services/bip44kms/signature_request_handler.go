@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/common"
 	"github.com/qredo/fusionchain/keyring/pkg/database"
 	"github.com/qredo/fusionchain/keyring/pkg/mpc"
@@ -106,13 +107,13 @@ func (s *signatureController) executeRequest(item *signatureRequestQueueItem) er
 	return nil
 }
 
-func (s signatureController) healthcheck() *HealthResponse {
+func (s signatureController) healthcheck() *api.HealthResponse {
 	return s.signatureRequestsHandler.healthcheck()
 }
 
 type SignatureRequestsHandler interface {
 	HandleSignatureRequest(ctx context.Context, item *signatureRequestQueueItem) error
-	healthcheck() *HealthResponse
+	healthcheck() *api.HealthResponse
 }
 
 // FusionSignatureRequestHandler implements SignatureRequestsHandler.
@@ -193,7 +194,7 @@ func updatePkEntry(db database.Database, keyIDStr string) error {
 	if v == nil {
 		return nil
 	}
-	pkDat := &PkData{}
+	pkDat := &api.PkData{}
 	if err := json.Unmarshal(v, pkDat); err != nil {
 		return err
 	}
@@ -208,6 +209,6 @@ func updatePkEntry(db database.Database, keyIDStr string) error {
 	return nil
 }
 
-func (*FusionSignatureRequestHandler) healthcheck() *HealthResponse {
-	return &HealthResponse{}
+func (*FusionSignatureRequestHandler) healthcheck() *api.HealthResponse {
+	return &api.HealthResponse{}
 }

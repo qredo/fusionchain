@@ -7,6 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/common"
 	"github.com/qredo/fusionchain/keyring/pkg/database"
 	"github.com/qredo/fusionchain/keyring/pkg/rpc"
@@ -41,7 +42,7 @@ func New(keyringAddr, keyRingSigner, mnemonic, password string, port int, logger
 		stop:          make(chan struct{}, 1),
 		stopped:       atomic.Bool{},
 	}
-	s.server = rpc.NewHTTPService(port, makeAPIHandlers(s), logger)
+	s.server = rpc.NewHTTPService(port, api.MakeKeyRingAPI(s), logger)
 	return s
 }
 

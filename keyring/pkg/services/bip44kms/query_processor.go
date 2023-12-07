@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/qredo/fusionchain/go-client"
+	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/services/mpcrelayer"
 	"github.com/qredo/fusionchain/x/treasury/types"
 	"github.com/sirupsen/logrus"
@@ -98,13 +99,13 @@ func (q *keyQueryProcessor) Stop() error {
 	return nil
 }
 
-func (q *keyQueryProcessor) healthcheck() *HealthResponse {
+func (q *keyQueryProcessor) healthcheck() *api.HealthResponse {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancelFunc()
 	if _, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{Limit: 1}, q.keyringAddr); err != nil {
-		return &HealthResponse{Failures: []string{fmt.Sprintf("query client: %v", err.Error())}}
+		return &api.HealthResponse{Failures: []string{fmt.Sprintf("query client: %v", err.Error())}}
 	}
-	return &HealthResponse{}
+	return &api.HealthResponse{}
 }
 
 type sigQueryProcessor struct {
@@ -194,11 +195,11 @@ func (q *sigQueryProcessor) Stop() error {
 	return nil
 }
 
-func (q *sigQueryProcessor) healthcheck() *HealthResponse {
+func (q *sigQueryProcessor) healthcheck() *api.HealthResponse {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancelFunc()
 	if _, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{Limit: 1}, q.keyringAddr); err != nil {
-		return &HealthResponse{Failures: []string{fmt.Sprintf("query client: %v", err.Error())}}
+		return &api.HealthResponse{Failures: []string{fmt.Sprintf("query client: %v", err.Error())}}
 	}
-	return &HealthResponse{}
+	return &api.HealthResponse{}
 }

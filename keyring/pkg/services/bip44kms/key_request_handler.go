@@ -9,6 +9,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/common"
 	"github.com/qredo/fusionchain/keyring/pkg/database"
 	"github.com/qredo/fusionchain/keyring/pkg/services/mpcrelayer"
@@ -102,7 +103,7 @@ func (k *keyController) executeRequest(item *keyRequestQueueItem) error {
 	return nil
 }
 
-func (k *keyController) healthcheck() *HealthResponse {
+func (k *keyController) healthcheck() *api.HealthResponse {
 	return k.keyRequestsHandler.healthcheck()
 }
 
@@ -114,7 +115,7 @@ type keyRequestQueueItem struct {
 
 type KeyRequestsHandler interface {
 	HandleKeyRequests(ctx context.Context, item *keyRequestQueueItem) error
-	healthcheck() *HealthResponse
+	healthcheck() *api.HealthResponse
 }
 
 // FusionKeyRequestHandler implements KeyRequestsHandler.
@@ -174,13 +175,13 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	return nil
 }
 
-func (*FusionKeyRequestHandler) healthcheck() *HealthResponse {
-	return &HealthResponse{}
+func (*FusionKeyRequestHandler) healthcheck() *api.HealthResponse {
+	return &api.HealthResponse{}
 }
 
 func makePkEntry(db database.Database, keyIDStr, pkStr string) error {
 	k := makeDBKey(keyIDStr)
-	v, err := json.Marshal(&PkData{
+	v, err := json.Marshal(&api.PkData{
 		PublicKey: pkStr,
 		Created:   time.Now().Format(time.RFC3339),
 	})
