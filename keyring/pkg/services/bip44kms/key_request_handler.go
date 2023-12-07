@@ -3,6 +3,7 @@ package kms
 import (
 	"context"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -164,7 +165,7 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	}
 
 	// Store the generated secret key in our database, will be used when user requests signatures.
-	if err = h.KeyDB.Persist(makeDBKey(keyIDStr), pk); err != nil {
+	if err = makePkEntry(h.KeyDB, keyIDStr, fmt.Sprintf("%x", pk)); err != nil {
 		return err
 	}
 	h.Logger.WithFields(logrus.Fields{
@@ -175,6 +176,21 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 
 func (*FusionKeyRequestHandler) healthcheck() *HealthResponse {
 	return &HealthResponse{}
+}
+
+func makePkEntry(db database.Database, keyIDStr, pkStr string) error {
+	k := makeDBKey(keyIDStr)
+	v, err := json.Marshal(&PkData{
+		PublicKey: pkStr,
+		Created:   time.Now().Format(time.RFC3339),
+	})
+	if err != nil {
+		return err
+	}
+	if err := db.Persist(k, v); err != nil {
+		return err
+	}
+	return nil
 }
 
 func makeDBKey(keyID string) string {

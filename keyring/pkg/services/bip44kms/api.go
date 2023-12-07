@@ -1,8 +1,8 @@
 package kms
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/qredo/fusionchain/keyring/pkg/common"
@@ -44,8 +44,14 @@ type HealthResponse struct {
 }
 
 type PubKey struct {
-	KeyID     string `json:"key_id"`
+	KeyID      string `json:"key_id"`
+	PubKeyData PkData `json:"pubkey_data"`
+}
+
+type PkData struct {
 	PublicKey string `json:"pubkey"`
+	Created   string `json:"created"`
+	LastUsed  string `json:"last_used"`
 }
 
 func makeAPIHandlers(s *Service) *rpc.API {
@@ -136,8 +142,12 @@ func (s *Service) pubKeys(w http.ResponseWriter, h *http.Request) {
 	}
 
 	var pubKeyList []*PubKey
-	for keyID, pK := range keyMap {
-		pubKeyList = append(pubKeyList, &PubKey{KeyID: keyID, PublicKey: fmt.Sprintf("%x", pK)})
+	for keyID, pKDat := range keyMap {
+		dt := PkData{}
+		if err := json.Unmarshal(pKDat, &dt); err != nil {
+			continue // TODO - handle error properly
+		}
+		pubKeyList = append(pubKeyList, &PubKey{KeyID: keyID, PubKeyData: dt})
 	}
 	pKeyResponse.PubKeys = pubKeyList
 

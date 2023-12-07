@@ -3,6 +3,7 @@ package kms
 import (
 	"context"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -165,6 +166,11 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 	if err = h.TxClient.FulfilSignatureRequest(ctx, item.request.Id, signature); err != nil {
 		return err
 	}
+
+	// update DB with last used
+	if err = updatePkEntry(h.KeyDB, fmt.Sprintf("%x", keyID)); err != nil {
+		return err
+	}
 	h.Logger.WithFields(logrus.Fields{
 		"keyID":     fmt.Sprintf("%x", keyID),
 		"pubKey":    fmt.Sprintf("%x", pubKey),
@@ -172,6 +178,33 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 		"timeTaken": common.RoundFloat(time.Since(start).Seconds(), 2),
 	}).Info("sigRequestFulfilled")
 
+	return nil
+}
+
+func updatePkEntry(db database.Database, keyIDStr string) error {
+	k := makeDBKey(keyIDStr)
+	v, err := db.Get(k)
+	if err != nil {
+		if err == database.ErrNotFound {
+			return nil // ignore if item is not stored locally
+		}
+		return err
+	}
+	if v == nil {
+		return nil
+	}
+	pkDat := &PkData{}
+	if err := json.Unmarshal(v, pkDat); err != nil {
+		return err
+	}
+	pkDat.LastUsed = time.Now().Format(time.RFC3339)
+	b, err := json.Marshal(pkDat)
+	if err != nil {
+		return err
+	}
+	if err := db.Persist(k, b); err != nil {
+		return err
+	}
 	return nil
 }
 
