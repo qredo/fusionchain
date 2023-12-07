@@ -130,7 +130,7 @@ $ curl -s -H "password: 1234" localhost:8080/pubkeys | jq
 
 ### 4) /mnemonic (GET)
 
-The `/mnemonic` call requests a list of workspace keys that have been saved to the  application's local database.
+`/mnemonic` is a password-protected call requesting the applications mnemonic seed phrase.
 
 ```go
 StatusCode: 200
@@ -160,7 +160,7 @@ $ curl -s -H "password: 1234" localhost:8080/mnemonic | jq
 
 ### 5) /keyring (GET)
 
-The `/keyring` call requests a list of workspace keys that have been saved to the  application's local database.
+`/keyring` is a password-protected call requesting the identity.
 
 ```go
 StatusCode: 200

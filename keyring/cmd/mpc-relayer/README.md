@@ -1,6 +1,6 @@
 # mpc-relayer
 
-An implementation of Fusion keyring compatible with Qredo dMPC.
+An implementation of Fusion keyring compatible with Qredo dMPC. `mpc-relayer` is a client that calls key/sig request endpoints from the `mpcclientparent` coordinator. The `mpc-relayer` itself does not have access to private key material, it can only obtain signatures via API calls. However, it is permitted to write key and signature data on behalf of an MPC instance for the kering identity speicifed in its configuration.
 
 
 ## Run
@@ -9,7 +9,7 @@ An implementation of Fusion keyring compatible with Qredo dMPC.
 go run .
 ```
 
-## Configuration
+## Run with `fusiond`
 
 An example config yaml file can be found in `./docker-compose/config-example.yml`. You must supply a gRPC endpoint for fusiond.
 For local setup, raise a `fusiond` client by executing
