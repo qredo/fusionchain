@@ -14,7 +14,8 @@ import (
 )
 
 func Test_RateLimit(t *testing.T) {
-	log, err := logger.NewLogger("fatal", "plain", false, "test")
+	n := "test"
+	log, err := logger.NewLogger("fatal", "plain", false, n)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,7 +56,7 @@ func Test_RateLimit(t *testing.T) {
 
 	for _, tt := range apiTests {
 		t.Run(tt.name, func(t *testing.T) {
-			method := WithRateLimit(tt.ratelimit, time.Second, PasswordProtected(m.password, m.PubKeys))
+			method := WithRateLimit(tt.ratelimit, time.Second, PasswordProtected(m.password, HandlePubKeyRequest(m.log, m.db, n)))
 			httpReq := httptest.NewRequest(http.MethodGet, tt.endpoint, nil)
 			respRecorder := httptest.NewRecorder()
 			for i := 0; i < tt.requests; i++ {
@@ -75,6 +76,7 @@ func Test_RateLimit(t *testing.T) {
 }
 
 func Test_TokenRefill(t *testing.T) {
+	n := "test"
 	log, err := logger.NewLogger("fatal", "plain", false, "test")
 	if err != nil {
 		t.Fatal(err)
@@ -84,7 +86,7 @@ func Test_TokenRefill(t *testing.T) {
 	duration := 10 * time.Millisecond
 	pause := 11 * time.Millisecond
 
-	method := WithRateLimit(1, duration, m.Status)
+	method := WithRateLimit(1, duration, HandleStatusRequest(m.log, n))
 	httpReq := httptest.NewRequest(http.MethodGet, PubKeysEndPnt, nil)
 	respRecorder := httptest.NewRecorder()
 
