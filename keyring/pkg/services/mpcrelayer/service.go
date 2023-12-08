@@ -34,13 +34,14 @@ type secrets struct {
 
 func New(keyringAddr, keyRingSigner, mnemonic, password string, port int, logger *logrus.Entry, dB database.Database, modules ...api.Module) *Service {
 	s := &Service{
-		keyringAddr: keyringAddr,
-		log:         logger,
-		secrets:     secrets{mnemonic: mnemonic, password: password},
-		dB:          dB,
-		modules:     modules,
-		stop:        make(chan struct{}, 1),
-		stopped:     atomic.Bool{},
+		keyringAddr:   keyringAddr,
+		keyringSigner: keyRingSigner,
+		log:           logger,
+		secrets:       secrets{mnemonic: mnemonic, password: password},
+		dB:            dB,
+		modules:       modules,
+		stop:          make(chan struct{}, 1),
+		stopped:       atomic.Bool{},
 	}
 	s.server = rpc.NewHTTPService(port, rpc.MakeAPI([]rpc.EndPoint{
 		rpc.NewEndpoint(api.StatusEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /status
