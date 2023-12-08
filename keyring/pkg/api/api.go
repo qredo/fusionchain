@@ -95,11 +95,9 @@ func PasswordProtectedWithRateLimit(password string, rateLimit int, duration tim
 				return
 			}
 			handler(w, req)
-		} else {
-			rpc.RespondWithError(w, http.StatusBadRequest, errTooManyRequests)
 			return
 		}
-
+		rpc.RespondWithError(w, http.StatusBadRequest, errTooManyRequests)
 	}
 }
 

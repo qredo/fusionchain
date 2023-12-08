@@ -80,18 +80,24 @@ func Test_TokenRefill(t *testing.T) {
 		t.Fatal(err)
 	}
 	m := newMockKeyRing("", log, database.NewMemory(), &mockModule{})
+
 	duration := 10 * time.Millisecond
+	pause := 11 * time.Millisecond
+
 	method := PasswordProtectedWithRateLimit(m.password, 1, duration, m.Mnemonic)
 	httpReq := httptest.NewRequest(http.MethodGet, PubKeysEndPnt, nil)
 	respRecorder := httptest.NewRecorder()
+
 	for i := 0; i < 10; i++ {
 		respRecorder = httptest.NewRecorder()
 		method(respRecorder, httpReq)
-		time.Sleep(duration) // Ensure time elapses for the tokens to refill
+		time.Sleep(pause) // Ensure time elapses for the tokens to refill
 	}
+
 	if g, w := respRecorder.Code, http.StatusOK; g != w {
 		t.Errorf("unexpected response code, want %v got %v", w, g)
 	}
+
 	expectedJSON, _ := json.Marshal(&Response{Message: "OK", Version: common.FullVersion, Service: "test"})
 
 	if g, w := respRecorder.Body.Bytes(), expectedJSON; !bytes.Equal(g, w) {

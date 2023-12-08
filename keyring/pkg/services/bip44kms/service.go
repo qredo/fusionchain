@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"sync/atomic"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -50,15 +51,18 @@ func New(keyringAddr, keyRingSigner, mnemonic, password string, port int, logger
 		rpc.NewEndpoint(api.HealthEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /healthcheck
 			api.HandleHealthcheckRequest(w, s.modules, logger, serviceName)
 		}),
-		rpc.NewEndpoint(api.KeyringEndPnt, http.MethodGet, api.PasswordProtected(s.secrets.password, func(w http.ResponseWriter, r *http.Request) { // /keyring
-			api.HandleKeyringRequest(w, logger, s.keyringAddr, s.keyringSigner, serviceName)
-		})),
-		rpc.NewEndpoint(api.PubKeysEndPnt, http.MethodGet, api.PasswordProtected(s.secrets.password, func(w http.ResponseWriter, r *http.Request) { // /pubkeys
-			api.HandlePubKeyRequest(w, logger, s.dB, serviceName)
-		})),
-		rpc.NewEndpoint(api.MnemonicEndPnt, http.MethodGet, api.PasswordProtected(s.secrets.password, func(w http.ResponseWriter, r *http.Request) { // /mnemonic
-			api.HandleMnemonicRequest(w, logger, s.secrets.password, s.secrets.mnemonic, serviceName)
-		})),
+		rpc.NewEndpoint(api.KeyringEndPnt, http.MethodGet, api.PasswordProtectedWithRateLimit(s.secrets.password, rateLimitPerSecond, time.Second,
+			func(w http.ResponseWriter, r *http.Request) { // /keyring
+				api.HandleKeyringRequest(w, logger, s.keyringAddr, s.keyringSigner, serviceName)
+			})),
+		rpc.NewEndpoint(api.PubKeysEndPnt, http.MethodGet, api.PasswordProtectedWithRateLimit(s.secrets.password, rateLimitPerSecond, time.Second,
+			func(w http.ResponseWriter, r *http.Request) { // /pubkeys
+				api.HandlePubKeyRequest(w, logger, s.dB, serviceName)
+			})),
+		rpc.NewEndpoint(api.MnemonicEndPnt, http.MethodGet, api.PasswordProtectedWithRateLimit(s.secrets.password, rateLimitPerSecond, time.Second,
+			func(w http.ResponseWriter, r *http.Request) { // /mnemonic
+				api.HandleMnemonicRequest(w, logger, s.secrets.password, s.secrets.mnemonic, serviceName)
+			})),
 	}), logger)
 	return s
 }
