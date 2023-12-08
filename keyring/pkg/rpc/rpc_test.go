@@ -13,8 +13,15 @@ import (
 	"time"
 
 	"github.com/qredo/fusionchain/keyring/pkg/logger"
+
 	"github.com/stretchr/testify/assert"
 )
+
+func Test_MakeAPI(t *testing.T) {
+	if a := MakeAPI([]EndPoint{EndPoint{}}); a == nil {
+		t.Fatal("unexpected nil output")
+	}
+}
 
 // Test RespondWithJSON function.
 func TestRespondWithJSON(t *testing.T) {

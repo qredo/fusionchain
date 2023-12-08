@@ -1,26 +1,22 @@
 package mpcrelayer
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
-	"net/http"
-	"net/http/httptest"
 	"os"
 	"testing"
 
-	"github.com/qredo/fusionchain/keyring/pkg/common"
+	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/logger"
 	"github.com/qredo/fusionchain/keyring/pkg/mpc"
 )
 
 var testConfig = ServiceConfig{
-	Port:        8080,
-	KeyringAddr: "qredokeyring1ph63us46lyw56vrzgaq",
-	LogLevel:    "fatal",
-	LogFormat:   "plain",
-	LogToFile:   false,
-	Mnemonic:    "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge",
+	Port:      8080,
+	Keyring:   "qredokeyring1ph63us46lyw56vrzgaq",
+	LogLevel:  "fatal",
+	LogFormat: "plain",
+	LogToFile: false,
+	Mnemonic:  "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge",
 	MPC: mpc.Config{
 		Mock: true,
 	},
@@ -30,7 +26,7 @@ var (
 	tests = []struct {
 		name                        string
 		config                      ServiceConfig
-		modules                     []Module
+		modules                     []api.Module
 		buildErr, startErr, stopErr bool
 	}{
 		{
@@ -44,11 +40,11 @@ var (
 		{
 			"no mnemonic",
 			ServiceConfig{
-				Port:        8080,
-				KeyringAddr: "qredokeyring1ph63us46lyw56vrzgaq",
-				LogLevel:    "fatal",
-				LogFormat:   "plain",
-				LogToFile:   false,
+				Port:      8080,
+				Keyring:   defaultKeyring,
+				LogLevel:  "fatal",
+				LogFormat: "plain",
+				LogToFile: false,
 			},
 			nil,
 			true,
@@ -66,7 +62,7 @@ var (
 		{
 			"single module",
 			testConfig,
-			[]Module{mockModule{}},
+			[]api.Module{mockModule{}},
 			false,
 			false,
 			false,
@@ -74,7 +70,7 @@ var (
 		{
 			"multiple module",
 			testConfig,
-			[]Module{mockModule{}, mockModule{}},
+			[]api.Module{mockModule{}, mockModule{}},
 			false,
 			false,
 			false,
@@ -82,7 +78,7 @@ var (
 		{
 			"module with error",
 			testConfig,
-			[]Module{mockModuleErr{}},
+			[]api.Module{mockModuleErr{}},
 			false,
 			true,
 			true,
@@ -100,8 +96,8 @@ func (m mockModule) Stop() error {
 	return nil
 }
 
-func (m mockModule) healthcheck() *HealthResponse {
-	return &HealthResponse{}
+func (m mockModule) Healthcheck() *api.HealthResponse {
+	return &api.HealthResponse{}
 }
 
 type mockModuleErr struct{}
@@ -114,8 +110,8 @@ func (m mockModuleErr) Stop() error {
 	return errors.New("error")
 }
 
-func (m mockModuleErr) healthcheck() *HealthResponse {
-	return &HealthResponse{Failures: []string{"some failure"}}
+func (m mockModuleErr) Healthcheck() *api.HealthResponse {
+	return &api.HealthResponse{Failures: []string{"some failure"}}
 }
 
 func Test_ServiceStartStop(t *testing.T) {
@@ -140,76 +136,21 @@ func Test_ServiceStartStop(t *testing.T) {
 
 }
 
-func Test_ServiceAPI(t *testing.T) {
-	s, err := buildTestService(t, tests[3].config)
-	if err != nil {
-		t.Fatal(err)
-	}
+func buildTestService(t *testing.T, config ServiceConfig, modules ...api.Module) (*Service, error) {
+	config, _ = sanitizeConfig(config)
 
-	apiTests := []struct {
-		name             string
-		endpoint         string
-		method           func(w http.ResponseWriter, req *http.Request)
-		expectedResponse any
-		expectedCode     int
-	}{
-		{
-			"status",
-			statusEndPnt,
-			s.status,
-			&Response{Message: "OK", Version: common.FullVersion, Service: serviceName},
-			http.StatusOK,
-		},
-		{
-			"healthcheck",
-			healthEndPnt,
-			s.healthcheck,
-			&HealthResponse{Version: common.FullVersion, Service: serviceName, Failures: []string{}},
-			http.StatusOK,
-		},
-		{
-			"pubkeys",
-			pubKeysEndPnt,
-			s.pubKeys,
-			&Response{Message: "OK", Version: common.FullVersion, Service: serviceName},
-			http.StatusOK,
-		},
-	}
-
-	for _, tt := range apiTests {
-		t.Run(tt.name, func(t *testing.T) {
-			httpReq := httptest.NewRequest(http.MethodGet, tt.endpoint, nil)
-			respRecorder := httptest.NewRecorder()
-			tt.method(respRecorder, httpReq)
-			if g, w := respRecorder.Code, tt.expectedCode; g != w {
-				t.Errorf("unexpected response code, want %v got %v", w, g)
-			}
-			expectedJSON, _ := json.Marshal(tt.expectedResponse)
-
-			if g, w := respRecorder.Body.Bytes(), expectedJSON; !bytes.Equal(g, w) {
-				t.Fatalf("unexpected reponse, want %s, got %s", w, g)
-			}
-		})
-	}
-
-}
-
-func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*Service, error) {
-	config, err := sanitizeConfig(config)
-	if err != nil {
-		return nil, err
-	}
 	log, err := logger.NewLogger(logger.Level(config.LogLevel), logger.Format(config.LogFormat), config.LogToFile, "test")
 	if err != nil {
 		return nil, err
 	}
-	keyringAddr, _, _, err := makeKeyringClient(&config, log)
-	if err != nil {
-		return nil, err
-	}
-	memoryKeyDB, err := makeKeyDB("", true)
+	memoryKeyDB, err := makeDB("", true)
 	if err != nil {
 		t.Fatal(err)
 	}
-	return New(keyringAddr, config.Port, log, memoryKeyDB, modules...), nil
+	keyringAddr, mn, p, i, _, err := makeKeyringClient(&config, log, memoryKeyDB)
+	if err != nil {
+		return nil, err
+	}
+
+	return New(keyringAddr, i.Address.String(), mn, p, config.Port, log, memoryKeyDB, modules...), nil
 }

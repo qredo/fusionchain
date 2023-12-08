@@ -27,6 +27,7 @@ type Bip44KeyRing struct {
 	cryptoSys  mpc.CryptoSystem
 }
 
+// NewBip44KeyRing returns a Bip44KeyRing with masterseed and chaincode
 func NewBip44KeyRing(seedPhrase, password string, cryptoType mpc.CryptoSystem) (*Bip44KeyRing, error) {
 	// Convert the seed phrase to a master seed using BIP39 derivation
 	seedBytes, err := bip39.NewSeedWithErrorChecking(seedPhrase, password)
@@ -39,11 +40,11 @@ func NewBip44KeyRing(seedPhrase, password string, cryptoType mpc.CryptoSystem) (
 	return &Bip44KeyRing{
 		masterSeed: masterKey,
 		chainCode:  chainCode,
-		cryptoSys:  cryptoType, // TODO - In future we may want to have a single key ring manage both ECDSA and EdDSA keys... This may need refactoring..
+		cryptoSys:  cryptoType, // TODO - In future we may want to have a single key ring manage both ECDSA and EdDSA keys... We may remove this..
 	}, nil
 }
 
-// GenerateMnemonic creates a fresh BIP39 mnemomic with 256-bit entropy.
+// GenerateMnemonic creates a fresh BIP39 mnemonic with 256-bit entropy.
 func GenerateMnemonic() (string, error) {
 	e, err := bip39.NewEntropy(256)
 	if err != nil {

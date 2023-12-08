@@ -6,13 +6,15 @@ import (
 	"time"
 
 	"github.com/qredo/fusionchain/go-client"
+	"github.com/qredo/fusionchain/keyring/pkg/api"
+	"github.com/qredo/fusionchain/keyring/pkg/fusionclient"
 	"github.com/qredo/fusionchain/x/treasury/types"
 	"github.com/sirupsen/logrus"
 )
 
 type keyQueryProcessor struct {
 	keyringAddr    string
-	queryClient    QueryClient
+	queryClient    fusionclient.QueryClient
 	keyRequestChan chan *keyRequestQueueItem
 	threads        chan struct{}
 	stop           chan struct{}
@@ -23,7 +25,7 @@ type keyQueryProcessor struct {
 	maxTries int
 }
 
-func newKeyQueryProcessor(keyringAddr string, q QueryClient, k chan *keyRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *keyQueryProcessor {
+func newKeyQueryProcessor(keyringAddr string, q fusionclient.QueryClient, k chan *keyRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *keyQueryProcessor {
 	return &keyQueryProcessor{
 		keyringAddr:    keyringAddr,
 		queryClient:    q,
@@ -50,11 +52,11 @@ func (q *keyQueryProcessor) startTicker() {
 	for {
 		select {
 		case <-q.stop:
-			q.log.Info("keyQueryProcessor received shutdown signal")
+			q.log.Debug("keyQueryProcessor received shutdown signal")
 			for i := 0; i < defaultThreads; i++ {
 				<-q.threads // empty thread chan
 			}
-			q.log.Info("terminated keyQueryProcessor")
+			q.log.Debug("terminated keyQueryProcessor")
 			q.wait <- struct{}{}
 			return
 		case <-ticker.C:
@@ -97,18 +99,18 @@ func (q *keyQueryProcessor) Stop() error {
 	return nil
 }
 
-func (q *keyQueryProcessor) healthcheck() *HealthResponse {
+func (q *keyQueryProcessor) Healthcheck() *api.HealthResponse {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancelFunc()
 	if _, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{Limit: 1}, q.keyringAddr); err != nil {
-		return &HealthResponse{Failures: []string{fmt.Sprintf("query client: %v", err.Error())}}
+		return &api.HealthResponse{Failures: []string{fmt.Sprintf("query client: %v", err.Error())}}
 	}
-	return &HealthResponse{}
+	return &api.HealthResponse{}
 }
 
 type sigQueryProcessor struct {
 	keyringAddr    string
-	queryClient    QueryClient
+	queryClient    fusionclient.QueryClient
 	sigRequestChan chan *signatureRequestQueueItem
 	threads        chan struct{}
 	stop           chan struct{}
@@ -119,7 +121,7 @@ type sigQueryProcessor struct {
 	maxTries int
 }
 
-func newSigQueryProcessor(keyringAddr string, q QueryClient, s chan *signatureRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *sigQueryProcessor {
+func newSigQueryProcessor(keyringAddr string, q fusionclient.QueryClient, s chan *signatureRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *sigQueryProcessor {
 	return &sigQueryProcessor{
 		keyringAddr:    keyringAddr,
 		queryClient:    q,
@@ -146,11 +148,11 @@ func (q sigQueryProcessor) startTicker() {
 	for {
 		select {
 		case <-q.stop:
-			q.log.Info("sigQueryProcessor received shutdown signal")
+			q.log.Debug("sigQueryProcessor received shutdown signal")
 			for i := 0; i < defaultThreads; i++ {
 				<-q.threads // empty thread chan
 			}
-			q.log.Info("terminated sigQueryProcessor")
+			q.log.Debug("terminated sigQueryProcessor")
 			q.wait <- struct{}{}
 			return
 		case <-ticker.C:
@@ -193,11 +195,11 @@ func (q *sigQueryProcessor) Stop() error {
 	return nil
 }
 
-func (q *sigQueryProcessor) healthcheck() *HealthResponse {
+func (q *sigQueryProcessor) Healthcheck() *api.HealthResponse {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancelFunc()
 	if _, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{Limit: 1}, q.keyringAddr); err != nil {
-		return &HealthResponse{Failures: []string{fmt.Sprintf("query client: %v", err.Error())}}
+		return &api.HealthResponse{Failures: []string{fmt.Sprintf("query client: %v", err.Error())}}
 	}
-	return &HealthResponse{}
+	return &api.HealthResponse{}
 }

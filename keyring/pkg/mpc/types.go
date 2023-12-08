@@ -20,8 +20,11 @@ under the License.
 */
 
 import (
+	"bytes"
 	"errors"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -41,6 +44,12 @@ var (
 
 	EmptyConfig = Config{}
 )
+
+func IsEmpty(cfg Config) bool {
+	b, _ := yaml.Marshal(cfg)
+	e, _ := yaml.Marshal(EmptyConfig)
+	return bytes.Equal(b, e)
+}
 
 type CryptoSystem string
 

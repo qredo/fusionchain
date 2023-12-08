@@ -2,37 +2,63 @@ package mpcrelayer
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"sync/atomic"
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/common"
 	"github.com/qredo/fusionchain/keyring/pkg/database"
 	"github.com/qredo/fusionchain/keyring/pkg/rpc"
 )
 
 type Service struct {
-	keyringAddr string
-	modules     []Module
-	server      rpc.HTTPService
-	log         *logrus.Entry
-	keyDB       database.Database
+	keyringAddr   string
+	keyringSigner string
+	secrets       secrets
+	modules       []api.Module
+	server        rpc.HTTPService
+	log           *logrus.Entry
+	dB            database.Database
 
 	stop    chan struct{}
 	stopped atomic.Bool
 }
 
-func New(keyringAddr string, port int, logger *logrus.Entry, keyDB database.Database, modules ...Module) *Service {
+type secrets struct {
+	mnemonic string
+	password string
+}
+
+func New(keyringAddr, keyRingSigner, mnemonic, password string, port int, logger *logrus.Entry, dB database.Database, modules ...api.Module) *Service {
 	s := &Service{
 		keyringAddr: keyringAddr,
 		log:         logger,
-		keyDB:       keyDB,
+		secrets:     secrets{mnemonic: mnemonic, password: password},
+		dB:          dB,
 		modules:     modules,
 		stop:        make(chan struct{}, 1),
 		stopped:     atomic.Bool{},
 	}
-	s.server = rpc.NewHTTPService(port, makeAPIHandlers(s), logger)
+	s.server = rpc.NewHTTPService(port, rpc.MakeAPI([]rpc.EndPoint{
+		rpc.NewEndpoint(api.StatusEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /status
+			api.HandleStatusRequest(w, logger, serviceName)
+		}),
+		rpc.NewEndpoint(api.HealthEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /healthcheck
+			api.HandleHealthcheckRequest(w, modules, logger, serviceName)
+		}),
+		rpc.NewEndpoint(api.KeyringEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /keyring
+			api.HandleKeyringRequest(w, r, logger, s.secrets.password, s.keyringAddr, s.keyringSigner, serviceName)
+		}),
+		rpc.NewEndpoint(api.PubKeysEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /pubkeys
+			api.HandlePubKeyRequest(w, r, logger, s.dB, s.secrets.password, serviceName)
+		}),
+		rpc.NewEndpoint(api.MnemonicEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /mnemonic
+			api.HandleMnemonicRequest(w, r, logger, s.secrets.password, s.secrets.mnemonic, serviceName)
+		}),
+	}), logger)
 	return s
 }
 

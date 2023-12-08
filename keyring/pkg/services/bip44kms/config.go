@@ -35,15 +35,15 @@ var (
 )
 
 // ServiceConfig represents the main application configuration struct.
-// Example YAML config can be founs in github.com/qredo/fusionchain/mpc-relayer/docker-compose/config-example.yaml
+// Example YAML config can be found in github.com/qredo/fusionchain/mpc-relayer/docker-compose/config-example.yaml
 type ServiceConfig struct {
 	Port          int    `yaml:"port"`
 	Path          string `yaml:"path"`
 	Keyring       string `yaml:"keyring"`
 	ChainID       string `yaml:"chainid"`
 	FusionURL     string `yaml:"fusionurl"`
-	Password      string `yaml:"password"` // User supplied passphrase. Must be supplied in the http header
-	Mnemonic      string `yaml:"mnemonic"` // (Optional) The user can supply a mnemonic
+	Password      string `yaml:"password"` // User supplied passphrase.
+	Mnemonic      string `yaml:"mnemonic"` // (Optional) The user can supply a mnemonic or one will be generated.
 	LogLevel      string `yaml:"loglevel"`
 	LogFormat     string `yaml:"logformat"`
 	LogToFile     bool   `yaml:"logtofile"`

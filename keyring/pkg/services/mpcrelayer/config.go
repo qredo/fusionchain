@@ -2,31 +2,75 @@ package mpcrelayer
 
 import (
 	"bytes"
-	"fmt"
+	"time"
 
 	"github.com/qredo/fusionchain/keyring/pkg/mpc"
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	serviceName = "mpc-relayer"
+)
+
+var (
+	// Config vars
+	defaultPort = 8080
+
+	defaultFusionURL     = "localhost:9090"
+	defaultFusionChainID = "qredofusiontestnet_257-1"
+	defaultKeyring       = "qredokeyring1ph63us46lyw56vrzgaq"
+
+	defaultHandlerTimeout = 60 * time.Second
+	defaultQueryTimeout   = 5 * time.Second
+
+	defaultMaxRetries    int64 = 100
+	defaultQueryInterval int64 = 5
+
+	defaultRetryTimeout = 30 * time.Second
+
+	defaultChanSize = 1000
+
+	defaultPageLimit uint64 = 10
+
+	defaultThreads = 2
+)
+
 // ServiceConfig represents the main application configuration struct.
-// Example YAML config can be found in github.com/qredo/fusionchain/keyring/docker-compose/config-example.yaml
+// Example YAML config can be found in github.com/qredo/fusionchain/mpc-relayer/docker-compose/config-example.yaml
 type ServiceConfig struct {
 	Port          int        `yaml:"port"`
 	Path          string     `yaml:"path"`
-	KeyringAddr   string     `yaml:"keyring_addr"`
-	ChainID       string     `yaml:"chain_id"`
-	FusionURL     string     `yaml:"fusion_url"`
-	Mnemonic      string     `yaml:"mnemonic"`
+	Keyring       string     `yaml:"keyring"`
+	ChainID       string     `yaml:"chainid"`
+	FusionURL     string     `yaml:"fusionurl"`
+	Password      string     `yaml:"password"` // User supplied passphrase.
+	Mnemonic      string     `yaml:"mnemonic"` // (Optional) The user can supply a mnemonic or one will be generated.
 	LogLevel      string     `yaml:"loglevel"`
 	LogFormat     string     `yaml:"logformat"`
 	LogToFile     bool       `yaml:"logtofile"`
 	MPC           mpc.Config `yaml:"mpc"`
-	QueryInterval int64      `yaml:"query_interval"`
+	QueryInterval int64      `yaml:"queryinterval"`
 	RetrySleep    int64      `yaml:"retrySleep"`
 	MaxTries      int64      `yaml:"maxTries"`
 }
 
 var emptyConfig = ServiceConfig{}
+
+var defaultConfig = ServiceConfig{
+	Port:          defaultPort,
+	Path:          "", // If no path is supplied an in-memory key-value store will be used
+	LogLevel:      "info",
+	LogFormat:     "plain",
+	LogToFile:     false,
+	Keyring:       defaultKeyring,
+	ChainID:       defaultFusionChainID,
+	FusionURL:     defaultFusionURL,
+	Mnemonic:      "", // will be generated if no supplied by the user
+	Password:      "", // must be user supplied
+	MPC:           mpc.Config{Mock: true},
+	QueryInterval: defaultQueryInterval,
+	MaxTries:      defaultMaxRetries,
+}
 
 func isEmpty(c ServiceConfig) bool {
 	b, _ := yaml.Marshal(c)
@@ -35,28 +79,32 @@ func isEmpty(c ServiceConfig) bool {
 }
 
 // sanitizeConfig Partially empty configs will be sanitized with default values.
-func sanitizeConfig(config ServiceConfig) (cfg ServiceConfig, err error) {
+func sanitizeConfig(config ServiceConfig) (cfg ServiceConfig, defaultUsed bool) {
 	if isEmpty(config) {
-		err = fmt.Errorf("no config file supplied")
-		return
-	}
-	mpcConfig := config.MPC
-	if len(mpcConfig.Node) == 0 && !mpcConfig.Mock {
-		err = fmt.Errorf("invalid (empty) mpc config")
+		defaultUsed = true
+		cfg = defaultConfig
 		return
 	}
 	cfg = config
 
-	if config.MaxTries == 0 {
-		cfg.MaxTries = defaultMaxRetries
-	}
-
-	if config.QueryInterval == 0 {
-		cfg.QueryInterval = defaultQueryInterval
-	}
-
 	if config.Port == 0 {
 		cfg.Port = defaultPort
+	}
+
+	if config.LogLevel == "" {
+		cfg.LogLevel = "info"
+	}
+
+	if config.LogFormat == "" {
+		cfg.LogFormat = "plain"
+	}
+
+	if mpc.IsEmpty(config.MPC) {
+		cfg.MPC = mpc.Config{Mock: true}
+	}
+
+	if config.Keyring == "" {
+		cfg.Keyring = defaultKeyring
 	}
 
 	if config.FusionURL == "" {
@@ -64,7 +112,15 @@ func sanitizeConfig(config ServiceConfig) (cfg ServiceConfig, err error) {
 	}
 
 	if config.ChainID == "" {
-		cfg.FusionURL = defaultFusionChainID
+		cfg.ChainID = defaultFusionChainID
+	}
+
+	if config.QueryInterval == 0 {
+		cfg.QueryInterval = defaultQueryInterval
+	}
+
+	if config.MaxTries == 0 {
+		cfg.MaxTries = defaultMaxRetries
 	}
 	return
 }

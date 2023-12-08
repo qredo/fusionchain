@@ -8,8 +8,10 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/common"
 	"github.com/qredo/fusionchain/keyring/pkg/database"
+	"github.com/qredo/fusionchain/keyring/pkg/fusionclient"
 	"github.com/qredo/fusionchain/keyring/pkg/mpc"
 	"github.com/qredo/fusionchain/x/treasury/types"
 )
@@ -26,7 +28,7 @@ type keyController struct {
 	retrySleep time.Duration
 }
 
-func newFusionKeyController(logger *logrus.Entry, prefixDB database.Database, q chan *keyRequestQueueItem, keyringClient mpc.Client, txc TxClient) *keyController {
+func newFusionKeyController(logger *logrus.Entry, prefixDB database.Database, q chan *keyRequestQueueItem, keyringClient mpc.Client, txc fusionclient.TxClient) *keyController {
 	k := &FusionKeyRequestHandler{
 		KeyDB:         prefixDB,
 		keyringClient: keyringClient,
@@ -59,11 +61,11 @@ func (k *keyController) startExecutor() {
 	for {
 		select {
 		case <-k.stop:
-			k.log.Info("keyController received shutdown signal")
+			k.log.Debug("keyController received shutdown signal")
 			for i := 0; i < defaultThreads; i++ {
 				<-k.threads // empty thread chan
 			}
-			k.log.Info("terminated keyController")
+			k.log.Debug("terminated keyController")
 			k.wait <- struct{}{}
 			return
 		case item := <-k.queue:
@@ -101,8 +103,8 @@ func (k *keyController) executeRequest(item *keyRequestQueueItem) error {
 	return nil
 }
 
-func (k *keyController) healthcheck() *HealthResponse {
-	return k.keyRequestsHandler.healthcheck()
+func (k *keyController) Healthcheck() *api.HealthResponse {
+	return k.keyRequestsHandler.Healthcheck()
 }
 
 type keyRequestQueueItem struct {
@@ -113,14 +115,14 @@ type keyRequestQueueItem struct {
 
 type KeyRequestsHandler interface {
 	HandleKeyRequests(ctx context.Context, item *keyRequestQueueItem) error
-	healthcheck() *HealthResponse
+	Healthcheck() *api.HealthResponse
 }
 
 // FusionKeyRequestHandler implements KeyRequestsHandler.
 type FusionKeyRequestHandler struct {
 	KeyDB         database.Database
 	keyringClient mpc.Client
-	TxClient      TxClient
+	TxClient      fusionclient.TxClient
 	Logger        *logrus.Entry
 }
 
@@ -174,10 +176,10 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	return nil
 }
 
-func (h *FusionKeyRequestHandler) healthcheck() *HealthResponse {
+func (h *FusionKeyRequestHandler) Healthcheck() *api.HealthResponse {
 	mpcOk, _ := h.keyringClient.Ping()
 	if !mpcOk {
-		return &HealthResponse{Failures: []string{"mpc not ok"}}
+		return &api.HealthResponse{Failures: []string{"mpc not ok"}}
 	}
-	return &HealthResponse{}
+	return &api.HealthResponse{}
 }

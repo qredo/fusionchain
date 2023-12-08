@@ -1,29 +1,24 @@
 package mpcrelayer
 
-import "time"
+import (
+	"time"
+
+	"github.com/cosmos/go-bip39"
+)
 
 const (
-	serviceName         = "mpc-relayer"
 	mpcRequestKeyLength = 64
+	mnemonicKey         = "mnemonic"
 )
 
-var (
-	defaultPort = 8080
-
-	defaultHandlerTimeout = 60 * time.Second
-	defaultQueryTimeout   = 5 * time.Second
-
-	defaultMaxRetries    int64 = 100
-	defaultQueryInterval int64 = 5
-
-	defaultRetryTimeout = 30 * time.Second
-
-	defaultChanSize = 1000
-
-	defaultPageLimit uint64 = 10
-
-	defaultThreads = 6
-)
+// GenerateMnemonic creates a fresh BIP39 mnemonic with 256-bit entropy. TODO - create a shared crypto package
+func GenerateMnemonic() (string, error) {
+	e, err := bip39.NewEntropy(256)
+	if err != nil {
+		return "", err
+	}
+	return bip39.NewMnemonic(e)
+}
 
 func requeueKeyItemWithTimeout(c chan *keyRequestQueueItem, item *keyRequestQueueItem, timeout time.Duration) {
 	go func() {

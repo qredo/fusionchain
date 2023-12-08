@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/common"
 	"github.com/qredo/fusionchain/keyring/pkg/database"
+	"github.com/qredo/fusionchain/keyring/pkg/fusionclient"
 	"github.com/qredo/fusionchain/keyring/pkg/mpc"
 	"github.com/qredo/fusionchain/x/treasury/types"
 	"github.com/sirupsen/logrus"
@@ -30,7 +32,7 @@ type signatureRequestQueueItem struct {
 	request  *types.SignRequest
 }
 
-func newFusionSignatureController(logger *logrus.Entry, prefixDB database.Database, q chan *signatureRequestQueueItem, keyringClient mpc.Client, txc TxClient) *signatureController {
+func newFusionSignatureController(logger *logrus.Entry, prefixDB database.Database, q chan *signatureRequestQueueItem, keyringClient mpc.Client, txc fusionclient.TxClient) *signatureController {
 	s := &FusionSignatureRequestHandler{
 		KeyDB:         prefixDB,
 		keyringClient: keyringClient,
@@ -104,20 +106,20 @@ func (s *signatureController) executeRequest(item *signatureRequestQueueItem) er
 	return nil
 }
 
-func (s signatureController) healthcheck() *HealthResponse {
-	return s.signatureRequestsHandler.healthcheck()
+func (s signatureController) Healthcheck() *api.HealthResponse {
+	return s.signatureRequestsHandler.Healthcheck()
 }
 
 type SignatureRequestsHandler interface {
 	HandleSignatureRequest(ctx context.Context, item *signatureRequestQueueItem) error
-	healthcheck() *HealthResponse
+	Healthcheck() *api.HealthResponse
 }
 
 // FusionSignatureRequestHandler implements SignatureRequestsHandler.
 type FusionSignatureRequestHandler struct {
 	KeyDB         database.Database
 	keyringClient mpc.Client
-	TxClient      TxClient
+	TxClient      fusionclient.TxClient
 	Logger        *logrus.Entry
 }
 
@@ -179,10 +181,10 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 	return nil
 }
 
-func (h *FusionSignatureRequestHandler) healthcheck() *HealthResponse {
+func (h *FusionSignatureRequestHandler) Healthcheck() *api.HealthResponse {
 	mpcOk, _ := h.keyringClient.Ping()
 	if !mpcOk {
-		return &HealthResponse{Failures: []string{"mpc not ok"}}
+		return &api.HealthResponse{Failures: []string{"mpc not ok"}}
 	}
-	return &HealthResponse{}
+	return &api.HealthResponse{}
 }

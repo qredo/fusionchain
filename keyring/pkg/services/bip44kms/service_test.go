@@ -1,16 +1,11 @@
 package kms
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
-	"net/http"
-	"net/http/httptest"
 	"os"
 	"testing"
 
 	"github.com/qredo/fusionchain/keyring/pkg/api"
-	"github.com/qredo/fusionchain/keyring/pkg/common"
 	"github.com/qredo/fusionchain/keyring/pkg/logger"
 )
 
@@ -27,7 +22,7 @@ var (
 	tests = []struct {
 		name                        string
 		config                      ServiceConfig
-		modules                     []Module
+		modules                     []api.Module
 		buildErr, startErr, stopErr bool
 	}{
 		{
@@ -78,7 +73,7 @@ var (
 		{
 			"single module",
 			testConfig,
-			[]Module{mockModule{}},
+			[]api.Module{mockModule{}},
 			false,
 			false,
 			false,
@@ -86,7 +81,7 @@ var (
 		{
 			"multiple module",
 			testConfig,
-			[]Module{mockModule{}, mockModule{}},
+			[]api.Module{mockModule{}, mockModule{}},
 			false,
 			false,
 			false,
@@ -94,7 +89,7 @@ var (
 		{
 			"module with error",
 			testConfig,
-			[]Module{mockModuleErr{}},
+			[]api.Module{mockModuleErr{}},
 			false,
 			true,
 			true,
@@ -136,7 +131,7 @@ func (m mockModule) Stop() error {
 	return nil
 }
 
-func (m mockModule) healthcheck() *api.HealthResponse {
+func (m mockModule) Healthcheck() *api.HealthResponse {
 	return &api.HealthResponse{}
 }
 
@@ -150,7 +145,7 @@ func (m mockModuleErr) Stop() error {
 	return errors.New("error")
 }
 
-func (m mockModuleErr) healthcheck() *api.HealthResponse {
+func (m mockModuleErr) Healthcheck() *api.HealthResponse {
 	return &api.HealthResponse{Failures: []string{"some failure"}}
 }
 
@@ -189,75 +184,7 @@ func Test_ConfigTypes(t *testing.T) {
 
 }
 
-func Test_ServiceAPI(t *testing.T) {
-	s, err := buildTestService(t, tests[2].config) // Use test config with fixed mnemonic
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	apiTests := []struct {
-		name             string
-		endpoint         string
-		method           func(w http.ResponseWriter, req *http.Request)
-		expectedResponse any
-		expectedCode     int
-	}{
-		{
-			"status",
-			api.StatusEndPnt,
-			s.Status,
-			&api.Response{Message: "OK", Version: common.FullVersion, Service: serviceName},
-			http.StatusOK,
-		},
-		{
-			"healthcheck",
-			api.HealthEndPnt,
-			s.HealthCheck,
-			&api.HealthResponse{Version: common.FullVersion, Service: serviceName, Failures: []string{}},
-			http.StatusOK,
-		},
-		{
-			"keyring",
-			api.KeyringEndPnt,
-			s.Keyring,
-			&api.Response{Message: "OK", Version: common.FullVersion, Service: serviceName, KeyRing: defaultConfig.Keyring, KeyringSigner: "qredo1r7dhrn6ljwj72akjhpgslvqwx6kq2xzypz8sm6"},
-			http.StatusOK,
-		},
-		{
-			"pubkeys",
-			api.PubKeysEndPnt,
-			s.PubKeys,
-			&api.Response{Message: "OK", Version: common.FullVersion, Service: serviceName},
-			http.StatusOK,
-		},
-		{
-			"mnemonic",
-			api.MnemonicEndPnt,
-			s.Mnemonic,
-			&api.Response{Message: "OK", Version: common.FullVersion, Service: serviceName, Mnemonic: testMnemonic},
-			http.StatusOK,
-		},
-	}
-
-	for _, tt := range apiTests {
-		t.Run(tt.name, func(t *testing.T) {
-			httpReq := httptest.NewRequest(http.MethodGet, tt.endpoint, nil)
-			respRecorder := httptest.NewRecorder()
-			tt.method(respRecorder, httpReq)
-			if g, w := respRecorder.Code, tt.expectedCode; g != w {
-				t.Errorf("unexpected response code, want %v got %v", w, g)
-			}
-			expectedJSON, _ := json.Marshal(tt.expectedResponse)
-
-			if g, w := respRecorder.Body.Bytes(), expectedJSON; !bytes.Equal(g, w) {
-				t.Fatalf("unexpected reponse, want %s, got %s", w, g)
-			}
-		})
-	}
-
-}
-
-func buildTestService(t *testing.T, config ServiceConfig, modules ...Module) (*Service, error) {
+func buildTestService(t *testing.T, config ServiceConfig, modules ...api.Module) (*Service, error) {
 
 	config, _ = sanitizeConfig(config)
 

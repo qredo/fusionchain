@@ -7,14 +7,14 @@ import (
 
 	"github.com/qredo/fusionchain/go-client"
 	"github.com/qredo/fusionchain/keyring/pkg/api"
-	"github.com/qredo/fusionchain/keyring/pkg/services/mpcrelayer"
+	"github.com/qredo/fusionchain/keyring/pkg/fusionclient"
 	"github.com/qredo/fusionchain/x/treasury/types"
 	"github.com/sirupsen/logrus"
 )
 
 type keyQueryProcessor struct {
 	keyringAddr    string
-	queryClient    mpcrelayer.QueryClient
+	queryClient    fusionclient.QueryClient
 	keyRequestChan chan *keyRequestQueueItem
 	threads        chan struct{}
 	stop           chan struct{}
@@ -25,7 +25,7 @@ type keyQueryProcessor struct {
 	maxTries int
 }
 
-func newKeyQueryProcessor(keyringAddr string, q mpcrelayer.QueryClient, k chan *keyRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *keyQueryProcessor {
+func newKeyQueryProcessor(keyringAddr string, q fusionclient.QueryClient, k chan *keyRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *keyQueryProcessor {
 	return &keyQueryProcessor{
 		keyringAddr:    keyringAddr,
 		queryClient:    q,
@@ -99,7 +99,7 @@ func (q *keyQueryProcessor) Stop() error {
 	return nil
 }
 
-func (q *keyQueryProcessor) healthcheck() *api.HealthResponse {
+func (q *keyQueryProcessor) Healthcheck() *api.HealthResponse {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancelFunc()
 	if _, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{Limit: 1}, q.keyringAddr); err != nil {
@@ -110,7 +110,7 @@ func (q *keyQueryProcessor) healthcheck() *api.HealthResponse {
 
 type sigQueryProcessor struct {
 	keyringAddr    string
-	queryClient    mpcrelayer.QueryClient
+	queryClient    fusionclient.QueryClient
 	sigRequestChan chan *signatureRequestQueueItem
 	threads        chan struct{}
 	stop           chan struct{}
@@ -121,7 +121,7 @@ type sigQueryProcessor struct {
 	maxTries int
 }
 
-func newSigQueryProcessor(keyringAddr string, q mpcrelayer.QueryClient, s chan *signatureRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *sigQueryProcessor {
+func newSigQueryProcessor(keyringAddr string, q fusionclient.QueryClient, s chan *signatureRequestQueueItem, log *logrus.Entry, t time.Duration, maxTries int) *sigQueryProcessor {
 	return &sigQueryProcessor{
 		keyringAddr:    keyringAddr,
 		queryClient:    q,
@@ -195,7 +195,7 @@ func (q *sigQueryProcessor) Stop() error {
 	return nil
 }
 
-func (q *sigQueryProcessor) healthcheck() *api.HealthResponse {
+func (q *sigQueryProcessor) Healthcheck() *api.HealthResponse {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), defaultQueryTimeout)
 	defer cancelFunc()
 	if _, err := q.queryClient.PendingSignatureRequests(ctx, &client.PageRequest{Limit: 1}, q.keyringAddr); err != nil {

@@ -2,6 +2,7 @@ package kms
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"sync/atomic"
 
@@ -17,7 +18,7 @@ type Service struct {
 	keyringAddr   string
 	keyringSigner string
 	secrets       secrets
-	modules       []Module
+	modules       []api.Module
 	server        rpc.HTTPService
 	log           *logrus.Entry
 	dB            database.Database
@@ -31,7 +32,7 @@ type secrets struct {
 	password string
 }
 
-func New(keyringAddr, keyRingSigner, mnemonic, password string, port int, logger *logrus.Entry, db database.Database, modules ...Module) *Service {
+func New(keyringAddr, keyRingSigner, mnemonic, password string, port int, logger *logrus.Entry, db database.Database, modules ...api.Module) *Service {
 	s := &Service{
 		keyringAddr:   keyringAddr,
 		keyringSigner: keyRingSigner,
@@ -42,7 +43,23 @@ func New(keyringAddr, keyRingSigner, mnemonic, password string, port int, logger
 		stop:          make(chan struct{}, 1),
 		stopped:       atomic.Bool{},
 	}
-	s.server = rpc.NewHTTPService(port, api.MakeKeyRingAPI(s), logger)
+	s.server = rpc.NewHTTPService(port, rpc.MakeAPI([]rpc.EndPoint{
+		rpc.NewEndpoint(api.StatusEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /status
+			api.HandleStatusRequest(w, logger, serviceName)
+		}),
+		rpc.NewEndpoint(api.HealthEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /healthcheck
+			api.HandleHealthcheckRequest(w, s.modules, logger, serviceName)
+		}),
+		rpc.NewEndpoint(api.KeyringEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /keyring
+			api.HandleKeyringRequest(w, r, logger, s.secrets.password, s.keyringAddr, s.keyringSigner, serviceName)
+		}),
+		rpc.NewEndpoint(api.PubKeysEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /pubkeys
+			api.HandlePubKeyRequest(w, r, logger, s.dB, s.secrets.password, serviceName)
+		}),
+		rpc.NewEndpoint(api.MnemonicEndPnt, http.MethodGet, func(w http.ResponseWriter, r *http.Request) { // /mnemonic
+			api.HandleMnemonicRequest(w, r, logger, s.secrets.password, s.secrets.mnemonic, serviceName)
+		}),
+	}), logger)
 	return s
 }
 

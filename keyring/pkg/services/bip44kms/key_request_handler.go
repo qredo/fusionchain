@@ -12,7 +12,7 @@ import (
 	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/common"
 	"github.com/qredo/fusionchain/keyring/pkg/database"
-	"github.com/qredo/fusionchain/keyring/pkg/services/mpcrelayer"
+	"github.com/qredo/fusionchain/keyring/pkg/fusionclient"
 	"github.com/qredo/fusionchain/x/treasury/types"
 )
 
@@ -28,7 +28,7 @@ type keyController struct {
 	retrySleep time.Duration
 }
 
-func newFusionKeyController(logger *logrus.Entry, prefixDB database.Database, q chan *keyRequestQueueItem, keyringClient Keyring, txc mpcrelayer.TxClient) *keyController {
+func newFusionKeyController(logger *logrus.Entry, prefixDB database.Database, q chan *keyRequestQueueItem, keyringClient Keyring, txc fusionclient.TxClient) *keyController {
 	k := &FusionKeyRequestHandler{
 		KeyDB:         prefixDB,
 		keyringClient: keyringClient,
@@ -103,8 +103,8 @@ func (k *keyController) executeRequest(item *keyRequestQueueItem) error {
 	return nil
 }
 
-func (k *keyController) healthcheck() *api.HealthResponse {
-	return k.keyRequestsHandler.healthcheck()
+func (k *keyController) Healthcheck() *api.HealthResponse {
+	return k.keyRequestsHandler.Healthcheck()
 }
 
 type keyRequestQueueItem struct {
@@ -115,14 +115,14 @@ type keyRequestQueueItem struct {
 
 type KeyRequestsHandler interface {
 	HandleKeyRequests(ctx context.Context, item *keyRequestQueueItem) error
-	healthcheck() *api.HealthResponse
+	Healthcheck() *api.HealthResponse
 }
 
 // FusionKeyRequestHandler implements KeyRequestsHandler.
 type FusionKeyRequestHandler struct {
 	KeyDB         database.Database
 	keyringClient Keyring
-	TxClient      mpcrelayer.TxClient
+	TxClient      fusionclient.TxClient
 	Logger        *logrus.Entry
 }
 
@@ -175,7 +175,7 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 	return nil
 }
 
-func (*FusionKeyRequestHandler) healthcheck() *api.HealthResponse {
+func (*FusionKeyRequestHandler) Healthcheck() *api.HealthResponse {
 	return &api.HealthResponse{}
 }
 

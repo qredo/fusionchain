@@ -33,21 +33,29 @@ func NewHTTPService(port int, api *API, l *logrus.Entry) HTTPService {
 }
 
 type EndPoint struct {
-	path        string
-	handlerFunc http.HandlerFunc
-	methodType  string
+	Path       string
+	Handler    http.HandlerFunc
+	MethodType string
 }
 
 func NewEndpoint(path, methodType string, handler http.HandlerFunc) EndPoint {
 	return EndPoint{
-		path:        path,
-		handlerFunc: handler,
-		methodType:  methodType,
+		Path:       path,
+		Handler:    handler,
+		MethodType: methodType,
 	}
 }
 
 type API struct {
 	Endpoints []EndPoint
+}
+
+func MakeAPI(endpoints []EndPoint) *API {
+	r := &API{}
+	for _, e := range endpoints {
+		r.AddEndpoint(e)
+	}
+	return r
 }
 
 func (a *API) AddEndpoint(e EndPoint) {
@@ -57,7 +65,7 @@ func (a *API) AddEndpoint(e EndPoint) {
 func (a *API) Routes() *mux.Router {
 	router := mux.NewRouter()
 	for _, e := range a.Endpoints {
-		router.Handle(e.path, e.handlerFunc).Methods(e.methodType)
+		router.Handle(e.Path, e.Handler).Methods(e.MethodType)
 	}
 	return router
 }

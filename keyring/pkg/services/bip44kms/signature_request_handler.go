@@ -10,8 +10,8 @@ import (
 	"github.com/qredo/fusionchain/keyring/pkg/api"
 	"github.com/qredo/fusionchain/keyring/pkg/common"
 	"github.com/qredo/fusionchain/keyring/pkg/database"
+	"github.com/qredo/fusionchain/keyring/pkg/fusionclient"
 	"github.com/qredo/fusionchain/keyring/pkg/mpc"
-	"github.com/qredo/fusionchain/keyring/pkg/services/mpcrelayer"
 	"github.com/qredo/fusionchain/x/treasury/types"
 	"github.com/sirupsen/logrus"
 )
@@ -33,7 +33,7 @@ type signatureRequestQueueItem struct {
 	request  *types.SignRequest
 }
 
-func newFusionSignatureController(logger *logrus.Entry, prefixDB database.Database, q chan *signatureRequestQueueItem, keyringClient Keyring, txc mpcrelayer.TxClient) *signatureController {
+func newFusionSignatureController(logger *logrus.Entry, prefixDB database.Database, q chan *signatureRequestQueueItem, keyringClient Keyring, txc fusionclient.TxClient) *signatureController {
 	s := &FusionSignatureRequestHandler{
 		KeyDB:         prefixDB,
 		keyringClient: keyringClient,
@@ -107,7 +107,7 @@ func (s *signatureController) executeRequest(item *signatureRequestQueueItem) er
 	return nil
 }
 
-func (s signatureController) healthcheck() *api.HealthResponse {
+func (s signatureController) Healthcheck() *api.HealthResponse {
 	return s.signatureRequestsHandler.healthcheck()
 }
 
@@ -120,7 +120,7 @@ type SignatureRequestsHandler interface {
 type FusionSignatureRequestHandler struct {
 	KeyDB         database.Database
 	keyringClient Keyring
-	TxClient      mpcrelayer.TxClient
+	TxClient      fusionclient.TxClient
 	Logger        *logrus.Entry
 }
 

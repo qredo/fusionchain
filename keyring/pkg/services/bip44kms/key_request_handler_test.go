@@ -39,7 +39,7 @@ func Test_KeyControllerStartStop(t *testing.T) {
 	if err := k.Start(); err != nil {
 		t.Fatal(err)
 	}
-	_ = k.healthcheck()
+	_ = k.Healthcheck()
 	if err := k.Stop(); err != nil {
 		t.Fatal(err)
 	}
@@ -91,7 +91,6 @@ func testSetupKeyController(t *testing.T) *keyController {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("test mnemonic: %v", mn)
 	cl, err := NewBip44KeyRing(mn, "", mpc.EcDSA)
 	if err != nil {
 		t.Fatal(err)

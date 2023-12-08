@@ -6,9 +6,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/qredo/fusionchain/go-client"
 	"github.com/qredo/fusionchain/keyring/pkg/database"
+	"github.com/qredo/fusionchain/keyring/pkg/fusionclient"
 	"github.com/qredo/fusionchain/keyring/pkg/logger"
 	"github.com/qredo/fusionchain/keyring/pkg/mpc"
-	"github.com/qredo/fusionchain/keyring/pkg/services/mpcrelayer"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -109,7 +109,7 @@ func makeKeyringClient(config *ServiceConfig, log *logrus.Entry, dB database.Dat
 	return
 }
 
-func makeFusionGRPCClient(config *ServiceConfig, identity client.Identity) (mpcrelayer.QueryClient, mpcrelayer.TxClient, error) {
+func makeFusionGRPCClient(config *ServiceConfig, identity client.Identity) (fusionclient.QueryClient, fusionclient.TxClient, error) {
 	fusionGRPCClient, err := grpc.Dial(
 		config.FusionURL,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
