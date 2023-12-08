@@ -68,6 +68,18 @@ type KeyringService interface { // Keyring service APIs
 	Mnemonic(w http.ResponseWriter, r *http.Request)
 }
 
+// PasswordProtected wraps the handler with password verification.
+func PasswordProtected(password string, handler http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		pwd := req.Header.Get(pwdHeaderKey)
+		if password != pwd {
+			rpc.RespondWithError(w, http.StatusBadRequest, errInvalidPswd)
+			return
+		}
+		handler(w, req)
+	}
+}
+
 // HandleStatusRequest handles the /status query and will always respond OK
 func HandleStatusRequest(w http.ResponseWriter, logger *logrus.Entry, serviceName string) {
 	resp := Response{Message: "OK", Version: common.FullVersion, Service: serviceName}
@@ -104,12 +116,7 @@ func HandleHealthcheckRequest(w http.ResponseWriter, modules []Module, logger *l
 
 // HandleKeyringRequest implements the /keyring endpoint, keyring address registered for the service.
 // PASSWORD PROTECTION is used, the http header must contain the correct password for the service.
-func HandleKeyringRequest(w http.ResponseWriter, r *http.Request, logger *logrus.Entry, password, keyringAddr, keyRingSigner, serviceName string) {
-	pwd := r.Header.Get(pwdHeaderKey)
-	if password != pwd {
-		rpc.RespondWithError(w, http.StatusBadRequest, errInvalidPswd)
-		return
-	}
+func HandleKeyringRequest(w http.ResponseWriter, logger *logrus.Entry, keyringAddr, keyRingSigner, serviceName string) {
 	if err := rpc.RespondWithJSON(w, http.StatusOK, &Response{
 		Service:       serviceName,
 		Version:       common.FullVersion,
@@ -124,12 +131,7 @@ func HandleKeyringRequest(w http.ResponseWriter, r *http.Request, logger *logrus
 // HandlePubKeyRequest implements the /pubkeys endpoint, returning a list of registered keyID and public keys
 // stored in the local database. PASSWORD PROTECTION is used, the http header must contain the correct password for
 // the service.
-func HandlePubKeyRequest(w http.ResponseWriter, r *http.Request, logger *logrus.Entry, db database.Database, password, serviceName string) {
-	pwd := r.Header.Get(pwdHeaderKey)
-	if password != pwd {
-		rpc.RespondWithError(w, http.StatusBadRequest, errInvalidPswd)
-		return
-	}
+func HandlePubKeyRequest(w http.ResponseWriter, logger *logrus.Entry, db database.Database, serviceName string) {
 	pKeyResponse := &Response{
 		Service: serviceName,
 		Version: common.FullVersion,
@@ -163,12 +165,7 @@ func HandlePubKeyRequest(w http.ResponseWriter, r *http.Request, logger *logrus.
 
 // HandleMnemonicRequest implements the /mnemonic endpoint, returning the BIP39 seed phrase used to derive the keyring's master seed.
 // PASSWORD PROTECTION is used, the http header must contain the correct password for the service.
-func HandleMnemonicRequest(w http.ResponseWriter, r *http.Request, logger *logrus.Entry, password, mnemonic, serviceName string) {
-	pwd := r.Header.Get(pwdHeaderKey)
-	if password != pwd {
-		rpc.RespondWithError(w, http.StatusBadRequest, errInvalidPswd)
-		return
-	}
+func HandleMnemonicRequest(w http.ResponseWriter, logger *logrus.Entry, password, mnemonic, serviceName string) {
 	if err := rpc.RespondWithJSON(w, http.StatusOK, &Response{
 		Service:      serviceName,
 		Version:      common.FullVersion,
