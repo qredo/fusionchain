@@ -55,7 +55,7 @@ func Test_RateLimit(t *testing.T) {
 
 	for _, tt := range apiTests {
 		t.Run(tt.name, func(t *testing.T) {
-			method := PasswordProtectedWithRateLimit(m.password, tt.ratelimit, time.Second, m.PubKeys)
+			method := WithRateLimit(tt.ratelimit, time.Second, PasswordProtected(m.password, m.PubKeys))
 			httpReq := httptest.NewRequest(http.MethodGet, tt.endpoint, nil)
 			respRecorder := httptest.NewRecorder()
 			for i := 0; i < tt.requests; i++ {
@@ -84,7 +84,7 @@ func Test_TokenRefill(t *testing.T) {
 	duration := 10 * time.Millisecond
 	pause := 11 * time.Millisecond
 
-	method := PasswordProtectedWithRateLimit(m.password, 1, duration, m.Mnemonic)
+	method := WithRateLimit(1, duration, m.Status)
 	httpReq := httptest.NewRequest(http.MethodGet, PubKeysEndPnt, nil)
 	respRecorder := httptest.NewRecorder()
 

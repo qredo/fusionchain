@@ -82,18 +82,13 @@ func PasswordProtected(password string, handler http.HandlerFunc) http.HandlerFu
 	}
 }
 
-// PasswordProtectedWithRateLimit wraps the handler with password verification. The rateLimit represents the number of requests
+// WithRateLimit wraps the handler with a rate limiter. The rateLimit represents the number of requests
 // within the given duration e.g. rateLimit = 2, duration = time.Second ==> 2 req/second.
-func PasswordProtectedWithRateLimit(password string, rateLimit int, duration time.Duration, handler http.HandlerFunc) http.HandlerFunc {
+func WithRateLimit(rateLimit int, duration time.Duration, handler http.HandlerFunc) http.HandlerFunc {
 	limiter := NewRateLimiter(rateLimit, duration)
 	go limiter.refillTokens()
 	return func(w http.ResponseWriter, req *http.Request) {
 		if limiter.takeToken() {
-			pwd := req.Header.Get(pwdHeaderKey)
-			if password != pwd {
-				rpc.RespondWithError(w, http.StatusBadRequest, errInvalidPswd)
-				return
-			}
 			handler(w, req)
 			return
 		}
