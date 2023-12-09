@@ -15,7 +15,7 @@ jobs:
        startsWith(github.ref_name, 'fusionkms@') ||
        startsWith(github.ref_name, 'fusionmodel@') ||
        startsWith(github.ref_name, 'mpcfusionmodel@') ||
-       startsWith(github.ref_name, 'mpc-relayer@') ||
+       startsWith(github.ref_name, 'mpcrelayer@') ||
        startsWith(github.ref_name, 'fusion-stack@') ||
        startsWith(github.ref_name, 'relayer-eth@') 
     steps:
