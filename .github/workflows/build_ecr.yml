@@ -30,6 +30,7 @@ jobs:
       - name: Set tags
         id: vars
         run: |
+          echo "ARCHITECTURE=x86_64" >> $GITHUB_ENV
           echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "COMMIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
           echo "BUILD_DATE=$(git show -s --format=%ci ${{ env.COMMIT_SHA }})" >> $GITHUB_ENV
@@ -45,6 +46,7 @@ jobs:
           context: .
           file: ./docker/Dockerfile-${{ env.REF }}
           build-args: |
+             ARCH=${{ env.ARCHITECTURE }}
              SERVICE=${{ env.REF }}
              GIT_SHA=${{ env.COMMIT_SHA }}
              BUILD_DATE=${{ env.BUILD_DATE }}
