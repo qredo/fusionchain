@@ -23,7 +23,7 @@ var (
 	defaultHandlerTimeout = 60 * time.Second
 	defaultQueryTimeout   = 5 * time.Second
 
-	defaultMaxRetries    int64 = 100
+	defaultMaxRetries    int64 = 10
 	defaultQueryInterval int64 = 5
 
 	defaultRetryTimeout = 30 * time.Second
