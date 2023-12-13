@@ -120,7 +120,7 @@ func (s *signatureController) executeRequest(item *signatureRequestQueueItem) er
 	return nil
 }
 
-func (s signatureController) Healthcheck() *api.HealthResponse {
+func (s *signatureController) Healthcheck() *api.HealthResponse {
 	return s.signatureRequestsHandler.Healthcheck()
 }
 
