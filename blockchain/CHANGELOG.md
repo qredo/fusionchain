@@ -1,3 +1,17 @@
+## fusiond [1.1.1](https://github.com/qredo/fusionchain/compare/fusiond@1.1.0...fusiond@1.1.1) (2023-12-12)
+
+
+### Bug Fixes
+
+* **blockchain:** keyring.Fees can be nil ([#176](https://github.com/qredo/fusionchain/issues/176)) ([2cbc75d](https://github.com/qredo/fusionchain/commit/2cbc75d0c8374ab4c825b2dc3a7a3299eec09648))
+
+# fusiond [1.1.0](https://github.com/qredo/fusionchain/compare/fusiond@1.0.1...fusiond@1.1.0) (2023-12-12)
+
+
+### Features
+
+* **keyring:** add keyring releaserc JSON ([#171](https://github.com/qredo/fusionchain/issues/171)) ([9dfe5b2](https://github.com/qredo/fusionchain/commit/9dfe5b20b5df63fbc5bdade434522912568ea5cf))
+
 ## fusiond [1.0.1](https://github.com/qredo/fusionchain/compare/fusiond@1.0.0...fusiond@1.0.1) (2023-12-07)
 
 
