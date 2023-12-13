@@ -25,7 +25,7 @@ var (
 	defaultMaxRetries    int64 = 10
 	defaultQueryInterval int64 = 5
 
-	defaultRetryTimeout = 30 * time.Second
+	defaultRetryTimeout = 5 * time.Second
 
 	defaultChanSize = 1000
 

@@ -83,6 +83,8 @@ func (k *keyController) startExecutor() {
 							"retries": i.retries,
 							"error":   err.Error(),
 						}).Error("keyRequestErr")
+					} else {
+						k.tracker.Delete(i.request.Id)
 					}
 				}()
 			}

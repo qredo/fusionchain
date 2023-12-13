@@ -86,10 +86,12 @@ func (s *signatureController) startExecutor() {
 					defer func() { s.threads <- struct{}{} }()
 					if err := s.executeRequest(it); err != nil {
 						s.log.WithFields(logrus.Fields{
-							"requestID": item.request.Id,
+							"requestID": it.request.Id,
 							"retries":   it.retries,
 							"error":     err.Error(),
 						}).Error("signRequestErr")
+					} else {
+						s.tracker.Delete(it.request.Id)
 					}
 				}()
 			}
@@ -124,12 +126,12 @@ func (s *signatureController) executeRequest(item *signatureRequestQueueItem) er
 }
 
 func (s *signatureController) Healthcheck() *api.HealthResponse {
-	return s.signatureRequestsHandler.healthcheck()
+	return s.signatureRequestsHandler.Healthcheck()
 }
 
 type SignatureRequestsHandler interface {
 	HandleSignatureRequest(ctx context.Context, item *signatureRequestQueueItem) error
-	healthcheck() *api.HealthResponse
+	Healthcheck() *api.HealthResponse
 }
 
 // FusionSignatureRequestHandler implements SignatureRequestsHandler.
@@ -225,6 +227,6 @@ func updatePkEntry(db database.Database, keyIDStr string) error {
 	return nil
 }
 
-func (*FusionSignatureRequestHandler) healthcheck() *api.HealthResponse {
+func (*FusionSignatureRequestHandler) Healthcheck() *api.HealthResponse {
 	return &api.HealthResponse{}
 }

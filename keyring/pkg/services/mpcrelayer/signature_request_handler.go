@@ -84,9 +84,12 @@ func (s *signatureController) startExecutor() {
 					defer func() { s.threads <- struct{}{} }()
 					if err := s.executeRequest(it); err != nil {
 						s.log.WithFields(logrus.Fields{
-							"retries": it.retries,
-							"error":   err.Error(),
+							"requestID": it.request.Id,
+							"retries":   it.retries,
+							"error":     err.Error(),
 						}).Error("signRequestErr")
+					} else {
+						s.tracker.Delete(it.request.Id)
 					}
 				}()
 			}
