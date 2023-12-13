@@ -75,11 +75,12 @@ func (s *signatureController) startExecutor() {
 		case item := <-s.queue:
 			// process queue items async
 			go func() {
+				it := item
 				<-s.threads
 				defer func() { s.threads <- struct{}{} }()
-				if err := s.executeRequest(item); err != nil {
+				if err := s.executeRequest(it); err != nil {
 					s.log.WithFields(logrus.Fields{
-						"retries": item.retries,
+						"retries": it.retries,
 						"error":   err.Error(),
 					}).Error("signRequestErr")
 				}

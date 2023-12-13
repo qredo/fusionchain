@@ -70,8 +70,8 @@ func (k *keyController) startExecutor() {
 			return
 		case item := <-k.queue:
 			go func() {
-				i := item
 				<-k.threads
+				i := item
 				defer func() { k.threads <- struct{}{} }()
 				if err := k.executeRequest(i); err != nil {
 					k.log.WithFields(logrus.Fields{
