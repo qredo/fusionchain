@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/qredo/fusionchain/keyring/pkg/api"
@@ -18,6 +19,7 @@ import (
 
 type signatureController struct {
 	queue                    chan *signatureRequestQueueItem
+	tracker                  sync.Map
 	signatureRequestsHandler SignatureRequestsHandler
 	log                      *logrus.Entry
 
@@ -43,6 +45,7 @@ func newFusionSignatureController(logger *logrus.Entry, prefixDB database.Databa
 	return &signatureController{
 		queue:                    q,
 		signatureRequestsHandler: s,
+		tracker:                  sync.Map{},
 		log:                      logger,
 		threads:                  makeThreads(defaultThreads),
 		stop:                     make(chan struct{}, 1),
@@ -74,17 +77,23 @@ func (s *signatureController) startExecutor() {
 			return
 		case item := <-s.queue:
 			// process queue items async
-			go func() {
-				it := item
-				<-s.threads
-				defer func() { s.threads <- struct{}{} }()
-				if err := s.executeRequest(it); err != nil {
-					s.log.WithFields(logrus.Fields{
-						"retries": it.retries,
-						"error":   err.Error(),
-					}).Error("signRequestErr")
-				}
-			}()
+			// check whether the item already being processed
+			if _, ok := s.tracker.Load(item.request.Id); !ok {
+				s.tracker.Store(item.request.Id, true)
+				go func() {
+					it := item
+					<-s.threads
+					defer func() { s.threads <- struct{}{} }()
+					if err := s.executeRequest(it); err != nil {
+						s.log.WithFields(logrus.Fields{
+							"requestID": item.request.Id,
+							"retries":   it.retries,
+							"error":     err.Error(),
+						}).Error("signRequestErr")
+					}
+				}()
+			}
+
 		}
 	}
 }
