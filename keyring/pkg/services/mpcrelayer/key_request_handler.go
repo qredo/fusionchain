@@ -72,7 +72,7 @@ func (k *keyController) startExecutor() {
 			k.wait <- struct{}{}
 			return
 		case item := <-k.queue:
-			if _, ok := k.tracker.Load(item.request.Id); !ok {
+			if !k.itemProcessing(item.request.Id, item.retries) {
 				k.tracker.Store(item.request.Id, true)
 				go func() {
 					i := item
@@ -88,6 +88,13 @@ func (k *keyController) startExecutor() {
 			}
 		}
 	}
+}
+
+func (k *keyController) itemProcessing(id uint64, tries int) (ok bool) {
+	if tries == 0 {
+		_, ok = k.tracker.Load(id)
+	}
+	return ok
 }
 
 // Stop implements Module.Stop()

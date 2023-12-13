@@ -78,7 +78,7 @@ func (s *signatureController) startExecutor() {
 		case item := <-s.queue:
 			// process queue items async
 			// check whether the item already being processed
-			if _, ok := s.tracker.Load(item.request.Id); !ok {
+			if !s.itemProcessing(item.request.Id, item.retries) {
 				s.tracker.Store(item.request.Id, true)
 				go func() {
 					it := item
@@ -96,6 +96,13 @@ func (s *signatureController) startExecutor() {
 
 		}
 	}
+}
+
+func (s *signatureController) itemProcessing(id uint64, tries int) (ok bool) {
+	if tries == 0 {
+		_, ok = s.tracker.Load(id)
+	}
+	return ok
 }
 
 // Stop implements Module.Stop()
