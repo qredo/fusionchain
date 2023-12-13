@@ -132,15 +132,27 @@ fchain q identity workspaces
 You can add custom policies to fusionchain and assign it to your workspaces. 
 
 ```bash
-## create new policy
-fchain tx policy new-policy test "(p1 + p2) > 0" --yes
+## create new policy. define participants of this policy with the default and a second user
+fchain tx policy new-policy test "(p1 + p2) > 0" -p p1:qredo1d652c9nngq5cneak2whyaqa4g9ehr8psyl0t7j,p2:qredo1s3qj9p0ymugy6chyrwy3ft2s5u24fc320vdvv5 --yes
 
-## check the new policy was created
+## check the new policy was created. Investigate the definition and the participants which should be the same as in the previous step
 fchain q policy policies
 
 ## update the admin and sign policy of the workspace to the new policy (id=1)
 fchain tx identity update-workspace qredoworkspace14a2hpadpsy9h5m6us54 1 1 1000 --yes
 
 ## check the workspace has admin_policy_id and signature_policy_id = "1"
+fchain q identity workspace-by-address qredoworkspace14a2hpadpsy9h5m6us54
+
+## create a new policy to later add it to a workspace
+fchain tx policy new-policy test "(p1) > 0" -p p1:qredo1d652c9nngq5cneak2whyaqa4g9ehr8psyl0t7j --yes
+
+## check if the new policy with id="2" was created.
+fchain q policy policies
+
+## update the admin policy of the workspace with the new policy (id="2")
+fchain tx identity update-workspace qredoworkspace14a2hpadpsy9h5m6us54 2 1 1000 --yes
+
+## check the workspace has admin_policy_id = "2" and signature_policy_id = "1"
 fchain q identity workspace-by-address qredoworkspace14a2hpadpsy9h5m6us54
 ```
