@@ -18,8 +18,6 @@ func NewWallet(k *Key, w WalletType) (Wallet, error) {
 		return NewFusionWallet(k)
 	case WalletType_WALLET_TYPE_ETH:
 		return NewEthereumWallet(k)
-	case WalletType_WALLET_TYPE_ETH_SEPOLIA:
-		return NewEthereumWallet(k)
 	}
 	return nil, ErrUnknownWalletType
 }
