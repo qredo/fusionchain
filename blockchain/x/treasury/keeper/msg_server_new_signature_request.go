@@ -21,7 +21,7 @@ func (k msgServer) NewSignatureRequest(goCtx context.Context, msg *types.MsgNewS
 		return nil, fmt.Errorf("key not found")
 	}
 
-	if len(msg.DataForSigning) != 32 {
+	if len(msg.DataForSigning) != 32 && key.Type == 1 {
 		return nil, fmt.Errorf("signed data is not 32 bytes. Length is: %d", len(msg.DataForSigning))
 	}
 
