@@ -27,8 +27,8 @@ import (
 func TestInitCmd(t *testing.T) {
 	rootCmd, _ := fusiond.NewRootCmd()
 	rootCmd.SetArgs([]string{
-		"init",          // Test the init cmd
-		"etherminttest", // Moniker
+		"init",       // Test the init cmd
+		"fusiontest", // Moniker
 		fmt.Sprintf("--%s=%s", cli.FlagOverwrite, "true"), // Overwrite genesis.json, in case it already exists
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, "qredofusiontestnet_257-1"),
 	})

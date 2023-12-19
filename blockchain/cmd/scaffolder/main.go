@@ -18,7 +18,7 @@ import (
 // queries to existing Cosmos SDK modules.
 //
 // We are developing this to be a simpler version of Ignite compatible with
-// Ethermint chains and focused on our needs.
+// Fusion and focused on our needs.
 func main() {
 	cmd.Execute()
 }
