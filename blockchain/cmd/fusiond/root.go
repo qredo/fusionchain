@@ -302,7 +302,7 @@ func (a appCreator) appExport(
 	appOpts servertypes.AppOptions,
 	modulesToExport []string,
 ) (servertypes.ExportedApp, error) {
-	var FusionApp *app.FusionApp
+	var fusionApp *app.FusionApp
 	homePath, ok := appOpts.Get(flags.FlagHome).(string)
 	if !ok || homePath == "" {
 		return servertypes.ExportedApp{}, errors.New("application home not set")
@@ -314,7 +314,7 @@ func (a appCreator) appExport(
 	} else {
 		loadLatest = true
 	}
-	FusionApp = app.NewFusionApp(
+	fusionApp = app.NewFusionApp(
 		logger,
 		db,
 		traceStore,
@@ -328,10 +328,10 @@ func (a appCreator) appExport(
 		baseapp.SetChainID(app.ChainID),
 	)
 	if height != -1 {
-		if err := FusionApp.LoadHeight(height); err != nil {
+		if err := fusionApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	}
 
-	return FusionApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
+	return fusionApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
 }
