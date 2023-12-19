@@ -90,10 +90,13 @@ func getBalances(wl Watchlist) (map[string]string, error) {
 		addresses += addr
 	}
 	apiKey := "BKVXZFMCHBIBVA52D4KWT18Q2PIKKXQXBZ"
-	url := fmt.Sprintf("https://api-sepolia.etherscan.io/api?module=account&action=balancemulti&address=%s&tag=latest&apikey=%s", addresses, apiKey)
 	outputMap := make(map[string]string)
 
-	resp, err := http.Get(url)
+	req, err := http.NewRequest(http.MethodGet, makeURL(addresses, apiKey), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -119,6 +122,11 @@ func getBalances(wl Watchlist) (map[string]string, error) {
 		outputMap[account] = balance
 	}
 	return outputMap, nil
+}
+
+func makeURL(addresses, apiKey string) string {
+	url := fmt.Sprintf("https://api-sepolia.etherscan.io/api?module=account&action=balancemulti&address=%s&tag=latest&apikey=%s", addresses, apiKey)
+	return url
 }
 
 func writeBalancesToContract(balances map[string]string, privKey string, dir string) error {
