@@ -8,7 +8,7 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with the Fusion library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
-package blackbird
+package policy
 
 import (
 	"context"

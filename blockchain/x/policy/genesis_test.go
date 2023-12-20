@@ -8,13 +8,14 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with the Fusion library. If not, see https://github.com/qredo/fusionchain/blob/main/LICENSE
-package blackbird_test
+package policy_test
 
 import (
 	"testing"
 
 	keepertest "github.com/qredo/fusionchain/testutil/keeper"
 	"github.com/qredo/fusionchain/testutil/nullify"
+	"github.com/qredo/fusionchain/x/policy"
 	"github.com/qredo/fusionchain/x/policy/types"
 	"github.com/stretchr/testify/require"
 )
@@ -27,8 +28,8 @@ func TestGenesis(t *testing.T) {
 	}
 
 	k, ctx := keepertest.PolicyKeeper(t)
-	blackbird.InitGenesis(ctx, *k, genesisState)
-	got := blackbird.ExportGenesis(ctx, *k)
+	policy.InitGenesis(ctx, *k, genesisState)
+	got := policy.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
 
 	nullify.Fill(&genesisState)
