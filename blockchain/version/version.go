@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	AppVersion = "0.0.1"
+	AppVersion = "1.1.2"
 	GitCommit  = ""
 	BuildDate  = ""
 	GoVersion  = ""
