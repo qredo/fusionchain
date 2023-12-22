@@ -80,11 +80,11 @@ func (k *Key) ToEdDSAEd25519() (*ed25519.PublicKey, error) {
 
 	var pk *ed25519.PublicKey
 
-	if len(k.PublicKey) == 32 {
+	if len(k.PublicKey) == 33 {
 		pubKey := ed25519.PublicKey(k.PublicKey)
 		pk = &pubKey
 	} else {
-		return nil, fmt.Errorf("invalid key lenght, expected 32, got %d", len(k.PublicKey))
+		return nil, fmt.Errorf("invalid key length, expected 33, got %d and key %v", len(k.PublicKey), k)
 	}
 
 	return pk, nil

@@ -38,8 +38,11 @@ func (k Keeper) Keys(goCtx context.Context, req *types.QueryKeysRequest) (*types
 		var wTypes []types.WalletType
 		if req.Type != types.WalletType_WALLET_TYPE_UNSPECIFIED {
 			wTypes = []types.WalletType{req.Type}
+		}
+		if req.Type != types.WalletType_WALLET_TYPE_SUI {
+			wTypes = []types.WalletType{types.WalletType_WALLET_TYPE_SUI}
 		} else {
-			wTypes = []types.WalletType{types.WalletType_WALLET_TYPE_FUSION, types.WalletType_WALLET_TYPE_ETH, types.WalletType_WALLET_TYPE_CELESTIA, types.WalletType_WALLET_TYPE_SUI}
+			wTypes = []types.WalletType{types.WalletType_WALLET_TYPE_FUSION, types.WalletType_WALLET_TYPE_ETH, types.WalletType_WALLET_TYPE_CELESTIA}
 		}
 		for _, wType := range wTypes {
 			var (
