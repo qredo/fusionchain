@@ -34,7 +34,7 @@ func (k msgServer) NewSignTransactionRequest(goCtx context.Context, msg *types.M
 	if err != nil {
 		return nil, err
 	}
-	return k.NewSignTransactionRequestActionHandler(ctx, act, &cdctypes.Any{}, key.Type)
+	return k.NewSignTransactionRequestActionHandler(ctx, act, &cdctypes.Any{})
 }
 
 func (k msgServer) NewSignTransactionRequestPolicyGenerator(ctx sdk.Context, msg *types.MsgNewSignTransactionRequest) (policy.Policy, error) {
@@ -52,7 +52,7 @@ func (k msgServer) NewSignTransactionRequestPolicyGenerator(ctx sdk.Context, msg
 	return pol, nil
 }
 
-func (k msgServer) NewSignTransactionRequestActionHandler(ctx sdk.Context, act *bbirdtypes.Action, payload *cdctypes.Any, keyType types.KeyType) (*types.MsgNewSignTransactionRequestResponse, error) {
+func (k msgServer) NewSignTransactionRequestActionHandler(ctx sdk.Context, act *bbirdtypes.Action, payload *cdctypes.Any) (*types.MsgNewSignTransactionRequestResponse, error) {
 	return bbird.TryExecuteAction(
 		k.policyKeeper,
 		k.cdc,
@@ -89,7 +89,7 @@ func (k msgServer) NewSignTransactionRequestActionHandler(ctx sdk.Context, act *
 			signatureRequest := &types.SignRequest{
 				Creator:        msg.Creator,
 				KeyId:          msg.KeyId,
-				KeyType:        keyType,
+				KeyType:        key.Type,
 				DataForSigning: tx.DataForSigning,
 				Status:         types.SignRequestStatus_SIGN_REQUEST_STATUS_PENDING,
 			}
