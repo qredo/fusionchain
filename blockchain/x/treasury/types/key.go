@@ -12,6 +12,7 @@ package types
 
 import (
 	"crypto/ecdsa"
+	"crypto/ed25519"
 	fmt "fmt"
 
 	"github.com/ethereum/go-ethereum/crypto"
@@ -66,6 +67,24 @@ func (k *Key) ToECDSASecp256k1() (*ecdsa.PublicKey, error) {
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	return pk, nil
+}
+
+// ToEdDSAEd25519 returns the key parsed as a EdDSA Ed25519 public key.
+func (k *Key) ToEdDSAEd25519() (*ed25519.PublicKey, error) {
+	if k.Type != KeyType_KEY_TYPE_EDDSA_ED25519 {
+		return nil, fmt.Errorf("invalid key type, expected %s, got %s", KeyType_KEY_TYPE_EDDSA_ED25519, k.Type)
+	}
+
+	var pk *ed25519.PublicKey
+
+	if len(k.PublicKey) == 32 {
+		pubKey := ed25519.PublicKey(k.PublicKey)
+		pk = &pubKey
+	} else {
+		return nil, fmt.Errorf("invalid key lenght, expected 32, got %d", len(k.PublicKey))
 	}
 
 	return pk, nil
