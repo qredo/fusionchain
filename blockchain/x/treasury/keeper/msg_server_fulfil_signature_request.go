@@ -36,11 +36,11 @@ func (k msgServer) FulfilSignatureRequest(goCtx context.Context, msg *types.MsgF
 		switch req.KeyType {
 		case types.KeyType_KEY_TYPE_ECDSA_SECP256K1:
 			if l := len(sigData); l != 64 && l != 65 {
-				return nil, fmt.Errorf("invalid ecdsa public key %x of length %v", sigData, l)
+				return nil, fmt.Errorf("invalid ecdsa signature %x of length %v", sigData, l)
 			}
 		case types.KeyType_KEY_TYPE_EDDSA_ED25519:
 			if l := len(sigData); l != ed25519.SignatureSize {
-				return nil, fmt.Errorf("invalid eddsa public key %x of length %v", sigData, l)
+				return nil, fmt.Errorf("invalid eddsa signature %x of length %v", sigData, l)
 			}
 		default:
 			return nil, fmt.Errorf("invalid key type: %v", req.KeyType.String())
