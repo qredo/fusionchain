@@ -172,9 +172,9 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 		return err
 	}
 	cryptoSys := mpc.EcDSA
-	// if item.request.KeyType == types.KeyType_KEY_TYPE_EDDSA_ED25519 { - TODO add keytype to request API
-	//	cryptoSys = mpc.EdDSA
-	// }
+	if item.request.KeyType == types.KeyType_KEY_TYPE_EDDSA_ED25519 {
+		cryptoSys = mpc.EdDSA
+	}
 
 	// Generate a signature. The returned signature is 65-byte and of the form [r, s, v]
 	// with recoveryID v, valid on the Ethereum network
