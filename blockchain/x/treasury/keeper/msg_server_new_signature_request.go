@@ -34,7 +34,7 @@ func (k msgServer) NewSignatureRequest(goCtx context.Context, msg *types.MsgNewS
 		return nil, fmt.Errorf("keyring is nil or is inactive")
 	}
 
-	act, err := k.policyKeeper.AddAction(ctx, msg.Creator, msg, ws.SignPolicyId, msg.Btl, key.Type)
+	act, err := k.policyKeeper.AddAction(ctx, msg.Creator, msg, ws.SignPolicyId, msg.Btl)
 	if err != nil {
 		return nil, err
 	}
