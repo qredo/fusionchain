@@ -35,10 +35,13 @@ func (k Keeper) Keys(goCtx context.Context, req *types.QueryKeysRequest) (*types
 			Key: value,
 		}
 
-		// var wTypes []types.WalletType
+		// all wallet types for ECDSA keys
 		wTypesECDSA := []types.WalletType{types.WalletType_WALLET_TYPE_FUSION, types.WalletType_WALLET_TYPE_ETH, types.WalletType_WALLET_TYPE_CELESTIA}
+
+		// all wallet types for EdDSA keys
 		wTypesEdDSA := []types.WalletType{types.WalletType_WALLET_TYPE_SUI}
 
+		// create addresses for all wallets that require an ECDSA key
 		if value.Type == types.KeyType_KEY_TYPE_ECDSA_SECP256K1 {
 			for _, wType := range wTypesECDSA {
 				var (
@@ -68,6 +71,7 @@ func (k Keeper) Keys(goCtx context.Context, req *types.QueryKeysRequest) (*types
 			}
 		}
 
+		// create addresses for all wallets that require an EdDSA key
 		if value.Type == types.KeyType_KEY_TYPE_EDDSA_ED25519 {
 			for _, wType := range wTypesEdDSA {
 				var (
@@ -76,11 +80,16 @@ func (k Keeper) Keys(goCtx context.Context, req *types.QueryKeysRequest) (*types
 					walletType types.WalletType
 				)
 
-				switch wType {
-				case types.WalletType_WALLET_TYPE_SUI:
+				if wType == types.WalletType_WALLET_TYPE_SUI {
 					address, err = types.SuiAddress(value)
 					walletType = types.WalletType_WALLET_TYPE_SUI
 				}
+				// uncomment when we add more eddsa keys
+				// switch wType {
+				// case types.WalletType_WALLET_TYPE_SUI:
+				// 	address, err = types.SuiAddress(value)
+				// 	walletType = types.WalletType_WALLET_TYPE_SUI
+				// }
 				if err != nil {
 					return nil, err
 				}
