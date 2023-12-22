@@ -169,7 +169,7 @@ func (h *FusionKeyRequestHandler) HandleKeyRequests(ctx context.Context, item *k
 		return err
 	}
 
-	var cryptoSys mpc.CryptoSystem = mpc.EcDSA
+	cryptoSys := mpc.EcDSA
 	if item.request.KeyType == types.KeyType_KEY_TYPE_EDDSA_ED25519 {
 		cryptoSys = mpc.EdDSA
 	}

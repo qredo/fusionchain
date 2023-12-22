@@ -170,10 +170,10 @@ func (h *FusionSignatureRequestHandler) HandleSignatureRequest(ctx context.Conte
 		return err
 	}
 
-	var cryptoSys mpc.CryptoSystem = mpc.EcDSA
-	//if item.request.KeyType == types.KeyType_KEY_TYPE_EDDSA_ED25519 { - TODO add keytype to sig request
+	cryptoSys := mpc.EcDSA
+	// if item.request.KeyType == types.KeyType_KEY_TYPE_EDDSA_ED25519 { - TODO add keytype to sig request
 	//	cryptoSys = mpc.EdDSA
-	//}
+	// }
 
 	// reuest a signature via the MPC/Keyring client
 	sigResponse, _, err := h.keyringClient.Signature(&mpc.SigRequestData{
