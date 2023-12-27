@@ -37,7 +37,6 @@ func (k Keeper) Keys(goCtx context.Context, req *types.QueryKeysRequest) (*types
 
 		// create addresses for all wallets that require an ECDSA key
 		if value.Type == types.KeyType_KEY_TYPE_ECDSA_SECP256K1 {
-
 			var wTypesECDSA []types.WalletType
 			// all wallet types for ECDSA keys
 			switch req.Type {
