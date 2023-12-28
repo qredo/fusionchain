@@ -50,41 +50,45 @@ func (k Keeper) Keys(goCtx context.Context, req *types.QueryKeysRequest) (*types
 				wTypesECDSA = []types.WalletType{types.WalletType_WALLET_TYPE_FUSION, types.WalletType_WALLET_TYPE_ETH, types.WalletType_WALLET_TYPE_CELESTIA}
 			}
 
-			if value.Type == types.KeyType_KEY_TYPE_ECDSA_SECP256K1 {
-				for _, wType := range wTypesECDSA {
-					var (
-						address    string
-						err        error
-						walletType types.WalletType
-					)
+			for _, wType := range wTypesECDSA {
+				var (
+					address    string
+					err        error
+					walletType types.WalletType
+				)
 
-					switch wType {
-					case types.WalletType_WALLET_TYPE_FUSION | types.WalletType_WALLET_TYPE_UNSPECIFIED:
-						address, err = types.FusionChainAddress(value)
-						walletType = types.WalletType_WALLET_TYPE_FUSION
-					case types.WalletType_WALLET_TYPE_ETH | types.WalletType_WALLET_TYPE_UNSPECIFIED:
-						address, err = types.EthereumAddress(value)
-						walletType = types.WalletType_WALLET_TYPE_ETH
-					case types.WalletType_WALLET_TYPE_CELESTIA | types.WalletType_WALLET_TYPE_UNSPECIFIED:
-						address, err = types.CelestiaAddress(value)
-						walletType = types.WalletType_WALLET_TYPE_CELESTIA
-					}
-					if err != nil {
-						return nil, err
-					}
-					response.Wallets = append(response.Wallets, &types.WalletKeyResponse{
-						Address: address,
-						Type:    walletType,
-					})
+				switch wType {
+				case types.WalletType_WALLET_TYPE_FUSION:
+					address, err = types.FusionChainAddress(value)
+					walletType = types.WalletType_WALLET_TYPE_FUSION
+				case types.WalletType_WALLET_TYPE_ETH:
+					address, err = types.EthereumAddress(value)
+					walletType = types.WalletType_WALLET_TYPE_ETH
+				case types.WalletType_WALLET_TYPE_CELESTIA:
+					address, err = types.CelestiaAddress(value)
+					walletType = types.WalletType_WALLET_TYPE_CELESTIA
 				}
+				if err != nil {
+					return nil, err
+				}
+				response.Wallets = append(response.Wallets, &types.WalletKeyResponse{
+					Address: address,
+					Type:    walletType,
+				})
 			}
 		}
 
-		// all wallet types for EdDSA keys
-		wTypesEdDSA := []types.WalletType{types.WalletType_WALLET_TYPE_SUI}
-
 		// create addresses for all wallets that require an EdDSA key
-		if value.Type == types.KeyType_KEY_TYPE_EDDSA_ED25519 {
+		if value.Type == types.KeyType_KEY_TYPE_EDDSA_ED25519 && (req.Type == types.WalletType_WALLET_TYPE_SUI || req.Type == types.WalletType_WALLET_TYPE_UNSPECIFIED) {
+			var wTypesEdDSA []types.WalletType
+			// all wallet types for EdDSA keys
+			switch req.Type {
+			case types.WalletType_WALLET_TYPE_SUI:
+				wTypesEdDSA = []types.WalletType{types.WalletType_WALLET_TYPE_SUI}
+			case types.WalletType_WALLET_TYPE_UNSPECIFIED:
+				wTypesEdDSA = []types.WalletType{types.WalletType_WALLET_TYPE_SUI}
+			}
+
 			for _, wType := range wTypesEdDSA {
 				var (
 					address    string
