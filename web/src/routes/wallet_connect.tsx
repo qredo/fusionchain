@@ -572,7 +572,11 @@ function WalletConnect() {
             <Card key={s.peer.publicKey} className="grow">
               <CardHeader>
                 <div className="flex flex-row gap-2">
-                  <img className="w-8 h-8" src={s.peer.metadata.icons[0]} />
+                  <img className="w-8 h-8" src={
+                    s.peer.metadata.icons[0].startsWith('http') ?
+                    s.peer.metadata.icons[0] :
+                    `${s.peer.metadata.url}${s.peer.metadata.icons[0]}`
+                  } />
                   <CardTitle>{s.peer.metadata.name}</CardTitle>
                 </div>
                 <span>{s.peer.metadata.description}</span>
