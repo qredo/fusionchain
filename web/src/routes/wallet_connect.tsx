@@ -500,7 +500,9 @@ function WalletConnect() {
                           // ethers.TypedDataEncoder tries to determine the
                           // primaryType automatically, but it fails because we
                           // have multiple "roots" in the DAG: one is
-                          // EIP712Domain, one is PermitSingle.
+                          // EIP712Domain, one is specified in
+                          // `data.primaryType` (e.g. "PermitSingle" for
+                          // Uniswap, "dYdX", ...).
                           // I split the types into two objects and manually
                           // create two different encoders.
                           const typesWithoutDomain = { ...data.types };
@@ -514,7 +516,7 @@ function WalletConnect() {
                           // See EIP-712 for the definition of the message to be signed.
                           // https://eips.ethereum.org/EIPS/eip-712#definition-of-domainseparator
                           const domainSeparator = domainEncoder.hashStruct("EIP712Domain", data.domain);
-                          const message = messageEncoder.hashStruct("PermitSingle", data.message);
+                          const message = messageEncoder.hashStruct(data.primaryType, data.message);
                           const toSign = ethers.keccak256(ethers.concat([
                             ethers.getBytes("0x1901"),
                             ethers.getBytes(domainSeparator),
