@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -166,49 +167,66 @@ func ParseEthereumTransaction(b []byte, chainID *big.Int) (*EthereumTransfer, er
 
 	hash := signer.Hash(tx)
 
-	// check if the contract call is an ERC20 transfer - TODO we should refactor this so that value can be extracted from 'known' contract calls
-	transfer, err := parseERC20Transfer(tx, chainID)
-	if err != nil {
-		// non ERC-20 transfer
-		return &EthereumTransfer{
-			To:             tx.To(),
-			Amount:         value,
-			DataForSigning: hash.Bytes(),
-		}, nil
+	transfer := &EthereumTransfer{
+		To:             tx.To(),
+		Amount:         value,
+		DataForSigning: hash.Bytes(),
+	}
+
+	if tx.Data() != nil {
+		// a contract call is being made
+		transfer.Contract = tx.To()
+		callMsg, parsed, err := parseCallData(tx.Data()) // - TODO we should refactor this so that value can be extracted from all known contract calls
+		if err != nil {
+			return nil, err
+		}
+		if !parsed {
+			// Most contract calls will fall into this category. Over time parseCallData must be improved so that
+			// asset value movements can be tracked over an increasing set of contract types.
+			return transfer, nil
+		}
+		transfer.To = callMsg.To
+		transfer.Amount = callMsg.Value
 	}
 
 	return transfer, nil
 }
 
-func parseERC20Transfer(tx *types.Transaction, chainID *big.Int) (*EthereumTransfer, error) {
-	data := tx.Data()
-	if len(data) < 4+32+32 {
-		return nil, fmt.Errorf("invalid ERC-20 transfer: data is too short")
+func parseCallData(txData []byte) (call *ethereum.CallMsg, parsed bool, err error) {
+	if len(txData) < 4 {
+		return nil, false, fmt.Errorf("invalid contract call")
 	}
 
 	// 4 bytes - method signature (transfer: 0xa9059cbb)
-	// 32 bytes - recipient address
-	// 32 bytes - amount
-	method := data[0:4]
-	recipient := data[4 : 4+32]
-	amount := data[4+32 : 4+32+32]
+	method := txData[0:4]
 
-	if !bytes.Equal(method, hexutil.MustDecode("0xa9059cbb")) {
-		return nil, fmt.Errorf("invalid ERC-20 transfer: method is not ERC-20 transfer")
+	switch {
+	case bytes.Equal(method, transferMethodID):
+		// 32 bytes - recipient address
+		// 32 bytes - amount
+		to, amt, err := rawUnpackERC20Transfer(txData)
+		if err != nil {
+			return nil, false, err
+		}
+		return &ethereum.CallMsg{To: to, Value: amt}, true, nil
+	default:
+		return nil, false, nil
 	}
+}
 
-	if !bytes.Equal(recipient[0:12], hexutil.MustDecode("0x000000000000000000000000")) {
-		return nil, fmt.Errorf("invalid ERC-20 transfer: recipient address is not 20 bytes")
+var (
+	transferMethodID = crypto.Keccak256Hash([]byte("transfer(address,uint256)")).Bytes()[0:4]
+)
+
+// rawUnpackERC20Transfer Unpack without use of Go ABI package. Assumes correct ERC20 payload formatting
+func rawUnpackERC20Transfer(txData []byte) (to *common.Address, amount *big.Int, err error) {
+	if !bytes.Equal(txData[0:4], transferMethodID) {
+		return nil, nil, fmt.Errorf("wrong method id")
 	}
-
-	to := common.BytesToAddress(recipient[12:])
-
-	signer := types.LatestSignerForChainID(chainID)
-	hash := signer.Hash(tx)
-	return &EthereumTransfer{
-		Contract:       tx.To(),
-		To:             &to,
-		Amount:         new(big.Int).SetBytes(amount),
-		DataForSigning: hash.Bytes(),
-	}, nil
+	if !bytes.Equal(txData[4:4+12], hexutil.MustDecode("0x000000000000000000000000")) {
+		return nil, nil, fmt.Errorf("invalid ERC-20 transfer: recipient address is not 20 bytes")
+	}
+	toAddr := common.BytesToAddress(txData[16:36])
+	amount = new(big.Int).SetBytes(txData[36:68])
+	return &toAddr, amount, nil
 }
