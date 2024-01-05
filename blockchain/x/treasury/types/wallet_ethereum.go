@@ -117,6 +117,12 @@ func DecodeUnsignedPayload(msg []byte) (types.TxData, error) {
 	if len(msg) <= 1 {
 		return nil, fmt.Errorf("found less than 1 byte in %v", msg)
 	}
+	if msg[0] > 0x7f {
+		// Legacy transaction
+		var res types.LegacyTx
+		err := rlp.DecodeBytes(msg, &res)
+		return &res, err
+	}
 	switch msg[0] {
 	case types.AccessListTxType:
 		var res AccessListTxWithoutSignature
@@ -173,7 +179,7 @@ func ParseEthereumTransaction(b []byte, chainID *big.Int) (*EthereumTransfer, er
 		DataForSigning: hash.Bytes(),
 	}
 
-	if tx.Data() != nil {
+	if len(tx.Data()) > 0 {
 		// a contract call is being made
 		transfer.Contract = tx.To()
 		callMsg, parsed, err := parseCallData(tx.Data()) // - TODO we should refactor this so that value can be extracted from all known contract calls
